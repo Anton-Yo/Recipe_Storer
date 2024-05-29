@@ -85,7 +85,9 @@ def insertData():
 
     cursor.execute("INSERT INTO Ingredients VALUES (0, 0, 0, 'Bread', '1', 'slice', '1')")
     cursor.execute("INSERT INTO Ingredients VALUES (0, 0, 1, 'Toast', '1', 'slice', '1')")
-    cursor.execute("INSERT INTO Ingredients VALUES (1, 1, 0, 'Egg', '100g', 'boiled', '0')")
+    cursor.execute("INSERT INTO Ingredients VALUES (0, 1, 0, 'Egg', '100g', 'boiled', '0')")
+
+
 
 def commitDB():
     connection.commit()
@@ -97,17 +99,29 @@ def queryRecipe():
 
 def printAll():
     results = []
-    cursor.execute("SELECT recipeName FROM Recipes")
+    cursor.execute("SELECT recipeID FROM Recipes")
     results.append(cursor.fetchall())
-    cursor.execute("SELECT ingName FROM Ingredients")
+    cursor.execute("""SELECT ingName, stepDesc, recipeName
+                   FROM Ingredients
+                   INNER JOIN RecipeSteps ON Ingredients.stepID = RecipeSteps.stepID
+                   INNER JOIN Recipes ON Ingredients.recipeID = Recipes.recipeID
+                  """)
     results.append(cursor.fetchall())
 
     for row in results:
         print(row)
 
+def updateValue():
+    cursor.execute("""
+            UPDATE Recipes
+            SET recipeDesc = ?
+            WHERE recipeName = ?
+    """, ('Eggs on toast', 'Butter Chicken'))
+
 
 createTables()
 insertData()
+updateValue()
 printAll()
 commitDB()
 
