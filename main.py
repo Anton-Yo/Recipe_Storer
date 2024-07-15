@@ -1,9 +1,7 @@
-# main.py
-
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
-from . import models, schemas
-from .database import SessionLocal, engine
+import models, schemas, crud
+from database import SessionLocal, engine
 
 # Create the database tables
 models.Base.metadata.create_all(bind=engine)
@@ -18,17 +16,23 @@ def get_db():
     finally:
         db.close()
 
-# @app.post("/users/", response_model=schemas.User)
-# def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-#     db_user = models.User(name=user.name, email=user.email)
-#     db.add(db_user)
-#     db.commit()
-#     db.refresh(db_user)
-#     return db_user
+@app.get("/")
+def helpme():
+    return "gang gang"
 
-# @app.get("/users/{user_id}", response_model=schemas.User)
-# def read_user(user_id: int, db: Session = Depends(get_db)):
-#     db_user = db.query(models.User).filter(models.User.id == user_id).first()
-#     if db_user is None:
-#         raise HTTPException(status_code=404, detail="User not found")
-#     return db_user
+@app.post("/recipes/", response_model=schemas.Recipe)
+def create_recipe(recipe: schemas.RecipeCreate, db: Session = Depends(get_db)):
+    db_recipe = crud.create_recipe(db=db, recipe=recipe)
+    return db_recipe
+
+@app.get("/ingredients/", response_model=schemas.Ingredient)
+def read_ingredients(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    ings = crud.get_ingredients(db, skip = skip, limit = limit)
+    return ings
+
+@app.get("/recipes/{recipe_id}/", response_model=schemas.Recipe)
+def read_recipe(recipe_id:int, db: Session = Depends(get_db)):
+    db_recipe = crud.get_recipe(db, recipe_id=recipe_id)
+    if db_recipe is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_recipe
