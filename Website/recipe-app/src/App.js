@@ -1,13 +1,15 @@
 import React, {useState, useEffect} from "react"
 import api from "./api"
 import axios from 'axios'
+import './App.css'
 
 
 const App = () => {
   const [recipes, setRecipes] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
-    desc: ""
+    desc: "",
+    ingredients: []
   });
 
 
@@ -34,7 +36,8 @@ const App = () => {
     fetchRecipes();
     setFormData({
       name: "",
-      desc: ""
+      desc: "",
+      ingredients: []
     });
   };
 
@@ -87,6 +90,16 @@ const App = () => {
             </button>
 
           </form>
+        </div>
+
+        <div className='mx-5 my-3 boxes-container'>
+            {recipes.map((recipe) => (
+                  <div key={recipe.id} className='recipe-box'> 
+                      <p> {recipe.name} </p>
+                      <p> {recipe.desc} </p>
+                  </div>
+            ))}
+        </div>
 
           <table className='table table-striped table-bordered table-hover mt-3'>
             <thead>
@@ -110,7 +123,6 @@ const App = () => {
             </tbody>
           </table>
 
-        </div>
       </div>
   )
 }

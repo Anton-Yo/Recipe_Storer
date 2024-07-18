@@ -1,3 +1,4 @@
+from typing import List
 from pydantic import BaseModel
 
 class IngredientBase(BaseModel):
@@ -11,19 +12,32 @@ class Ingredient(IngredientBase):
     recipe_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class RecipeBase(BaseModel):
     name: str
     desc: str
+    cuisine_id: int
 
 class RecipeCreate(RecipeBase):
-    pass
+    ingredients: List[IngredientCreate]
 
 class Recipe(RecipeBase):
     id: int
-    ingredients: list[Ingredient] = []
+    ingredients: List[Ingredient]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
+
+class CuisineBase(BaseModel):
+    name: str
+
+class CuisineCreate(CuisineBase):
+    pass
+
+class Cuisine(CuisineBase):
+    id: int
+
+    class Config:
+        from_attributes = True
 
