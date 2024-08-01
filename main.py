@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Form, Request
 from typing import Annotated, List
 from sqlalchemy.orm import Session
 import models, schemas, crud
@@ -33,12 +33,30 @@ def get_db():
 
 @app.get("/")
 def helpme():
-    return "gang gang"
+    return "Time to learn databases and development"
 
+# -------------
+#    CREATE STUFF
+# -------------
+@app.post("/submit")
+async def submit(data: schemas.SubmitForm, db: Session = Depends(get_db)):
+    print( data, data.name, data.desc, data.cuisine_name)
+    create_recipe(recipe_data = data, db = db)
+    return "New Recipe submitted successfully"
+
+# @app.post("/submit2", response_model = str)
+# async def submit(name = Form(...), desc = Form(...), cuisine_name = Form(...)):
+#     print(name, desc, cuisine_name)
+#     return "Form printed successfully"
+
+# -------------
+#    RECIPES
+# -------------
 
 @app.post("/create_recipe", response_model= schemas.Recipe)
-def create_recipe(recipe: schemas.RecipeCreate, db: Session = Depends(get_db)):
-    db_recipe = models.Recipe(name = recipe.name, desc = recipe.desc, cuisine_id = recipe.cuisine_id)
+def create_recipe(recipe_data: schemas.SubmitForm, db: Session = Depends(get_db)):
+    print(recipe_data)
+    db_recipe = models.Recipe(name = recipe_data.name, desc = recipe_data.desc, cuisine_id = crud.get_cuisine_id_by_name(db, cuisine_name = recipe_data.cuisine_name))
     db.add(db_recipe)
     db.commit()
     db.refresh(db_recipe)
@@ -131,10 +149,7 @@ def delete_ing(ing_id: int, db: Session = Depends(get_db)):
 
 @app.post("/create_cuisine", response_model= schemas.Cuisine)
 def create_cuisine(cuisine: schemas.CuisineCreate, db: Session = Depends(get_db)):
-    db_cuisine = models.Cuisine(name = cuisine.name)
-    db.add(db_cuisine)
-    db.commit()
-    db.refresh(db_cuisine)
+    db_cuisine = crud.create_cuisine(db, cuisine_name = cuisine.name)
     #db_recipe = crud.create_recipe(db=db, recipe=recipe)
     return db_cuisine
 
@@ -152,3 +167,20 @@ def get_recipes_by_cuisine(cuisine_name: str, db: Session = Depends(get_db)):
     if db_recipes is None:
        raise HTTPException(status_code=404, detail="Cuisines not found")
     return db_recipes
+
+@app.delete("/delete_cuisine/{cuisine_name}", response_model=str)
+def delete_cuisine(cuisine_name: str, db: Session = Depends(get_db)):
+    crud.delete_cuisine(db, cuisine_name = cuisine_name)
+    return "cuisine deleted successfully"
+
+@app.get("/cuisines/{cuisine_name}", response_model = int)
+def get_cuisine_by_name(cuisine_name: str, db: Session = Depends(get_db)):
+    return crud.get_cuisine_id_by_name(db, cuisine_name= cuisine_name)
+
+
+# -------------
+#    STEPS
+# -------------
+
+# @app.get("/create_step", respone_model=schemas.Steps)
+# def create_recipe_step()

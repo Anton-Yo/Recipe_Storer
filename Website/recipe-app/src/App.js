@@ -9,7 +9,7 @@ const App = () => {
   const [formData, setFormData] = useState({
     name: "",
     desc: "",
-    ingredients: []
+    cuisine_name: "",
   });
 
 
@@ -32,29 +32,35 @@ const App = () => {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    await api.post("/create_recipe", formData);
+    console.log(formData);
+    try{
+      const response = await api.post("/submit", formData);
+      console.log(response.data)
+    } catch (error) {
+      console.error("Error submitting form:", error.response.data);
+    }
+  
     fetchRecipes();
     setFormData({
       name: "",
       desc: "",
-      ingredients: []
+      cuisine_name: "",
     });
   };
 
   
-    const handleDelete = async(recipe_id) => {
-      var response;
-      try {
-        response = await api.delete(`/recipes/${recipe_id}`);
-        console.log(response.data);
-      }
-      catch (error)
-      {
-        console.error("Error deleteing recipe:", error);
-      }
-      
-      fetchRecipes()
+  const handleDelete = async(recipe_id) => {
+    var response;
+    try {
+      response = await api.delete(`/recipes/${recipe_id}`);
+      console.log(response.data);
     }
+    catch (error)
+    {
+      console.error("Error deleting recipe:", error);
+    }     
+    fetchRecipes()
+  }
 
   return (
       <div> 
@@ -85,6 +91,14 @@ const App = () => {
               <input type='text' className='form-control' id='desc' name='desc' onChange={handleInputChange} value={formData.desc}></input>
             </div>
 
+            <div className='mb-3'>
+              <label htmlFor='amount' className='form-label'>
+                Cuisine
+              </label>
+
+              <input type='text' className='form-control' id='cuisine_name' name='cuisine_name' onChange={handleInputChange} value={formData.cuisine_name}></input>
+            </div>
+
             <button type='submit' className ='btn btn-primary'>
               Submit
             </button>
@@ -106,6 +120,7 @@ const App = () => {
               <tr>
                 <th>Name</th>
                 <th>Description</th>
+                <th>Cuisine</th>
                 <th className="text-center">Delete?</th>
               </tr>
             </thead>
@@ -115,6 +130,7 @@ const App = () => {
                 <tr key={recipe.id}>
                   <td>{recipe.name}</td>
                   <td>{recipe.desc}</td>
+                  <td>{recipe.cuisine_id}</td>
                   <td>
                     <button onClick={() => handleDelete(recipe.id)}> Delete </button>
                   </td>

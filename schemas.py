@@ -41,3 +41,8 @@ class Cuisine(CuisineBase):
     class Config:
         from_attributes = True
 
+
+class SubmitForm(BaseModel):
+    name: str
+    desc: str
+    cuisine_name: str

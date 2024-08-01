@@ -64,6 +64,22 @@ def delete_ing(db: Session, ing_id: int):
 #    Cuisine
 # -------------
 
+def create_cuisine(db: Session, cuisine_name: str):
+    db_cuisine = models.Cuisine(name = cuisine_name)
+    db.add(db_cuisine)
+    db.commit()
+    db.refresh(db_cuisine)
+    return db_cuisine
+
+def delete_cuisine(db: Session, cuisine_name:str):
+    print("deleting cuisine")
+    db_cuisine = db.query(models.Cuisine).filter(models.Cuisine.name == cuisine_name).first()
+    if db_cuisine is None:
+        raise HTTPException(status_code=404, detail="Cannot find cuisine to delete")
+    db.delete(db_cuisine)
+    db.commit()
+    return "Cuisine ${cuisine_name} has been deleted successfully"
+
 def get_recipes_by_cuisine(db: Session, cuisine_name: str):
     chosen_cuisine = db.query(models.Cuisine).filter(models.Cuisine.name == cuisine_name).first()
     if not chosen_cuisine:
@@ -74,3 +90,10 @@ def get_recipes_by_cuisine(db: Session, cuisine_name: str):
 
 def get_cuisines(db: Session, skip : int = 0, limit: int = 100):
     return db.query(models.Cuisine).offset(skip).limit(limit).all()
+
+def get_cuisine_id_by_name(db: Session, cuisine_name: str):
+    try:
+        return db.query(models.Cuisine).filter(models.Cuisine.name == cuisine_name).first().id
+    except None:
+        print("Created a new cuisine because it didn't exist yet")
+        return create_cuisine(db = db, cuisine_name= cuisine_name).id
