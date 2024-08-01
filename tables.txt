@@ -1,0 +1,54 @@
+ createStrings.append(
+        """CREATE TABLE IF NOT EXISTS Cuisine (
+            cuisineID INTEGER PRIMARY KEY,
+            cuisineName TEXT NOT NULL
+        ); """
+    )
+    DONE THIS ONE
+
+    createStrings.append(
+        """CREATE TABLE IF NOT EXISTS IngredientCategories (
+            categoryID INTEGER PRIMARY KEY,
+            categoryName TEXT NOT NULL
+        ); """
+    )
+    NOT DONE THIS ONE
+
+    createStrings.append(
+        """CREATE TABLE IF NOT EXISTS Recipes (
+            recipeID INTEGER PRIMARY KEY,
+            recipeName TEXT,
+            recipeDesc TEXT,
+            cookTime INTEGER,
+            cuisineID INTEGER,
+            FOREIGN KEY (cuisineID) REFERENCES Cuisine(cuisineID)
+        ); """
+        Getting there on this one
+    )
+
+    createStrings.append(
+        """CREATE TABLE IF NOT EXISTS RecipeSteps (
+            recipeID INTEGER,
+            stepID INTEGER,
+            stepDesc TEXT,
+            PRIMARY KEY (recipeID, stepID),
+            FOREIGN KEY (recipeID) REFERENCES Recipes(recipeID)
+        ); """
+        Need this one
+    )
+
+    createStrings.append(
+        """CREATE TABLE IF NOT EXISTS Ingredients (
+            recipeID INTEGER NOT NULL,
+            stepID INTEGER NOT NULL,
+            ingID INTEGER,
+            ingName TEXT,
+            ingQuantity TEXT,
+            ingInfo TEXT, 
+            categoryID INTEGER,
+            PRIMARY KEY (recipeID, stepID, ingID),
+            FOREIGN KEY (recipeID) REFERENCES Recipes(recipeID), 
+            FOREIGN KEY (stepID) REFERENCES RecipeSteps(stepID),
+            FOREIGN KEY (categoryID) REFERENCES IngredientCategories(categoryID)
+        ); """
+    )

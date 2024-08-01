@@ -182,5 +182,31 @@ def get_cuisine_by_name(cuisine_name: str, db: Session = Depends(get_db)):
 #    STEPS
 # -------------
 
-# @app.get("/create_step", respone_model=schemas.Steps)
-# def create_recipe_step()
+@app.post("/create_step", response_model=schemas.Step)
+def create_step(step: schemas.StepCreate, db: Session = Depends(get_db)):
+    db_step = crud.create_step(db, step_desc = step.step_desc, attached_recipe = step.recipe_id)
+    return db_step
+
+@app.get("/{recipe_id}/steps", response_model=List[schemas.Step])
+def get_steps_by_recipe(recipe_id: int, db: Session = Depends(get_db)):
+    
+    db_steps = crud.get_steps_by_recipe(db, target_id = recipe_id)
+
+    if not db_steps:
+        raise HTTPException(status_code=404, detail="there are no steps associated with those recipes")
+    return db_steps
+    
+
+@app.delete("/step/{step_id}", response_model=str)
+def delete_step(step_id: int, db: Session = Depends(get_db)):
+    crud.delete_step(db, step_id = step_id)
+    return "step deleted successfully"
+
+@app.get("/steps", response_model=List[schemas.Step])
+def get_steps(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    db_steps = crud.get_steps(db, skip=skip, limit=limit)
+    if db_steps is None:
+       raise HTTPException(status_code=404, detail="steps not found")
+    return db_steps
+
+

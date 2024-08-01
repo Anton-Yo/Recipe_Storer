@@ -92,8 +92,41 @@ def get_cuisines(db: Session, skip : int = 0, limit: int = 100):
     return db.query(models.Cuisine).offset(skip).limit(limit).all()
 
 def get_cuisine_id_by_name(db: Session, cuisine_name: str):
-    try:
-        return db.query(models.Cuisine).filter(models.Cuisine.name == cuisine_name).first().id
-    except None:
+    db_cuisine = db.query(models.Cuisine).filter(models.Cuisine.name == cuisine_name).first()
+
+    if db_cuisine is None:
         print("Created a new cuisine because it didn't exist yet")
-        return create_cuisine(db = db, cuisine_name= cuisine_name).id
+        db_cuisine = create_cuisine(db = db, cuisine_name= cuisine_name)
+
+    return db_cuisine.id
+
+
+# -------------
+#    Step
+# -------------
+
+def create_step(db: Session, step_desc: str, attached_recipe: int):
+    db_step = models.Step(step_desc = step_desc, recipe_id = attached_recipe)
+    db.add(db_step)
+    db.commit()
+    db.refresh(db_step)
+    return db_step
+
+def get_steps_by_recipe(db: Session, target_id: int = 1):
+    db_steps = []
+
+    db_steps = db.query(models.Step).filter(models.Step.recipe_id == target_id).all()
+
+    return db_steps
+    
+def delete_step(db: Session, step_id: int):
+    print("deleting step")
+    db_step = db.query(models.Step).filter(models.Step.id == step_id).first()
+    if db_step is None:
+        raise HTTPException(status_code=404, detail="Cannot find step to delete")
+    db.delete(db_step)
+    db.commit()
+    return "Step has been deleted successfully"
+
+def get_steps(db: Session, skip : int = 0, limit: int = 100):
+    return db.query(models.Step).offset(skip).limit(limit).all()

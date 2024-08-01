@@ -10,8 +10,9 @@ const App = () => {
     name: "",
     desc: "",
     cuisine_name: "",
+    steps: [],
+    ingredients: [],
   });
-
 
   const fetchRecipes = async() => {
     const response = await api.get("/recipes");
@@ -45,6 +46,8 @@ const App = () => {
       name: "",
       desc: "",
       cuisine_name: "",
+      steps: [],
+      ingredients: [],
     });
   };
 
