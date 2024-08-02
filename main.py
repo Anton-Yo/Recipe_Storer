@@ -35,12 +35,12 @@ def get_db():
 def helpme():
     return "Time to learn databases and development"
 
-# -------------
+# -------------------
 #    CREATE STUFF
-# -------------
+# -------------------
 @app.post("/submit", response_model=str)
 async def submit(data: schemas.SubmitForm, db: Session = Depends(get_db)):
-    print( data, data.name, data.desc, data.cuisine_name)
+    print(data, data.name, data.desc, data.cuisine_name)
     create_recipe(recipe_data = data, db = db)
     return "New Recipe submitted successfully"
 
@@ -50,10 +50,12 @@ async def submit_ing(data: schemas.SubmitIng, db: Session = Depends(get_db)):
     create_ingredient(ing_data = data, db=db)
     return "Ingredient created successfully"
 
-# @app.post("/submit2", response_model = str)
-# async def submit(name = Form(...), desc = Form(...), cuisine_name = Form(...)):
-#     print(name, desc, cuisine_name)
-#     return "Form printed successfully"
+# -------------------
+#    FETCH STUFF
+# -------------------
+@app.get()
+
+
 
 # -------------
 #    RECIPES
@@ -105,24 +107,7 @@ def create_ingredient(ing_data = schemas.SubmitIng, db: Session = Depends(get_db
     db_ing = crud.create_ing(db, ing_data = ing_data)
     if db_ing is None:
         raise HTTPException(status_code=404, detail="Ingredient creation failed")
-    
-    # db_ingredients = []
-    # for ingredient in ings:
-    #     db_ing = models.Ingredient(**ingredient.model_dump(), recipe_id = recipe_id)
-    #     db.add(db_ing)
-    #     db_ingredients.append(db_ing)
-    #     #db.commit()
-    #     #db.refresh(db_ing)
-
-    # db.commit()
-    # for ing in db_ingredients:
-    #     db.refresh(ing)
-
     return db_ing
-
-# def create_step(step: schemas.StepCreate, db: Session = Depends(get_db)):
-#     db_step = crud.create_step(db, step_desc = step.step_desc, attached_recipe = step.recipe_id)
-#     return db_step
 
 @app.get("/ingredients/", response_model=List[schemas.Ingredient])
 def get_ingredients(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):

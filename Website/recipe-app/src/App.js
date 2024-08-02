@@ -13,9 +13,14 @@ const App = () => {
     ingredients: [],
     steps: [],
   });
-
+  const[ingredients, setIngredients] = useState([]);
   const[ingForm, setIngFormData] = useState({
-    
+    name: "",
+    quantity: "",
+    additional_notes: "",
+    category_name: "",
+    recipe_id: 1,
+    step_id: 1,
   });
 
   const fetchRecipes = async() => {
@@ -23,8 +28,15 @@ const App = () => {
     setRecipes(response.data)
   };
 
+  const fetchIngredients = async() => {
+    const response = await api.get("/ingredients");
+    console.log(response.data);
+    setIngredients(response.data)
+  }
+
   useEffect(() => {
     fetchRecipes();
+    fetchIngredients();
   }, []);
 
   const handleInputChange = (event) => {
@@ -57,14 +69,21 @@ const App = () => {
 
   const handleIngredientSubmit = async (event) => {
       event.preventDefault();
+      try{
+        const response = await api.post("/submit_ingredient", ingForm);
+        console.log(response.data)
+      } catch (error) {
+        console.error("Error submitting form:", error.response.data);
+      }
 
       fetchRecipes();
-      setFormData({
-        name: formData.name,
-        desc: formData.desc,
-        cuisine_name: formData.cuisine_name,
-        steps: [],
-        ingredients: [],
+      setIngFormData({
+        name: "",
+        quantity: "",
+        additional_notes: "",
+        category_name: "",
+        recipe_id: 1,
+        step_id: 1,
       })
   }
 
@@ -80,6 +99,19 @@ const App = () => {
       console.error("Error deleting recipe:", error);
     }     
     fetchRecipes()
+  }
+
+  const handleIngDelete = async(ing_id) => {
+    var response;
+    try {
+      response = await api.delete(`/ingredients/${ing_id}`);
+      console.log(response.data);
+    }
+    catch (error)
+    {
+      console.error("Error deleting recipe:", error);
+    }   
+    fetchRecipes();
   }
 
   return (
@@ -171,20 +203,24 @@ const App = () => {
               <thead>
                 <tr>
                   <th>Name</th>
-                  <th>Description</th>
-                  <th>Cuisine</th>
+                  <th>Quantity</th>
+                  <th>additional_notes</th>
+                  <th>category</th>
+                  <th>step</th>
                   <th className="text-center">Delete?</th>
                 </tr>
               </thead>
 
               <tbody>
-                {recipes.map((recipe) => (
-                  <tr key={recipe.id}>
-                    <td>{recipe.name}</td>
-                    <td>{recipe.desc}</td>
-                    <td>{recipe.cuisine_id}</td>
+                {ingredients.map((ing) => (
+                  <tr key={ing.id}>
+                    <td>{ing.name}</td>
+                    <td>{ing.quantity}</td>
+                    <td>{ing.additional_notes}</td>
+                    <td>{ing.category_name}</td>
+                    <td>Step {ing.step}</td>
                     <td>
-                      <button onClick={() => handleDelete(recipe.id)}> Delete </button>
+                      <button onClick={() => handleIngDelete(ing.id)}> Delete </button>
                     </td>
                   </tr>
                 ))}
