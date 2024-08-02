@@ -38,11 +38,17 @@ def helpme():
 # -------------
 #    CREATE STUFF
 # -------------
-@app.post("/submit")
+@app.post("/submit", response_model=str)
 async def submit(data: schemas.SubmitForm, db: Session = Depends(get_db)):
     print( data, data.name, data.desc, data.cuisine_name)
     create_recipe(recipe_data = data, db = db)
     return "New Recipe submitted successfully"
+
+@app.post("/submit_ingredient", response_model=str)
+async def submit_ing(data: schemas.SubmitIng, db: Session = Depends(get_db)):
+    print(data, data.name, data.quantity, data.additional_notes, data.category_id, data.recipe_id, data.step_id)
+    create_ingredient(ing_data = data, db=db)
+    return "Ingredient created successfully"
 
 # @app.post("/submit2", response_model = str)
 # async def submit(name = Form(...), desc = Form(...), cuisine_name = Form(...)):
@@ -94,25 +100,29 @@ def delete_recipe(recipe_id: int, db: Session = Depends(get_db)):
 #  INGREDIENTS
 # -------------
 
-@app.post("/recipes/{recipe_id}/create_ingredient", response_model = List[schemas.Ingredient])
-def create_ingredients(recipe_id: int, ings: List[schemas.IngredientCreate], db: Session = Depends(get_db)):
-    db_recipe = crud.get_recipe(db, recipe_id=recipe_id)
-    if db_recipe is None:
-        raise HTTPException(status_code=404, detail="Recipe not found")
+@app.post("/recipes/{recipe_id}/create_ingredient", response_model = schemas.Ingredient)
+def create_ingredient(ing_data = schemas.SubmitIng, db: Session = Depends(get_db)):
+    db_ing = crud.create_ing(db, ing_data = ing_data)
+    if db_ing is None:
+        raise HTTPException(status_code=404, detail="Ingredient creation failed")
     
-    db_ingredients = []
-    for ingredient in ings:
-        db_ing = models.Ingredient(**ingredient.model_dump(), recipe_id = recipe_id)
-        db.add(db_ing)
-        db_ingredients.append(db_ing)
-        #db.commit()
-        #db.refresh(db_ing)
+    # db_ingredients = []
+    # for ingredient in ings:
+    #     db_ing = models.Ingredient(**ingredient.model_dump(), recipe_id = recipe_id)
+    #     db.add(db_ing)
+    #     db_ingredients.append(db_ing)
+    #     #db.commit()
+    #     #db.refresh(db_ing)
 
-    db.commit()
-    for ing in db_ingredients:
-        db.refresh(ing)
+    # db.commit()
+    # for ing in db_ingredients:
+    #     db.refresh(ing)
 
-    return db_ingredients
+    return db_ing
+
+# def create_step(step: schemas.StepCreate, db: Session = Depends(get_db)):
+#     db_step = crud.create_step(db, step_desc = step.step_desc, attached_recipe = step.recipe_id)
+#     return db_step
 
 @app.get("/ingredients/", response_model=List[schemas.Ingredient])
 def get_ingredients(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
@@ -174,7 +184,7 @@ def delete_cuisine(cuisine_name: str, db: Session = Depends(get_db)):
     return "cuisine deleted successfully"
 
 @app.get("/cuisines/{cuisine_name}", response_model = int)
-def get_cuisine_by_name(cuisine_name: str, db: Session = Depends(get_db)):
+def get_cuisine_id_by_name(cuisine_name: str, db: Session = Depends(get_db)):
     return crud.get_cuisine_id_by_name(db, cuisine_name= cuisine_name)
 
 
@@ -209,4 +219,40 @@ def get_steps(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
        raise HTTPException(status_code=404, detail="steps not found")
     return db_steps
 
+
+# -------------
+#    Categories
+# -------------
+
+
+@app.post("/create_category", response_model= schemas.Category)
+def create_category(category: schemas.CategoryCreate, db: Session = Depends(get_db)):
+    print(category)
+    db_category = crud.create_category(db, category_name = category.name)
+    #db_recipe = crud.create_recipe(db=db, recipe=recipe)
+    return db_category
+
+
+@app.get("/categories", response_model=List[schemas.Category])
+def get_categories(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    db_categories = crud.get_categories(db, skip=skip, limit=limit)
+    if db_categories is None:
+       raise HTTPException(status_code=404, detail="Categories not found")
+    return db_categories
+
+@app.get("/ingredients/{category_name}", response_model=List[schemas.Ingredient])
+def get_ingredients_by_category(category_name: str, db: Session = Depends(get_db)):
+    db_ings = crud.get_ingredients_by_category(db, category_name = category_name)
+    if db_ings is None:
+       raise HTTPException(status_code=404, detail="Ingredients not found")
+    return db_ings
+
+@app.delete("/delete_category/{category_name}", response_model=str)
+def delete_category(category_name: str, db: Session = Depends(get_db)):
+    crud.delete_category(db, category_name = category_name)
+    return "category deleted successfully"
+
+@app.get("/categories/{category_name}", response_model = int)
+def get_category_id_by_name(category_name: str, db: Session = Depends(get_db)):
+    return crud.get_category_id_by_name(db, category_name= category_name)
 

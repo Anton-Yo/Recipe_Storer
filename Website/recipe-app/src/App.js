@@ -10,8 +10,12 @@ const App = () => {
     name: "",
     desc: "",
     cuisine_name: "",
-    steps: [],
     ingredients: [],
+    steps: [],
+  });
+
+  const[ingForm, setIngFormData] = useState({
+    
   });
 
   const fetchRecipes = async() => {
@@ -51,6 +55,19 @@ const App = () => {
     });
   };
 
+  const handleIngredientSubmit = async (event) => {
+      event.preventDefault();
+
+      fetchRecipes();
+      setFormData({
+        name: formData.name,
+        desc: formData.desc,
+        cuisine_name: formData.cuisine_name,
+        steps: [],
+        ingredients: [],
+      })
+  }
+
   
   const handleDelete = async(recipe_id) => {
     var response;
@@ -75,10 +92,13 @@ const App = () => {
           </div>
         </nav>
 
+        
+
         <div className='container'>
           <form onSubmit={handleFormSubmit}>
 
             <div className='mb-3 mt-3'>
+              <h4>Recipes</h4>
               <label htmlFor='amount' className='form-label'>
                 Name
               </label>
@@ -107,6 +127,70 @@ const App = () => {
             </button>
 
           </form>
+        </div>
+
+        <h4 className='m-auto text-center'> Ingredient list </h4>
+        <div className='container d-flex mb-3 mt-5'>
+          <div id='left-side' className='w-50 p-3 bg-danger'> 
+              <form onSubmit={handleIngredientSubmit} id='ing-form'>
+
+                <div>
+                  <label htmlFor='amount' className='form-label'>
+                    Ingredient Name
+                  </label>
+
+                  <input type='text' className="form-control" id="ing_name" name="ing_name" onChange={handleInputChange} value={formData.desc}></input>
+
+                </div>
+
+                <div className='mb-3'>
+                  <label htmlFor='amount' className='form-label'>
+                    Description
+                  </label>
+
+                  <input type='text' className='form-control' id='desc' name='desc' onChange={handleInputChange} value={formData.desc}></input>
+                </div>
+
+                <div className='mb-3'>
+                  <label htmlFor='amount' className='form-label'>
+                    Cuisine
+                  </label>
+
+                  <input type='text' className='form-control' id='cuisine_name' name='cuisine_name' onChange={handleInputChange} value={formData.cuisine_name}></input>
+                </div>
+
+                <button type='submit' className ='btn btn-primary'>
+                  Submit
+                </button>
+
+              </form>
+          </div>
+
+          <div id='right-side' className='w-50 p-3 bg-dark'>
+            <table className='table table-striped table-bordered table-hover mt-3'>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Cuisine</th>
+                  <th className="text-center">Delete?</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {recipes.map((recipe) => (
+                  <tr key={recipe.id}>
+                    <td>{recipe.name}</td>
+                    <td>{recipe.desc}</td>
+                    <td>{recipe.cuisine_id}</td>
+                    <td>
+                      <button onClick={() => handleDelete(recipe.id)}> Delete </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <div className='mx-5 my-3 boxes-container'>

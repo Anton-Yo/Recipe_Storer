@@ -14,8 +14,22 @@ class Step(StepBase):
     class Config:
         from_attributes = True
 
+class CategoryBase(BaseModel):
+    name: str
+
+class CategoryCreate(CategoryBase):
+    pass
+
+class Category(CategoryBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
 class IngredientBase(BaseModel):
     name: str
+    quantity: str
+    additional_notes: str
 
 class IngredientCreate(IngredientBase):
     pass
@@ -23,6 +37,8 @@ class IngredientCreate(IngredientBase):
 class Ingredient(IngredientBase):
     id: int
     recipe_id: int
+    category_id: int
+    step_id: int
 
     class Config:
         from_attributes = True
@@ -60,4 +76,12 @@ class SubmitForm(BaseModel):
     name: str
     desc: str
     cuisine_name: str
+
+class SubmitIng(BaseModel):
+    name: str
+    quantity: str
+    additional_notes: str
+    category_id: int
+    recipe_id: int
+    step_id: int
 

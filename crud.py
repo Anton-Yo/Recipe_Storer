@@ -35,12 +35,26 @@ def delete_recipe(db: Session, recipe_id: int):
 #  INGREDIENTS
 # -------------
 
-# def create_ing(db: Session, ingSchema: schemas.Ingredient):
-#     db_ingredient = models.Ingredient(name = ingSchema.name, recipe_id = 5 )
-#     db.add(db_ingredient)
-#     db.commit()
-#     db.refresh(db_ingredient)
-#     return db_ingredient
+def create_ing(db: Session, ing_data: schemas.SubmitIng):
+    db_ingredient = models.Ingredient(
+        name = ing_data.name, 
+        quantity = ing_data.quantity, 
+        additional_notes  = ing_data.additional_notes,
+        recipe_id = ing_data.recipe_id,
+        category_id = ing_data.category_id,
+        step_id = ing_data.step_id
+    )
+    db.add(db_ingredient)
+    db.commit()
+    db.refresh(db_ingredient)
+    return db_ingredient
+
+def create_step(db: Session, step_desc: str, attached_recipe: int):
+    db_step = models.Step(step_desc = step_desc, recipe_id = attached_recipe)
+    db.add(db_step)
+    db.commit()
+    db.refresh(db_step)
+    return db_step
 
 def get_ing(db: Session, ing_id: int):
     return db.query(models.Ingredient).filter(models.Ingredient.id == ing_id).first()
@@ -130,3 +144,43 @@ def delete_step(db: Session, step_id: int):
 
 def get_steps(db: Session, skip : int = 0, limit: int = 100):
     return db.query(models.Step).offset(skip).limit(limit).all()
+
+
+# -------------
+#    Category
+# -------------
+def create_category(db: Session, category_name: str):
+    db_cat = models.Category(name = category_name)
+    db.add(db_cat)
+    db.commit()
+    db.refresh(db_cat)
+    return db_cat
+
+def delete_category(db: Session, category_name:str):
+    print("deleting category")
+    db_category = db.query(models.Category).filter(models.Category.name == category_name).first()
+    if db_category is None:
+        raise HTTPException(status_code=404, detail="Cannot find category to delete")
+    db.delete(db_category)
+    db.commit()
+    return "Cuisine ${category_name} has been deleted successfully"
+
+def get_ingredients_by_category(db: Session, category_name: str):
+    chosen_category = db.query(models.Category).filter(models.Category.name == category_name).first()
+    if not chosen_category:
+         raise HTTPException(status_code=404, detail="Cannot any the named category")
+    else:
+        ings = db.query(models.Ingredient).filter(models.Ingredient.category_id == chosen_category.id)
+        return ings
+
+def get_categories(db: Session, skip : int = 0, limit: int = 100):
+    return db.query(models.Category).offset(skip).limit(limit).all()
+
+def get_category_id_by_name(db: Session, category_name: str):
+    db_category = db.query(models.Category).filter(models.Category.name == category_name).first()
+
+    if db_category is None:
+        print("Created a new category because it didn't exist yet")
+        db_category = create_category(db = db, category_name= category_name)
+
+    return db_category.id

@@ -10,6 +10,15 @@ class Cuisine(Base):
 
     recipe = relationship("Recipe", back_populates="cuisine")
 
+
+class Category(Base):
+    __tablename__ = "categories"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
+
+    ingredient = relationship("Ingredient", back_populates="category")
+
 class Recipe(Base):
     __tablename__ = "recipes"
 
@@ -27,9 +36,14 @@ class Ingredient(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
+    quantity = Column(String, index=True)
+    additional_notes = Column(String, index=True)
+    category_id = Column(Integer, ForeignKey("categories.id"))
     recipe_id = Column(Integer, ForeignKey("recipes.id"))
+    step_id = Column(Integer, ForeignKey("steps.id"))
 
     recipe = relationship("Recipe", back_populates="ingredients")
+    category = relationship("Category", back_populates="ingredient")
 
 class Step(Base):
     __tablename__ = "steps"
@@ -39,5 +53,6 @@ class Step(Base):
     recipe_id = Column(Integer, ForeignKey("recipes.id"))
 
     recipe = relationship("Recipe", back_populates="steps")
+
 
 

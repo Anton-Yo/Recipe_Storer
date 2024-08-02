@@ -13,3 +13,13 @@
   border: 1px solid black;
   box-shadow: 0 0 10px black;
 }
+
+.dashed {
+  list-style-type: none;
+}
+
+.ing-list {
+  background-color: blue;
+  display: flex;
+}
+
