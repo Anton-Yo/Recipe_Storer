@@ -29,7 +29,7 @@ const App = () => {
   };
 
   const fetchIngredients = async() => {
-    const response = await api.get("/ingredients");
+    const response = await api.get("/fetch_ingredients");
     console.log(response.data);
     setIngredients(response.data)
   }

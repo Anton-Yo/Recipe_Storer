@@ -1,3 +1,4 @@
+from sqlite3 import IntegrityError
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
@@ -49,6 +50,22 @@ def create_ing(db: Session, ing_data: schemas.SubmitIng):
     db.refresh(db_ingredient)
     return db_ingredient
 
+def create_ing_from_dict(db: Session, ing_data: dict):
+    print(ing_data)
+    db_ingredient = models.Ingredient(
+        name = ing_data["name"], 
+        quantity = ing_data['quantity'], 
+        additional_notes  = ing_data['additional_notes'],
+        recipe_id = ing_data['recipe_id'],
+        category_id = ing_data['category_id'],
+        step_id = ing_data['step_id']
+    )
+    db.add(db_ingredient)
+    db.commit()
+    db.refresh(db_ingredient)
+    return db_ingredient
+
+
 def create_step(db: Session, step_desc: str, attached_recipe: int):
     db_step = models.Step(step_desc = step_desc, recipe_id = attached_recipe)
     db.add(db_step)
@@ -63,7 +80,14 @@ def get_ing_by_name(db: Session, ing_name: str):
     return db.query(models.Ingredient).filter(models.Ingredient.name == ing_name).first()
 
 def get_ingredients(db: Session, skip:int = 0, limit: int = 100):
-    return db.query(models.Ingredient).offset(skip).limit(limit).all()
+    db_ings = []
+    db_ings = db.query(models.Ingredient).offset(skip).limit(limit).all()
+    return db_ings
+
+def get_ingredients_for_table(recipe_id: int, db: Session):
+    db_ings = []
+    db_ings = db.select(models.Ingredient).where()
+    return db_ings
 
 def delete_ing(db: Session, ing_id: int):
     print("Deleting ingredient...")
@@ -79,11 +103,15 @@ def delete_ing(db: Session, ing_id: int):
 # -------------
 
 def create_cuisine(db: Session, cuisine_name: str):
-    db_cuisine = models.Cuisine(name = cuisine_name)
-    db.add(db_cuisine)
-    db.commit()
-    db.refresh(db_cuisine)
-    return db_cuisine
+    exists = db.query(models.Cuisine).filter(models.Cuisine.name == cuisine_name).first()
+    if exists is None:
+        print(cuisine_name + " is new")
+        db_cuisine = models.Cuisine(name = cuisine_name)
+        db.add(db_cuisine)
+        db.commit()
+        db.refresh(db_cuisine)
+        return db_cuisine
+    return None
 
 def delete_cuisine(db: Session, cuisine_name:str):
     print("deleting cuisine")
@@ -120,7 +148,8 @@ def get_cuisine_id_by_name(db: Session, cuisine_name: str):
 # -------------
 
 def create_step(db: Session, step_desc: str, attached_recipe: int):
-    db_step = models.Step(step_desc = step_desc, recipe_id = attached_recipe)
+    print("Step is new")
+    db_step = models.Step(desc = step_desc, recipe_id = attached_recipe)
     db.add(db_step)
     db.commit()
     db.refresh(db_step)
@@ -150,11 +179,14 @@ def get_steps(db: Session, skip : int = 0, limit: int = 100):
 #    Category
 # -------------
 def create_category(db: Session, category_name: str):
-    db_cat = models.Category(name = category_name)
-    db.add(db_cat)
-    db.commit()
-    db.refresh(db_cat)
-    return db_cat
+    exists = db.query(models.Category).filter(models.Category.name == category_name).first()
+    if exists is None:
+        db_cat = models.Category(name = category_name)
+        db.add(db_cat)
+        db.commit()
+        db.refresh(db_cat)
+        return db_cat
+    return None
 
 def delete_category(db: Session, category_name:str):
     print("deleting category")

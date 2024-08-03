@@ -49,7 +49,7 @@ class Step(Base):
     __tablename__ = "steps"
 
     id = Column(Integer, primary_key = True, index=True)
-    step_desc = Column(String, index = True)
+    desc = Column(String, index = True)
     recipe_id = Column(Integer, ForeignKey("recipes.id"))
 
     recipe = relationship("Recipe", back_populates="steps")

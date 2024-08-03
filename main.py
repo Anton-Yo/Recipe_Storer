@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, Form, Request
 from typing import Annotated, List
 from sqlalchemy.orm import Session
-import models, schemas, crud
+import models, schemas, crud, json
 from database import SessionLocal, engine
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -35,6 +35,7 @@ def get_db():
 def helpme():
     return "Time to learn databases and development"
 
+
 # -------------------
 #    CREATE STUFF
 # -------------------
@@ -53,8 +54,11 @@ async def submit_ing(data: schemas.SubmitIng, db: Session = Depends(get_db)):
 # -------------------
 #    FETCH STUFF
 # -------------------
-@app.get()
-
+@app.get("/fetch_ingredients", response_model=List[schemas.Ingredient])
+async def fetch_ingredients(recipe_id: int, db: Session = Depends(get_db)):
+    db_ings = []
+    db_ings = crud.get_ingredients_for_table(recipe_id=recipe_id, db = db)
+    return db_ings
 
 
 # -------------
@@ -179,7 +183,7 @@ def get_cuisine_id_by_name(cuisine_name: str, db: Session = Depends(get_db)):
 
 @app.post("/create_step", response_model=schemas.Step)
 def create_step(step: schemas.StepCreate, db: Session = Depends(get_db)):
-    db_step = crud.create_step(db, step_desc = step.step_desc, attached_recipe = step.recipe_id)
+    db_step = crud.create_step(db, step_desc = step.desc, attached_recipe = step.recipe_id)
     return db_step
 
 @app.get("/{recipe_id}/steps", response_model=List[schemas.Step])
@@ -240,4 +244,91 @@ def delete_category(category_name: str, db: Session = Depends(get_db)):
 @app.get("/categories/{category_name}", response_model = int)
 def get_category_id_by_name(category_name: str, db: Session = Depends(get_db)):
     return crud.get_category_id_by_name(db, category_name= category_name)
+
+
+# ---------------------------------
+#    CREATE TEST DATA WITH JSON
+# ---------------------------------
+
+@app.post("/test_data", response_model=str)
+async def create_test_data(db: Session = Depends(get_db)):
+
+    #Opens the file
+    f = open('testData.json')
+
+    #returns as dictionary
+    data = json.load(f)
+    #print(data)
+
+    #iterating through the json.
+
+    #Make the cuisines
+    for i in data["cuisines"]:
+        #print(i)
+        create_cuisine_from_dict(i, db = db)
+
+    #Make the recipes
+    for i in data["recipes"]:
+        create_recipe_from_dict(i, db = db)
+
+    # # #make the ingredients
+    for i in data["ingredients"]:
+        #print(data["ingredients"])
+        create_ingredient_from_dict(i, db = db)
+
+    # #make the categories
+    for i in data["categories"]:
+        create_category_from_dict(i, db=db)
+
+    # #make the steps
+    for i in data["steps"]:
+        create_step_from_dict(i, db=db)
+
+    f.close()
+    #print(data)
+    #create_recipe_from_dict(recipe_data = recipes, db=db)
+    return "done"
+
+def create_recipe_from_dict(recipe_data: dict, db: Session = Depends(get_db)):
+    print(recipe_data)
+    db_recipe = models.Recipe(name = recipe_data.get("name"), desc = recipe_data.get("desc"), cuisine_id = crud.get_cuisine_id_by_name(db, cuisine_name = recipe_data.get("cuisine_name")))
+    db.add(db_recipe)
+    db.commit()
+    db.refresh(db_recipe)
+    #db_recipe = crud.create_recipe(db=db, recipe=recipe)
+    return db_recipe
+
+def create_cuisine_from_dict(cuisine: dict, db: Session = Depends(get_db)):
+    db_cuisine = crud.create_cuisine(db, cuisine_name = cuisine["name"])
+    #db_recipe = crud.create_recipe(db=db, recipe=recipe)
+    return db_cuisine
+
+def create_ingredient_from_dict(ing_data: dict, db: Session = Depends(get_db)):
+    db_ing = crud.create_ing_from_dict(db, ing_data = ing_data)
+    if db_ing is None:
+        raise HTTPException(status_code=404, detail="Ingredient creation failed")
+    return db_ing
+
+def create_step_from_dict(step: dict, db: Session = Depends(get_db)):
+    db_step = crud.create_step(db, step_desc = step["desc"], attached_recipe = step["recipe_id"])
+    return db_step
+
+def create_category_from_dict(category: dict, db: Session = Depends(get_db)):
+    print(category)
+    db_category = crud.create_category(db, category_name = category["name"])
+    if db_category is None:
+        raise HTTPException(status_code=404, detail="Category is not found")
+    return db_category
+
+@app.delete("/clear_db", response_model=str)
+def delete_all(db: Session = Depends(get_db)):
+    db.query(models.Cuisine).delete()
+    db.query(models.Recipe).delete()
+    db.query(models.Ingredient).delete()
+    db.query(models.Category).delete()
+    db.query(models.Step).delete()
+    db.commit()
+    return "Database cleared successfully"
+
+
 
