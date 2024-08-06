@@ -2,14 +2,14 @@ from typing import List
 from pydantic import BaseModel
 
 class StepBase(BaseModel):
-    step_desc: str
+    desc: str
+    recipe_id: int
 
 class StepCreate(StepBase):
-    recipe_id: int
+    pass
 
 class Step(StepBase):
     id: int
-    recipe_id: int
 
     class Config:
         from_attributes = True
@@ -50,7 +50,7 @@ class RecipeBase(BaseModel):
 
 class RecipeCreate(RecipeBase):
     ingredients: List[IngredientCreate]
-    steps: List[Step]
+    steps: List[StepCreate]
 
 class Recipe(RecipeBase):
     id: int

@@ -67,7 +67,7 @@ def create_ing_from_dict(db: Session, ing_data: dict):
 
 
 def create_step(db: Session, step_desc: str, attached_recipe: int):
-    db_step = models.Step(step_desc = step_desc, recipe_id = attached_recipe)
+    db_step = models.Step(desc = step_desc, recipe_id = attached_recipe)
     db.add(db_step)
     db.commit()
     db.refresh(db_step)
@@ -86,7 +86,7 @@ def get_ingredients(db: Session, skip:int = 0, limit: int = 100):
 
 def get_ingredients_for_table(recipe_id: int, db: Session):
     db_ings = []
-    db_ings = db.select(models.Ingredient).where()
+    db_ings = db.query(models.Ingredient).all()
     return db_ings
 
 def delete_ing(db: Session, ing_id: int):
@@ -171,7 +171,7 @@ def delete_step(db: Session, step_id: int):
     db.commit()
     return "Step has been deleted successfully"
 
-def get_steps(db: Session, skip : int = 0, limit: int = 100):
+def get_steps(db: Session, skip: int = 0, limit: int = 100,):
     return db.query(models.Step).offset(skip).limit(limit).all()
 
 

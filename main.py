@@ -11,14 +11,13 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 origins = [
-    "http://localhost:3000/",
     "http://localhost:3000",
-    "http://localhost:3000",
+    "http://127.0.0.1:8000",
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins = origins,
+    allow_origins = ['*'],
     allow_credentials=True,
     allow_methods=['*'],
     allow_headers=['*'],
@@ -59,7 +58,7 @@ async def submit_ing(data: schemas.SubmitIng, db: Session = Depends(get_db)):
 @app.get("/fetch_ingredients", response_model=List[schemas.Ingredient])
 async def fetch_ingredients(recipe_id: int, db: Session = Depends(get_db)):
     db_ings = []
-    db_ings = crud.get_ingredients_for_table(recipe_id=recipe_id, db = db)
+    db_ings = crud.get_ingredients(recipe_id=recipe_id, db = db)
     return db_ings
 
 
@@ -205,7 +204,7 @@ def delete_step(step_id: int, db: Session = Depends(get_db)):
 
 @app.get("/steps", response_model=List[schemas.Step])
 def get_steps(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    db_steps = crud.get_steps(db, skip=skip, limit=limit)
+    db_steps = crud.get_steps(db)
     if db_steps is None:
        raise HTTPException(status_code=404, detail="steps not found")
     return db_steps

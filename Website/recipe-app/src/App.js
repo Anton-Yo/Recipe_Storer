@@ -12,30 +12,30 @@ const App = () => {
     ingredients: [],
     steps: [],
   });
-  // const[ingredients, setIngredients] = useState([]);
-  // const[ingForm, setIngFormData] = useState({
-  //   name: "",
-  //   quantity: "",
-  //   additional_notes: "",
-  //   category_name: "",
-  //   recipe_id: 1,
-  //   step_id: 1,
-  // });
+  const[ingredients, setIngredients] = useState([]);
+  const[ingForm, setIngFormData] = useState({
+    name: "",
+    quantity: "",
+    additional_notes: "",
+    category_name: "",
+    recipe_id: 1,
+    step_id: 1,
+  });
 
   const fetchRecipes = async() => {
     const response = await api.get("/recipes");
     setRecipes(response.data)
   };
 
-  // const fetchIngredients = async() => {
-  //   const response = await api.get("/fetch_ingredients");
-  //   console.log(response.data);
-  //   setIngredients(response.data)
-  // }
+  const fetchIngredients = async() => {
+    const response = await api.get("/ingredients");
+    console.log(response.data);
+    setIngredients(response.data)
+  }
 
   useEffect(() => {
     fetchRecipes();
-    //fetchIngredients();
+    fetchIngredients();
   }, []);
 
   const handleInputChange = (event) => {
@@ -66,25 +66,25 @@ const App = () => {
     });
   };
 
-  // const handleIngredientSubmit = async (event) => {
-  //     event.preventDefault();
-  //     try{
-  //       const response = await api.post("/submit_ingredient", ingForm);
-  //       console.log(response.data)
-  //     } catch (error) {
-  //       console.error("Error submitting form:", error.response.data);
-  //     }
+  const handleIngredientSubmit = async (event) => {
+      event.preventDefault();
+      try{
+        const response = await api.post("/submit_ingredient", ingForm);
+        console.log(response.data)
+      } catch (error) {
+        console.error("Error submitting form:", error.response.data);
+      }
 
-  //     fetchRecipes();
-  //     setIngFormData({
-  //       name: "",
-  //       quantity: "",
-  //       additional_notes: "",
-  //       category_name: "",
-  //       recipe_id: 1,
-  //       step_id: 1,
-  //     })
-  // }
+      fetchRecipes();
+      setIngFormData({
+        name: "",
+        quantity: "",
+        additional_notes: "",
+        category_name: "",
+        recipe_id: 1,
+        step_id: 1,
+      })
+  }
 
   
   const handleDelete = async(recipe_id) => {
@@ -100,18 +100,18 @@ const App = () => {
     fetchRecipes()
   }
 
-  // const handleIngDelete = async(ing_id) => {
-  //   var response;
-  //   try {
-  //     response = await api.delete(`/ingredients/${ing_id}`);
-  //     console.log(response.data);
-  //   }
-  //   catch (error)
-  //   {
-  //     console.error("Error deleting recipe:", error);
-  //   }   
-  //   fetchRecipes();
-  // }
+  const handleIngDelete = async(ing_id) => {
+    var response;
+    try {
+      response = await api.delete(`/ingredients/${ing_id}`);
+      console.log(response.data);
+    }
+    catch (error)
+    {
+      console.error("Error deleting recipe:", error);
+    }   
+    fetchRecipes();
+  }
 
   return (
       <div> 
@@ -158,7 +158,7 @@ const App = () => {
           </form>
         </div>
 
-        {/* <h4 className='m-auto text-center'> Ingredient list </h4>
+        <h4 className='m-auto text-center'> Ingredient list </h4>
         <div className='container d-flex mb-3 mt-5'>
           <div id='left-side' className='w-50 p-3 bg-danger'> 
               <form onSubmit={handleIngredientSubmit} id='ing-form'>
@@ -168,7 +168,7 @@ const App = () => {
                     Ingredient Name
                   </label>
 
-                  <input type='text' className="form-control" id="ing_name" name="ing_name" onChange={handleInputChange} value={formData.desc}></input>
+                  <input type='text' className="form-control" id="ing_name" name="ing_name" onChange={handleInputChange} value={ingForm.name}></input>
 
                 </div>
 
@@ -177,15 +177,15 @@ const App = () => {
                     Description
                   </label>
 
-                  <input type='text' className='form-control' id='desc' name='desc' onChange={handleInputChange} value={formData.desc}></input>
+                  <input type='text' className='form-control' id='desc' name='desc' onChange={handleInputChange} value={ingForm.desc}></input>
                 </div>
 
                 <div className='mb-3'>
                   <label htmlFor='amount' className='form-label'>
-                    Cuisine
+                    Notes
                   </label>
 
-                  <input type='text' className='form-control' id='cuisine_name' name='cuisine_name' onChange={handleInputChange} value={formData.cuisine_name}></input>
+                  <input type='text' className='form-control' id='cuisine_name' name='cuisine_name' onChange={handleInputChange} value={ingForm.additional_notes}></input>
                 </div>
 
                 <button type='submit' className ='btn btn-primary'>
@@ -224,7 +224,7 @@ const App = () => {
               </tbody>
             </table>
           </div>
-        </div> */}
+        </div> 
 
         <div className='mx-5 my-3 boxes-container'>
             {recipes.map((recipe) => (

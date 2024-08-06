@@ -44,6 +44,7 @@ class Ingredient(Base):
 
     recipe = relationship("Recipe", back_populates="ingredients")
     category = relationship("Category", back_populates="ingredient")
+    step = relationship("Step", back_populates="ingredients")
 
 class Step(Base):
     __tablename__ = "steps"
@@ -53,6 +54,7 @@ class Step(Base):
     recipe_id = Column(Integer, ForeignKey("recipes.id"))
 
     recipe = relationship("Recipe", back_populates="steps")
+    ingredients = relationship("Ingredient", back_populates="step")
 
 
 
