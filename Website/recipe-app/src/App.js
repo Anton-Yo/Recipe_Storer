@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from "react"
 import api from "./api"
-import axios from 'axios'
 import './App.css'
 
 
@@ -13,30 +12,30 @@ const App = () => {
     ingredients: [],
     steps: [],
   });
-  const[ingredients, setIngredients] = useState([]);
-  const[ingForm, setIngFormData] = useState({
-    name: "",
-    quantity: "",
-    additional_notes: "",
-    category_name: "",
-    recipe_id: 1,
-    step_id: 1,
-  });
+  // const[ingredients, setIngredients] = useState([]);
+  // const[ingForm, setIngFormData] = useState({
+  //   name: "",
+  //   quantity: "",
+  //   additional_notes: "",
+  //   category_name: "",
+  //   recipe_id: 1,
+  //   step_id: 1,
+  // });
 
   const fetchRecipes = async() => {
     const response = await api.get("/recipes");
     setRecipes(response.data)
   };
 
-  const fetchIngredients = async() => {
-    const response = await api.get("/fetch_ingredients");
-    console.log(response.data);
-    setIngredients(response.data)
-  }
+  // const fetchIngredients = async() => {
+  //   const response = await api.get("/fetch_ingredients");
+  //   console.log(response.data);
+  //   setIngredients(response.data)
+  // }
 
   useEffect(() => {
     fetchRecipes();
-    fetchIngredients();
+    //fetchIngredients();
   }, []);
 
   const handleInputChange = (event) => {
@@ -67,25 +66,25 @@ const App = () => {
     });
   };
 
-  const handleIngredientSubmit = async (event) => {
-      event.preventDefault();
-      try{
-        const response = await api.post("/submit_ingredient", ingForm);
-        console.log(response.data)
-      } catch (error) {
-        console.error("Error submitting form:", error.response.data);
-      }
+  // const handleIngredientSubmit = async (event) => {
+  //     event.preventDefault();
+  //     try{
+  //       const response = await api.post("/submit_ingredient", ingForm);
+  //       console.log(response.data)
+  //     } catch (error) {
+  //       console.error("Error submitting form:", error.response.data);
+  //     }
 
-      fetchRecipes();
-      setIngFormData({
-        name: "",
-        quantity: "",
-        additional_notes: "",
-        category_name: "",
-        recipe_id: 1,
-        step_id: 1,
-      })
-  }
+  //     fetchRecipes();
+  //     setIngFormData({
+  //       name: "",
+  //       quantity: "",
+  //       additional_notes: "",
+  //       category_name: "",
+  //       recipe_id: 1,
+  //       step_id: 1,
+  //     })
+  // }
 
   
   const handleDelete = async(recipe_id) => {
@@ -101,30 +100,28 @@ const App = () => {
     fetchRecipes()
   }
 
-  const handleIngDelete = async(ing_id) => {
-    var response;
-    try {
-      response = await api.delete(`/ingredients/${ing_id}`);
-      console.log(response.data);
-    }
-    catch (error)
-    {
-      console.error("Error deleting recipe:", error);
-    }   
-    fetchRecipes();
-  }
+  // const handleIngDelete = async(ing_id) => {
+  //   var response;
+  //   try {
+  //     response = await api.delete(`/ingredients/${ing_id}`);
+  //     console.log(response.data);
+  //   }
+  //   catch (error)
+  //   {
+  //     console.error("Error deleting recipe:", error);
+  //   }   
+  //   fetchRecipes();
+  // }
 
   return (
       <div> 
         <nav className ='navbar navbar-dark bg-primary'>
           <div className ='container-fluid'>
-            <a className = 'navbar-brand' href='#'>
+            {/* <a className = 'navbar-brand' href='#'>
                 Test link for recipes 3
-            </a>
+            </a> */}
           </div>
         </nav>
-
-        
 
         <div className='container'>
           <form onSubmit={handleFormSubmit}>
@@ -161,7 +158,7 @@ const App = () => {
           </form>
         </div>
 
-        <h4 className='m-auto text-center'> Ingredient list </h4>
+        {/* <h4 className='m-auto text-center'> Ingredient list </h4>
         <div className='container d-flex mb-3 mt-5'>
           <div id='left-side' className='w-50 p-3 bg-danger'> 
               <form onSubmit={handleIngredientSubmit} id='ing-form'>
@@ -227,7 +224,7 @@ const App = () => {
               </tbody>
             </table>
           </div>
-        </div>
+        </div> */}
 
         <div className='mx-5 my-3 boxes-container'>
             {recipes.map((recipe) => (
