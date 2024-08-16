@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel
 
 class StepBase(BaseModel):
@@ -58,8 +58,9 @@ class Cuisine(CuisineBase):
 class RecipeBase(BaseModel):
     name: str
     desc: str
-    cuisine_id: int
-    cuisine: CuisineBase
+    cuisine: Optional[CuisineBase]
+    steps: Optional[List[StepBase]]
+    ingredients: Optional[List[IngredientBase]]
 
 class RecipeCreate(RecipeBase):
     ingredients: List[IngredientCreate]

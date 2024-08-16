@@ -48,12 +48,20 @@
             
         },
         {
+            "name": "Secret sauce",
+            "quantity": "1 tbps",
+            "additional_notes": "",
+            "category_id": "3",
+            "recipe_id": "1",
+            "step_id": "2"
+        },
+        {
             "name": "Chicken",
             "quantity": "600g",
             "additional_notes": "Chop the legs up",
             "category_id": "1",
             "recipe_id": "2",
-            "step_id": "1"
+            "step_id": "3"
         },
         {
             "name": "Noodles",
@@ -61,7 +69,7 @@
             "additional_notes": "Satay these bad bois for 5 minutes",
             "category_id": "2",
             "recipe_id": "2",
-            "step_id": "2"
+            "step_id": "3"
         },
         {
             "name": "Veges",
@@ -69,16 +77,9 @@
             "additional_notes": "soften these bad bois for 2 minutes",
             "category_id": "3",
             "recipe_id": "2",
-            "step_id": "2"
-        },
-        {
-            "name": "Secret sauce",
-            "quantity": "1 tbps",
-            "additional_notes": "",
-            "category_id": "3",
-            "recipe_id": "1",
-            "step_id": "2"
+            "step_id": "4"
         }
+       
     ],
 
     "categories": [

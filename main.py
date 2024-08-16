@@ -115,9 +115,9 @@ def get_recipes_info(db: Session = Depends(get_db)):
     print("Got that sweet sweet recipe info")
     return db_recipe
 
-@app.get("/recipes/{recipe_id}")
+@app.get("/recipes/{recipe_id}", response_model=schemas.Recipe)
 def get_single_recipe_info(recipe_id: int, db: Session = Depends(get_db)):
-    db_recipe = crud.get_single_recipe_dict(db, recipe_id = recipe_id)
+    db_recipe = crud.get_single_recipe(db, recipe_id = recipe_id)
     print("Got that sweet sweet recipe info")
     return db_recipe
 

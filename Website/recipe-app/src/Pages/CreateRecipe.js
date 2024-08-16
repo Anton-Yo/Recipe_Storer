@@ -186,45 +186,10 @@ const CreateRecipe = () => {
         </form>
     </div>
 
-    <div id='right-side' className='w-50 p-3 bg-dark'>
-      <table className='table table-striped table-bordered table-hover mt-3'>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Quantity</th>
-            <th>additional_notes</th>
-            <th>category</th>
-            <th>step</th>
-            <th className="text-center">Delete?</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {ingredients.map((ing) => (
-            <tr key={ing.id}>
-              <td>{ing.name}</td>
-              <td>{ing.quantity}</td>
-              <td>{ing.additional_notes}</td>
-              <td>{ing.category_name}</td>
-              <td>Step {ing.step}</td>
-              <td>
-                <button onClick={() => handleIngDelete(ing.id)}> Delete </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <div id='right-side' className='w-50 p-3 bg-dark'> </div>
+      
   </div> 
 
-  <div className='mx-5 my-3 boxes-container'>
-      {recipes.map((recipe) => (
-            <div key={recipe.id} className='recipe-box'> 
-                <p> {recipe.name} </p>
-                <p> {recipe.desc} </p>
-            </div>
-      ))}
-  </div>
 
     <table className='table table-striped table-bordered table-hover mt-3'>
       <thead>

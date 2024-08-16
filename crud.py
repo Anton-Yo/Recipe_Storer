@@ -244,15 +244,17 @@ def get_recipes_info_dict(db: Session):
 
     return dictify_recipe(results)
 
-def get_single_recipe_dict(db: Session, recipe_id: int):
+def get_single_recipe(db: Session, recipe_id: int):
 
-    db_result = db.query(models.Recipe).options(joinedload(models.Recipe.cuisine)).filter(models.Recipe.id == recipe_id).first()
-    print("We ball")
-    # results = db.query(
-    #     models.Recipe, 
-    #     models.Cuisine,
-    # ).join(models.Cuisine).filter(models.Recipe.id == recipe_id).first()
-    
+    db_result = db.query(models.Recipe).options(
+        joinedload(models.Recipe.cuisine),
+        joinedload(models.Recipe.ingredients),
+        joinedload(models.Recipe.steps)
+    ).filter(models.Recipe.id == recipe_id).first()
+
+    if db_result: #chatGPT helped on this one. Lambda x:x.id is like an auto sort func https://stackoverflow.com/questions/16310015/what-does-this-mean-key-lambda-x-x1
+        db_result.ingredients.sort(key=lambda x: x.id)
+        db_result.steps.sort(key=lambda x: x.id)
     return db_result
 
 # def get_ingredients_dict(db: Session, recipe_id: int):
