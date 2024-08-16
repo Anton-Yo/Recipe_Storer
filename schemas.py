@@ -85,3 +85,11 @@ class SubmitIng(BaseModel):
     recipe_id: int
     step_id: int
 
+class RecipeInfo(BaseModel):
+    name: str
+    desc: str
+    cuisine_name: str
+    # ingredients: List[Ingredient]
+    # steps: List[Step]
+
+

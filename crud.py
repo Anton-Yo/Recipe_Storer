@@ -32,6 +32,48 @@ def delete_recipe(db: Session, recipe_id: int):
     db.commit()
     return "Recipe ${recipe_id} has been deleted successfully"
 
+def get_recipes_info_dict(db: Session):
+    print("gathering all recipes and making them into a dictionary")
+    results = db.query(
+        models.Recipe, 
+        models.Cuisine,
+    ).join(models.Cuisine).all()
+
+    return dictify_recipe(results)
+
+def get_single_recipe_dict(db: Session, recipe_id: int):
+
+    results = db.query(
+        models.Recipe, 
+        models.Cuisine,
+    ).join(models.Cuisine).filter(models.Recipe.id == recipe_id).first()
+    
+    return dictify_recipe(results)
+
+def dictify_recipe(info):
+    db_recipes = []
+    print(len(info))
+
+    if info: 
+        if len(info) > 2: #A single instance of the recipe/cuisine will be of length 2
+            for recipe, cuisine in info:
+                db_recipes.append({
+                    'id': recipe.id,
+                    'name': recipe.name,
+                    'desc': recipe.desc,
+                    'cuisine': cuisine.name
+            })
+        else:
+            recipe, cuisine = info
+            db_recipes.append({
+                    'id': recipe.id,
+                    'name': recipe.name,
+                    'desc': recipe.desc,
+                    'cuisine': cuisine.name
+            })
+
+    return db_recipes  
+
 # -------------
 #  INGREDIENTS
 # -------------

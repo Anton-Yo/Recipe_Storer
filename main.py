@@ -90,7 +90,7 @@ def get_recipe_by_name(recipe_name: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Recipe not found")
     return db_recipe
 
-@app.get("/recipes", response_model=List[schemas.Recipe])
+@app.get("/recipes-test", response_model=List[schemas.Recipe])
 def get_all_recipes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_recipes = crud.get_recipes(db, skip=skip, limit=limit)
     if db_recipes is None:
@@ -102,6 +102,18 @@ def get_all_recipes(skip: int = 0, limit: int = 100, db: Session = Depends(get_d
 def delete_recipe(recipe_id: int, db: Session = Depends(get_db)):
     crud.delete_recipe(db, recipe_id = recipe_id)
     return "Recipe deleted successfully"
+
+@app.get("/recipes")
+def get_recipes_info(db: Session = Depends(get_db)):
+    db_recipe = crud.get_recipes_info_dict(db)
+    print("Got that sweet sweet recipe info")
+    return db_recipe
+
+@app.get("/recipe/{recipe_id}")
+def get_single_recipe_info(recipe_id: int, db: Session = Depends(get_db)):
+    db_recipe = crud.get_single_recipe_dict(db, recipe_id = recipe_id)
+    print("Got that sweet sweet recipe info")
+    return db_recipe
 
 # -------------
 #  INGREDIENTS

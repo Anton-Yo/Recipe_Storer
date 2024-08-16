@@ -5,15 +5,7 @@ import '../App.css'
 
 const DisplayInfo = () => {
   const [recipes, setRecipes] = useState([]);
-  const [formData, setFormData] = useState({
-    name: "",
-    desc: "",
-    cuisine_name: "",
-    ingredients: [],
-    steps: [],
-  });
 
-  
   useEffect(() => {
     fetchRecipes();
   }, []);
@@ -21,6 +13,7 @@ const DisplayInfo = () => {
   const fetchRecipes = async() => {
     const response = await api.get("/recipes");
     setRecipes(response.data)
+    console.log(response.data)
   };
 
   return (
@@ -34,6 +27,7 @@ const DisplayInfo = () => {
           <div key={recipe.id} className="recipe-box">
             <p> {recipe.name} </p>
             <p> {recipe.desc} </p>
+            <p> {recipe.cuisine} </p>
           </div>
         ))}
       </div>
@@ -54,7 +48,7 @@ const DisplayInfo = () => {
           <tr key={recipe.id}>
             <td>{recipe.name}</td>
             <td>{recipe.desc}</td>
-            <td>{recipe.cuisine_id}</td>
+            <td>{recipe.cuisine_name}</td>
           </tr>
         ))}
       </tbody>

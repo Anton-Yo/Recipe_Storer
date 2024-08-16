@@ -114,6 +114,7 @@ const CreateRecipe = () => {
   }
   return (
     <div>
+      This is the create recipe page
     <div className='container'>
     <form onSubmit={handleFormSubmit}>
       <div className='mb-3 mt-3'>
