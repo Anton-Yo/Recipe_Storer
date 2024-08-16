@@ -23,3 +23,27 @@
   display: flex;
 }
 
+li {
+  display: block;
+}
+
+#ing-list {
+  height: 500px;
+}
+
+#image-container {
+  width: 500px;
+  height: 400px;
+  max-height: 500px;
+  margin: auto;
+  background-color: red;
+}
+
+.step-container {
+  width: 60%
+}
+
+.step-ingredients-container {
+  background-color: blueviolet;
+}
+

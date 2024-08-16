@@ -70,6 +70,14 @@
             "category_id": "3",
             "recipe_id": "2",
             "step_id": "2"
+        },
+        {
+            "name": "Secret sauce",
+            "quantity": "1 tbps",
+            "additional_notes": "",
+            "category_id": "3",
+            "recipe_id": "1",
+            "step_id": "2"
         }
     ],
 
@@ -94,16 +102,19 @@
         {
             "desc": "Combine the chicken and rice et Voila",
             "recipe_id": "1"
+ 
         },
 
         {
             "desc": "Cook em boil em put them in a stew",
             "recipe_id": "2"
+
         },
 
         {
             "desc": "You got potato stew",
             "recipe_id": "2"
+       
         }
     ]
 }

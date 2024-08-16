@@ -1,6 +1,6 @@
 from sqlite3 import IntegrityError
 from fastapi import HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 import models, schemas
 
@@ -30,49 +30,7 @@ def delete_recipe(db: Session, recipe_id: int):
         raise HTTPException(status_code=404, detail="Cannot find recipe to delete")
     db.delete(db_recipe)
     db.commit()
-    return "Recipe ${recipe_id} has been deleted successfully"
-
-def get_recipes_info_dict(db: Session):
-    print("gathering all recipes and making them into a dictionary")
-    results = db.query(
-        models.Recipe, 
-        models.Cuisine,
-    ).join(models.Cuisine).all()
-
-    return dictify_recipe(results)
-
-def get_single_recipe_dict(db: Session, recipe_id: int):
-
-    results = db.query(
-        models.Recipe, 
-        models.Cuisine,
-    ).join(models.Cuisine).filter(models.Recipe.id == recipe_id).first()
-    
-    return dictify_recipe(results)
-
-def dictify_recipe(info):
-    db_recipes = []
-    print(len(info))
-
-    if info: 
-        if len(info) > 2: #A single instance of the recipe/cuisine will be of length 2
-            for recipe, cuisine in info:
-                db_recipes.append({
-                    'id': recipe.id,
-                    'name': recipe.name,
-                    'desc': recipe.desc,
-                    'cuisine': cuisine.name
-            })
-        else:
-            recipe, cuisine = info
-            db_recipes.append({
-                    'id': recipe.id,
-                    'name': recipe.name,
-                    'desc': recipe.desc,
-                    'cuisine': cuisine.name
-            })
-
-    return db_recipes  
+    return "Recipe ${recipe_id} has been deleted successfully" 
 
 # -------------
 #  INGREDIENTS
@@ -107,14 +65,6 @@ def create_ing_from_dict(db: Session, ing_data: dict):
     db.refresh(db_ingredient)
     return db_ingredient
 
-
-def create_step(db: Session, step_desc: str, attached_recipe: int):
-    db_step = models.Step(desc = step_desc, recipe_id = attached_recipe)
-    db.add(db_step)
-    db.commit()
-    db.refresh(db_step)
-    return db_step
-
 def get_ing(db: Session, ing_id: int):
     return db.query(models.Ingredient).filter(models.Ingredient.id == ing_id).first()
 
@@ -126,9 +76,9 @@ def get_ingredients(db: Session, skip:int = 0, limit: int = 100):
     db_ings = db.query(models.Ingredient).offset(skip).limit(limit).all()
     return db_ings
 
-def get_ingredients_for_table(recipe_id: int, db: Session):
+def get_ingredients_by_recipe_id(recipe_id: int, db: Session):
     db_ings = []
-    db_ings = db.query(models.Ingredient).all()
+    db_ings = db.query(models.Ingredient).filter(models.Ingredient.recipe_id == recipe_id).all()
     return db_ings
 
 def delete_ing(db: Session, ing_id: int):
@@ -197,12 +147,33 @@ def create_step(db: Session, step_desc: str, attached_recipe: int):
     db.refresh(db_step)
     return db_step
 
-def get_steps_by_recipe(db: Session, target_id: int = 1):
+def get_steps_by_recipe(db: Session, target_id: int):
     db_steps = []
 
-    db_steps = db.query(models.Step).filter(models.Step.recipe_id == target_id).all()
-
+    db_steps = db.query(models.Step).filter(models.Recipe.id == target_id).all()
+    
     return db_steps
+    #return dicitify_steps(db_steps)what
+
+def dicitify_steps(data):
+    db_steps = []
+    #print(data)
+    recipe, steps = data
+    if recipe:
+        db_steps.append({
+            'step': steps.id,
+            'desc': s.desc
+        })
+    return db_steps
+
+# def get_recipes_info_dict(db: Session):
+#     print("gathering all recipes and making them into a dictionary")
+#     results = db.query(
+#         models.Recipe, 
+#         models.Cuisine,
+#     ).join(models.Cuisine).all()
+
+#     return dictify_recipe(results)
     
 def delete_step(db: Session, step_id: int):
     print("deleting step")
@@ -258,3 +229,64 @@ def get_category_id_by_name(db: Session, category_name: str):
         db_category = create_category(db = db, category_name= category_name)
 
     return db_category.id
+
+
+# -----------------------------
+#    Pass info to website
+# -----------------------------
+
+def get_recipes_info_dict(db: Session):
+    print("gathering all recipes and making them into a dictionary")
+    results = db.query(
+        models.Recipe, 
+        models.Cuisine,
+    ).join(models.Cuisine).all()
+
+    return dictify_recipe(results)
+
+def get_single_recipe_dict(db: Session, recipe_id: int):
+
+    db_result = db.query(models.Recipe).options(joinedload(models.Recipe.cuisine)).filter(models.Recipe.id == recipe_id).first()
+    print("We ball")
+    # results = db.query(
+    #     models.Recipe, 
+    #     models.Cuisine,
+    # ).join(models.Cuisine).filter(models.Recipe.id == recipe_id).first()
+    
+    return db_result
+
+# def get_ingredients_dict(db: Session, recipe_id: int):
+
+
+def dictify_recipe(data):
+    db_recipes = []
+    print(len(data))
+
+    if data: 
+        if len(data) > 2: #A single instance of the recipe/cuisine will be of length 2
+            for recipe, cuisine in data:
+                db_recipes.append({
+                    'id': recipe.id,
+                    'name': recipe.name,
+                    'desc': recipe.desc,
+                    'cuisine': cuisine.name
+            })
+        else:
+            recipe, cuisine = data
+            recipe = ({
+                    'id': recipe.id,
+                    'name': recipe.name,
+                    'desc': recipe.desc,
+                    'cuisine': cuisine.name
+            })
+            db_recipes = recipe
+
+    return db_recipes 
+
+
+# def dictify_ingredients(data):
+#     db_ingredients = []
+#     print(len(data))
+
+#     if data:
+#         if len(data) > 

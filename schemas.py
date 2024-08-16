@@ -43,10 +43,23 @@ class Ingredient(IngredientBase):
     class Config:
         from_attributes = True
 
+class CuisineBase(BaseModel):
+    name: str
+
+class CuisineCreate(CuisineBase):
+    pass
+
+class Cuisine(CuisineBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
 class RecipeBase(BaseModel):
     name: str
     desc: str
     cuisine_id: int
+    cuisine: CuisineBase
 
 class RecipeCreate(RecipeBase):
     ingredients: List[IngredientCreate]
@@ -56,18 +69,6 @@ class Recipe(RecipeBase):
     id: int
     ingredients: List[Ingredient]
     steps: List[Step]
-
-    class Config:
-        from_attributes = True
-
-class CuisineBase(BaseModel):
-    name: str
-
-class CuisineCreate(CuisineBase):
-    pass
-
-class Cuisine(CuisineBase):
-    id: int
 
     class Config:
         from_attributes = True

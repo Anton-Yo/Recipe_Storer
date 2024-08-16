@@ -52,13 +52,19 @@ async def submit_ing(data: schemas.SubmitIng, db: Session = Depends(get_db)):
     create_ingredient(ing_data = data, db=db)
     return "Ingredient created successfully"
 
-# -------------------
-#    FETCH STUFF
-# -------------------
+# -------------------------
+#    FETCH INGREDIENTS
+# ------------------------
 @app.get("/fetch_ingredients", response_model=List[schemas.Ingredient])
-async def fetch_ingredients(recipe_id: int, db: Session = Depends(get_db)):
+async def fetch_ingredients(db: Session = Depends(get_db)):
     db_ings = []
-    db_ings = crud.get_ingredients(recipe_id=recipe_id, db = db)
+    db_ings = crud.get_ingredients(db = db)
+    return db_ings
+
+@app.get("/fetch_ingredients/{recipe_id}", response_model=List[schemas.Ingredient])
+async def fetch_ingredients_by_recipe_id(recipe_id: int, db: Session = Depends(get_db)):
+    db_ings = []
+    db_ings = crud.get_ingredients_by_recipe_id(recipe_id = recipe_id, db = db)
     return db_ings
 
 
@@ -109,7 +115,7 @@ def get_recipes_info(db: Session = Depends(get_db)):
     print("Got that sweet sweet recipe info")
     return db_recipe
 
-@app.get("/recipe/{recipe_id}")
+@app.get("/recipes/{recipe_id}")
 def get_single_recipe_info(recipe_id: int, db: Session = Depends(get_db)):
     db_recipe = crud.get_single_recipe_dict(db, recipe_id = recipe_id)
     print("Got that sweet sweet recipe info")
@@ -126,7 +132,7 @@ def create_ingredient(ing_data = schemas.SubmitIng, db: Session = Depends(get_db
         raise HTTPException(status_code=404, detail="Ingredient creation failed")
     return db_ing
 
-@app.get("/ingredients/", response_model=List[schemas.Ingredient])
+@app.get("/ingredients", response_model=List[schemas.Ingredient])
 def get_ingredients(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_ings = crud.get_ingredients(db, skip=skip, limit=limit)
     if db_ings is None:
