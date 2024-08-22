@@ -25,6 +25,7 @@ class Recipe(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
     desc = Column(String, index=True)
+    cook_time = Column(Integer, index=True)
     cuisine_id = Column(Integer, ForeignKey("cuisines.id"))
 
     cuisine = relationship("Cuisine", back_populates="recipe")

@@ -310,7 +310,7 @@ async def create_test_data(db: Session = Depends(get_db)):
 
 def create_recipe_from_dict(recipe_data: dict, db: Session = Depends(get_db)):
     print(recipe_data)
-    db_recipe = models.Recipe(name = recipe_data.get("name"), desc = recipe_data.get("desc"), cuisine_id = crud.get_cuisine_id_by_name(db, cuisine_name = recipe_data.get("cuisine_name")))
+    db_recipe = models.Recipe(name = recipe_data.get("name"), desc = recipe_data.get("desc"), cook_time = recipe_data.get("cook_time"), cuisine_id = crud.get_cuisine_id_by_name(db, cuisine_name = recipe_data.get("cuisine_name")))
     db.add(db_recipe)
     db.commit()
     db.refresh(db_recipe)

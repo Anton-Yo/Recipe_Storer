@@ -17,7 +17,7 @@ def get_recipes(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Recipe).offset(skip).limit(limit).all()
 
 def create_recipe(db: Session, recipe: schemas.RecipeCreate):
-    db_recipe = models.Recipe(name = recipe.name, desc = recipe.desc)
+    db_recipe = models.Recipe(name = recipe.name, desc = recipe.desc, cook_time = recipe.cook_time)
     db.add(db_recipe)
     db.commit()
     db.refresh(db_recipe)

@@ -18,8 +18,8 @@ const DisplayInfo = () => {
 
   useEffect(() => {
     fetchRecipes(SetRecipeID);
-    console.log("About to disect")
-    disectData(recipeInfo);
+    //console.log("About to disect")
+    //disectData(recipeInfo);
   }, []);
 
   const fetchRecipes = async(recipe_id) => {
@@ -29,11 +29,22 @@ const DisplayInfo = () => {
     console.log(response.data)
   };
 
+  const getCookTime = () => {
+    
+    const time = recipeInfo.cook_time
+    const mins = time % 60
+    const hrs = (time - mins) / 60;
+    
+
+    var resultStr = hrs >= 1 ? `${hrs}h ${mins}mins` : `${mins}mins`
+    return resultStr
+  }
+
   var stepCount = 1;
 
-  const disectData = async (recipeInfo) => {
-      setIngredients(recipeInfo.ingredients)
-  };
+  // const disectData = async (recipeInfo) => {
+  //     setIngredients(recipeInfo.ingredients)
+  // };
 
   const isDataLoaded = () => {
       return !loading & recipeInfo != null
@@ -80,6 +91,11 @@ const DisplayInfo = () => {
     
       <div id="title" className="text-center">
         <h1>{recipeInfo.name || 'Loading...'} </h1>
+        {isDataLoaded() ? (
+            <h4> {getCookTime() + " | " + recipeInfo.cuisine.name }  </h4>
+            ) : (
+            <p> Loading cuisine...</p>
+        )}
       </div>
 
       <div className="container position-relative w-100  mt-5 bg-info">

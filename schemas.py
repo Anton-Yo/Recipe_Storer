@@ -58,6 +58,7 @@ class Cuisine(CuisineBase):
 class RecipeBase(BaseModel):
     name: str
     desc: str
+    cook_time: int
     cuisine: Optional[CuisineBase]
     steps: Optional[List[StepBase]]
     ingredients: Optional[List[IngredientBase]]

@@ -3,12 +3,14 @@
         {
             "name": "Butter Chicken",
             "desc": "chicken and butter baby",
+            "cook_time": 50,
             "cuisine_name": "Indian"
         },
 
         {
             "name": "Pad thai",
             "desc": "Good shit",
+            "cook_time": 20,
             "cuisine_name": "Thai"
         }
 
