@@ -32,18 +32,39 @@ li {
 }
 
 #image-container {
-  width: 500px;
-  height: 400px;
-  max-height: 500px;
-  margin: auto;
+  max-width: 700px;
+  max-height: 600px;
+  width: 40%;
+  margin-left: 5%;
+  position: relative;
   background-color: red;
 }
+
 
 .step-container {
   width: 60%
 }
 
+#step-list {
+  width: 100%;
+}
+.step-entry {
+  width: 1000px;
+}
+
 .step-ingredients-container {
   background-color: blueviolet;
+}
+
+.display-wrapper {
+  width: 70%;
+}
+
+.circle-list {
+  list-style-type: circle;
+}
+
+.m-auto {
+  margin:auto;
 }
 

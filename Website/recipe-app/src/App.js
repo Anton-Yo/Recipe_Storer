@@ -6,6 +6,7 @@ import DisplayInfo from './Pages/DisplayInfo';
 import NavBar from './Components/Navbar'
 import CreateRecipe from './Pages/CreateRecipe';
 import Home from './Pages/Home';
+import RecipeSelection from './Pages/RecipeSelection'
 
 
 const App = () => {
@@ -18,6 +19,7 @@ const App = () => {
           <Route path="" element={<Home/>}/>
           <Route path="/display" element={<DisplayInfo/>} />
           <Route path="/create" element={<CreateRecipe/>} />
+          <Route path="/choose" element={<RecipeSelection/>}/>
         </Routes>
 
       </div>

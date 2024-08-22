@@ -3,7 +3,7 @@
         {
             "name": "Butter Chicken",
             "desc": "chicken and butter baby",
-            "cook_time": 50,
+            "cook_time": 70,
             "cuisine_name": "Indian"
         },
 
@@ -93,6 +93,9 @@
         },
         {
             "name": "Vegetables"
+        },
+        {
+            "name": "4th category"
         }
     ],
 

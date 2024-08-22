@@ -1,4 +1,5 @@
 from sqlite3 import IntegrityError
+from typing import List
 from fastapi import HTTPException
 from sqlalchemy.orm import Session, joinedload
 
@@ -153,27 +154,6 @@ def get_steps_by_recipe(db: Session, target_id: int):
     db_steps = db.query(models.Step).filter(models.Recipe.id == target_id).all()
     
     return db_steps
-    #return dicitify_steps(db_steps)what
-
-def dicitify_steps(data):
-    db_steps = []
-    #print(data)
-    recipe, steps = data
-    if recipe:
-        db_steps.append({
-            'step': steps.id,
-            'desc': s.desc
-        })
-    return db_steps
-
-# def get_recipes_info_dict(db: Session):
-#     print("gathering all recipes and making them into a dictionary")
-#     results = db.query(
-#         models.Recipe, 
-#         models.Cuisine,
-#     ).join(models.Cuisine).all()
-
-#     return dictify_recipe(results)
     
 def delete_step(db: Session, step_id: int):
     print("deleting step")
@@ -235,15 +215,6 @@ def get_category_id_by_name(db: Session, category_name: str):
 #    Pass info to website
 # -----------------------------
 
-def get_recipes_info_dict(db: Session):
-    print("gathering all recipes and making them into a dictionary")
-    results = db.query(
-        models.Recipe, 
-        models.Cuisine,
-    ).join(models.Cuisine).all()
-
-    return dictify_recipe(results)
-
 def get_single_recipe(db: Session, recipe_id: int):
 
     db_result = db.query(models.Recipe).options(
@@ -257,38 +228,25 @@ def get_single_recipe(db: Session, recipe_id: int):
         db_result.steps.sort(key=lambda x: x.id)
     return db_result
 
-# def get_ingredients_dict(db: Session, recipe_id: int):
+def get_categories_from_ingredient_list(db: Session, ings: List[int]):
+
+    categories = db.query(models.Category).join(models.Ingredient).filter(models.Ingredient.id.in_(ings)).all()
+
+    for category in categories:
+        print(category.name)
+
+    return categories
+
+def get_recipes_for_website(db: Session, skip=0, limit=0):
+    
+    db_recipes = db.query(models.Recipe).options(
+        joinedload(models.Recipe.cuisine)
+    ).all()
+    
+    if db_recipes is None:
+        raise HTTPException(status_code=404, detail="Fetch recipes command failed")
+    return db_recipes
 
 
-def dictify_recipe(data):
-    db_recipes = []
-    print(len(data))
-
-    if data: 
-        if len(data) > 2: #A single instance of the recipe/cuisine will be of length 2
-            for recipe, cuisine in data:
-                db_recipes.append({
-                    'id': recipe.id,
-                    'name': recipe.name,
-                    'desc': recipe.desc,
-                    'cuisine': cuisine.name
-            })
-        else:
-            recipe, cuisine = data
-            recipe = ({
-                    'id': recipe.id,
-                    'name': recipe.name,
-                    'desc': recipe.desc,
-                    'cuisine': cuisine.name
-            })
-            db_recipes = recipe
-
-    return db_recipes 
 
 
-# def dictify_ingredients(data):
-#     db_ingredients = []
-#     print(len(data))
-
-#     if data:
-#         if len(data) > 

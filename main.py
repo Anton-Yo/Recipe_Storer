@@ -111,14 +111,16 @@ def delete_recipe(recipe_id: int, db: Session = Depends(get_db)):
 
 @app.get("/recipes")
 def get_recipes_info(db: Session = Depends(get_db)):
-    db_recipe = crud.get_recipes_info_dict(db)
+    db_recipes = crud.get_recipes_for_website(db, skip=0, limit=1000)
     print("Got that sweet sweet recipe info")
-    return db_recipe
+    return db_recipes
 
 @app.get("/recipes/{recipe_id}", response_model=schemas.Recipe)
 def get_single_recipe_info(recipe_id: int, db: Session = Depends(get_db)):
     db_recipe = crud.get_single_recipe(db, recipe_id = recipe_id)
     print("Got that sweet sweet recipe info")
+    if db_recipe is None:
+        raise HTTPException(status_code=404, detail="Recipe not found")
     return db_recipe
 
 # -------------
@@ -264,6 +266,19 @@ def delete_category(category_name: str, db: Session = Depends(get_db)):
 def get_category_id_by_name(category_name: str, db: Session = Depends(get_db)):
     return crud.get_category_id_by_name(db, category_name= category_name)
 
+@app.get("/categories_from_data")
+def get_categories_from_ingredient_list(db: Session = Depends(get_db)):
+    print("gamering")
+    ings = crud.get_ingredients(db, skip=0, limit=100)
+
+    print("Got the ingredeints")
+    #Get the ids of the ingredients that need to be checked
+    id_list = []
+    for ing in ings:
+        id_list.append(ing.id)
+
+    return crud.get_categories_from_ingredient_list(db, id_list)
+
 
 # ---------------------------------
 #    CREATE TEST DATA WITH JSON
@@ -348,6 +363,13 @@ def delete_all(db: Session = Depends(get_db)):
     db.query(models.Step).delete()
     db.commit()
     return "Database cleared successfully"
+
+
+
+# ---------------------------------
+#    Download Data as JSON
+# ---------------------------------
+
 
 
 
