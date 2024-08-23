@@ -7,7 +7,7 @@ import '../App.css'
 const IngredientBlock = ({ing}) => {
 
   return (
-    <div className="w-50 m-auto">
+    <div className="w-45 m-auto mt-1">
       <div className="mt-1 bg-danger text-center">
         <h6 className="pt-1"> {ing.name} </h6>
         <div className="d-flex justify-content-center">

@@ -7,7 +7,7 @@ import '../App.css'
 const StepBlock = ({step}) => {
 
   return (
-    <div className="w-50 m-auto">
+    <div className="w-45 m-auto mt-1">
       <div className="mt-1 bg-danger text-center">
         <h6 className="pt-1"> Step {step.count} </h6>
         <div className="d-flex justify-content-center">

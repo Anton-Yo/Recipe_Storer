@@ -162,7 +162,7 @@ const CreateRecipe = () => {
   }
 
   const EditMode = () => {
-    
+
   }
 
   const handlePageState = () => {
@@ -309,8 +309,12 @@ const CreateRecipe = () => {
         {GetRecipeBlock()}
         <div className="d-flex flex-wrap">
           {GetIngredientBlocks()}
+        </div>
+
+        <div className="d-flex flex-wrap">
           {GetStepBlocks()}
         </div>
+       
       </div>
   </div>
 
