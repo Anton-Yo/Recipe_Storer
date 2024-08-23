@@ -1,129 +1,268 @@
-import React, {useState, useEffect} from "react"
+import React, {useState, useEffect, useRef} from "react"
 import api from "../api"
 import '../App.css'
+import RecipeBlock from '../Components/RecipeBlock'
+import IngredientBlock from "../Components/IngredientBlock"
+import StepBlock from "../Components/StepBlock"
 
 
 const CreateRecipe = () => {
-  const [recipes, setRecipes] = useState([]);
-  const [formData, setFormData] = useState({
+  const [recipe, setRecipe] = useState([]);
+  const [recipeForm, setRecipeForm] = useState({
     name: "",
     desc: "",
+    cook_time: "",
     cuisine_name: "",
-    ingredients: [],
-    steps: [],
   });
-  const[ingredients, setIngredients] = useState([]);
-  const[ingForm, setIngFormData] = useState({
+  var[ingredients, setIngredients] = useState([]);
+  const[ingForm, setIngForm] = useState({
     name: "",
     quantity: "",
     additional_notes: "",
-    category_name: "",
-    recipe_id: 1,
-    step_id: 1,
+    category_name: "Protein... Vegetables... etc",
   });
+  const[steps, setSteps] = useState([]);
+  const [stepForm, setStepForm] = useState({
+    count: 1,
+    desc: "",
+  });
+  const[recipeSubmitted, setRecipeSubmitted] = useState(true);
+  const[ingredientSubmitted, setIngredientSubmitted] = useState(false);
+  const[ingredientsAllSubmitted, setIngredientsAllSubmitted] = useState(true);
+  const[stepSubmitted, setStepSubmitted] = useState(false);
+  const[stepsAllSubmitted, setStepsAllSubmitted] = useState(false);
+  const[pageState, setPageState] = useState([]);
 
-  const fetchRecipes = async() => {
-    const response = await api.get("/recipes");
-    setRecipes(response.data)
-  };
-
-  const fetchIngredients = async() => {
-    const response = await api.get("/ingredients");
-    console.log(response.data);
-    setIngredients(response.data)
-  }
+  const[stepCount, setStepCount] = useState(1);
 
   useEffect(() => {
-    fetchRecipes();
-    fetchIngredients();
+
   }, []);
 
-  const handleInputChange = (event) => {
+  const handleInputChange = (event, id) => {
     const value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
-    setFormData({
-      ...formData,
-      [event.target.name]: value,
-    });
-  };
+    switch(id)
+    {
+      case 0: 
+        setRecipeForm({
+          ...recipeForm,
+          [event.target.name]: value,
+        });
+      break;
 
-  const handleFormSubmit = async (event) => {
-    event.preventDefault();
-    console.log(formData);
-    try{
-      const response = await api.post("/submit", formData);
-      console.log(response.data)
-    } catch (error) {
-      console.error("Error submitting form:", error.response.data);
+      case 1: 
+        setIngForm({
+          ...ingForm,
+          [event.target.name]: value,
+        });
+      break;
+
+      case 2: 
+        setStepForm({
+          ...stepForm,
+          [event.target.name]: value,
+        });
+      break;
     }
   
-    fetchRecipes();
-    setFormData({
-      name: "",
-      desc: "",
-      cuisine_name: "",
-      steps: [],
-      ingredients: [],
-    });
   };
+
+  const ingredientsComplete = () => {
+    setIngredientsAllSubmitted(true);
+    console.log("Ingredients all submitted")
+  }
+
+  const stepsComplete = () => {
+    setStepsAllSubmitted(true);
+    console.log("Steps all submitted")
+  }
+
+  const handleRecipeSubmit = (event) => {
+    event.preventDefault();
+    setRecipeSubmitted(true);
+    setRecipe(recipeForm);
+  }
 
   const handleIngredientSubmit = async (event) => {
-      event.preventDefault();
-      try{
-        const response = await api.post("/submit_ingredient", ingForm);
-        console.log(response.data)
-      } catch (error) {
-        console.error("Error submitting form:", error.response.data);
-      }
+    event.preventDefault();
+    console.log(ingForm)
+    ingredients.push(ingForm);
+    setIngredientSubmitted(true)
+    setIngForm({
+      name: "",
+      quantity: "",
+      additional_notes: "",
+      category_name: "",
+    })
+}
 
-      fetchRecipes();
-      setIngFormData({
-        name: "",
-        quantity: "",
-        additional_notes: "",
-        category_name: "",
-        recipe_id: 1,
-        step_id: 1,
-      })
+  const handleStepSubmit = (event) => {
+    event.preventDefault();
+    stepForm.count = stepCount;
+    steps.push(stepForm);
+    setStepCount(stepCount + 1);
+    setStepSubmitted(true);
+    setStepForm({
+      desc: "",
+    })
   }
+
+  const GetRecipeBlock = () => {
+    //console.log(recipeSubmitted + " I dont understand how this is false")
+    if(recipeSubmitted && recipe != null)
+    {
+      //console.log("agsemea")
+      return <RecipeBlock recipe={recipe}> </RecipeBlock>
+    }
+    else
+    {
+      //console.log(`${recipeSubmitted} + ${recipe}`)
+      return `<div> empty <div/>`
+    }
+  }
+
+  const GetIngredientBlocks = () => {
+    //console.log(recipeSubmitted + " I dont understand how this is false")
+    if(ingredients != null && ingredientSubmitted)
+    {
+      console.log(ingredients)
+      
+      if(ingredients.length != null)
+      {
+        return ingredients.map((ing) => (
+          <IngredientBlock key={ing.name} ing={ing}> </IngredientBlock>
+        ))
+      }
+      else
+      {
+        return <IngredientBlock key={ingredients.name} ing={ingredients}>  </IngredientBlock>
+      }
+    }
+    else
+    {
+      //console.log(`${recipeSubmitted} + ${recipe}`)
+      return `No ingredients added yet`
+    }
+  }
+
+  const GetStepBlocks = () => {
+    if(steps != null && stepSubmitted)
+    {
+      if(steps.length != null)
+      {
+        return steps.map((step) => (
+          <StepBlock key={step.count} step={step}> </StepBlock>
+        ))
+      }
+      else
+      {
+        return <StepBlock key={1} step={steps}> </StepBlock>
+      }
+    }
+  }
+
+  const EditMode = () => {
+    
+  }
+
+  const handlePageState = () => {
+
+    if(recipeSubmitted && ingredientsAllSubmitted && stepsAllSubmitted)
+    {
+
+    }
+    //If recipe submitted, show ingredient from
+    if(recipeSubmitted && !ingredientsAllSubmitted)
+    {
+      return <div>
+        
+      <form onSubmit={handleIngredientSubmit} id='ing-form'>
+      <div className='mb-3 mt-3'>
+      <h4 className="text-center"> Add Ingredients </h4>
+      <div>
+        <label htmlFor='ing-name' className='form-label'>
+          Ingredient Name
+        </label>
+
+        <input type='text' className="form-control" id="name" name="name" onChange={(event) => handleInputChange(event, 1)} value={ingForm.name}></input>
+
+      </div>
+
+      <div className='mb-3'>
+        <label htmlFor='amount' className='form-label'>
+          Quantity
+        </label>
+
+        <input type='text' className='form-control' id='quantity' name='quantity' onChange={(event) => handleInputChange(event, 1)} value={ingForm.quantity}></input>
+      </div>
+
+      <div className='mb-3'>
+        <label htmlFor='amount' className='form-label'>
+          Additional Info
+        </label>
+
+        <input type='text' className='form-control' id='additional_notes' name='additional_notes' onChange={(event) => handleInputChange(event, 1)} value={ingForm.additional_notes}></input>
+      </div>
+
+      <div className='mb-3'>
+        <label htmlFor='amount' className='form-label'>
+          Category
+        </label>
+
+        <input type='text' placeholder="E.g Protein, Vegetable, Grain" className='form-control' id='category_name' name='category_name' onChange={(event) => handleInputChange(event, 1)} value={ingForm.category_name}></input>
+      </div>
+
+      <button type='submit' className ='btn btn-primary'>
+        Add
+      </button>
+
+      </div>
+      </form>
+
+      <button onClick={ingredientsComplete}> Submit all </button>
+      </div>
 
   
-  const handleDelete = async(recipe_id) => {
-    var response;
-    try {
-      response = await api.delete(`/recipes/${recipe_id}`);
-      console.log(response.data);
     }
-    catch (error)
+    //if ingredient submitted show step form
+    else if (recipeSubmitted && ingredientsAllSubmitted)
     {
-      console.error("Error deleting recipe:", error);
-    }     
-    fetchRecipes()
-  }
-
-  const handleIngDelete = async(ing_id) => {
-    var response;
-    try {
-      response = await api.delete(`/ingredients/${ing_id}`);
-      console.log(response.data);
-    }
-    catch (error)
-    {
-      console.error("Error deleting recipe:", error);
-    }   
-    fetchRecipes();
-  }
-  return (
-    <div>
-      This is the create recipe page
-    <div className='container'>
-    <form onSubmit={handleFormSubmit}>
+      return <div>
+      <form onSubmit={handleStepSubmit} id='step-form'>
       <div className='mb-3 mt-3'>
-        <h4>Recipes</h4>
+      <h4 className="text-center"> Add Steps </h4>
+
+      <h5> {`Step ${stepCount}`}</h5>
+
+      <div className='mb-3'>
+        <label htmlFor='amount' className='form-label'>
+          Description
+        </label>
+
+        <textarea rows="10" className='form-control' id='desc' name='desc' placeholder="Write step here" onChange={(event) => handleInputChange(event, 2)} value={stepForm.desc}/>
+      </div>
+
+      <button type='submit' className ='btn btn-primary'>
+        Add
+      </button>
+
+      </div>
+      </form>
+
+      <button onClick={stepsComplete}> Submit all </button>
+      </div>
+    }
+    //Show recipe form
+    else
+    {
+      return <form className='create-form' onSubmit={handleRecipeSubmit}>
+      <div className='mb-3 mt-3'>
+        <h4 className="text-center"> Add Recipe</h4>
         <label htmlFor='amount' className='form-label'>
           Name
         </label>
 
-        <input type='text' className='form-control' id='name' name='name' onChange={handleInputChange} value={formData.name}></input>
+        <input type='text' className='form-control' id='name' name='name' onChange={ (event) => handleInputChange(event, 0)} value={recipeForm.name}></input>
       </div>
 
       <div className='mb-3'>
@@ -131,7 +270,15 @@ const CreateRecipe = () => {
           Description
         </label>
 
-        <input type='text' className='form-control' id='desc' name='desc' onChange={handleInputChange} value={formData.desc}></input>
+        <input type='text' className='form-control' id='desc' name='desc' onChange={(event) => handleInputChange(event, 0)} value={recipeForm.desc}></input>
+      </div>
+
+      <div className='mb-3'>
+        <label htmlFor='amount' className='form-label'>
+          Cook Time
+        </label>
+
+        <input type='number' className='form-control' id='cook_time' name='cook_time' onChange={(event) => handleInputChange(event, 0)} value={recipeForm.cook_time}></input>
       </div>
 
       <div className='mb-3'>
@@ -139,57 +286,33 @@ const CreateRecipe = () => {
           Cuisine
         </label>
 
-        <input type='text' className='form-control' id='cuisine_name' name='cuisine_name' onChange={handleInputChange} value={formData.cuisine_name}></input>
+        <input type='text' className='form-control' id='cuisine_name' name='cuisine_name' onChange={(event) => handleInputChange(event, 0)} value={recipeForm.cuisine_name}></input>
       </div>
 
       <button type='submit' className ='btn btn-primary'>
         Submit
       </button>
-
     </form>
-  </div>
+    }
+  }
 
-  <h4 className='m-auto text-center'> Ingredient list </h4>
-  <div className='container d-flex mb-3 mt-5'>
-    <div id='left-side' className='w-50 p-3 bg-danger'> 
-        <form onSubmit={handleIngredientSubmit} id='ing-form'>
+  return (
+  <div>
 
-          <div>
-            <label htmlFor='amount' className='form-label'>
-              Ingredient Name
-            </label>
-
-            <input type='text' className="form-control" id="ing_name" name="ing_name" onChange={handleInputChange} value={ingForm.name}></input>
-
-          </div>
-
-          <div className='mb-3'>
-            <label htmlFor='amount' className='form-label'>
-              Description
-            </label>
-
-            <input type='text' className='form-control' id='desc' name='desc' onChange={handleInputChange} value={ingForm.desc}></input>
-          </div>
-
-          <div className='mb-3'>
-            <label htmlFor='amount' className='form-label'>
-              Notes
-            </label>
-
-            <input type='text' className='form-control' id='cuisine_name' name='cuisine_name' onChange={handleInputChange} value={ingForm.additional_notes}></input>
-          </div>
-
-          <button type='submit' className ='btn btn-primary'>
-            Submit
-          </button>
-
-        </form>
-    </div>
-
-    <div id='right-side' className='w-50 p-3 bg-dark'> </div>
+  <div className='container d-flex'>
       
-  </div> 
+      <div className="form-container bg-success"> 
+        {handlePageState()}
+      </div>
 
+      <div className="visual-box bg-secondary">
+        {GetRecipeBlock()}
+        <div className="d-flex flex-wrap">
+          {GetIngredientBlocks()}
+          {GetStepBlocks()}
+        </div>
+      </div>
+  </div>
 
     <table className='table table-striped table-bordered table-hover mt-3'>
       <thead>
@@ -201,8 +324,8 @@ const CreateRecipe = () => {
         </tr>
       </thead>
 
-      <tbody>
-        {recipes.map((recipe) => (
+      {/* <tbody>
+        {recipe.map((recipe) => (
           <tr key={recipe.id}>
             <td>{recipe.name}</td>
             <td>{recipe.desc}</td>
@@ -212,7 +335,7 @@ const CreateRecipe = () => {
             </td>
           </tr>
         ))}
-      </tbody>
+      </tbody> */}
     </table>
 
     </div>
