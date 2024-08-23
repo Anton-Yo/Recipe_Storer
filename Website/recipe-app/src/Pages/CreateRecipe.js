@@ -23,13 +23,12 @@ const CreateRecipe = () => {
     name: "",
     quantity: "",
     additional_notes: "",
-    category_name: "Protein... Vegetables... etc",
+    category_name: "",
   });
   const [steps, setSteps] = useState([]);
   const [stepForm, setStepForm] = useState({
     count: 1,
     desc: "",
-    droppedItems: []
   });
   const [recipeSubmitted, setRecipeSubmitted] = useState(true);
   const [ingredientSubmitted, setIngredientSubmitted] = useState(false);
@@ -43,6 +42,28 @@ const CreateRecipe = () => {
   const [droppedItems, setDroppedItems] = useState([]);
 
   const handleDrop = (item) => {
+    console.log(item.keys + "gamer");
+    const copyOfSteps= [...steps];
+    for(let i = 0; i < steps.length; i++)
+    {
+        if(copyOfSteps[i].count == item.count)
+        {
+          copyOfSteps[i] = {
+            ...copyOfSteps[i],
+            containedIngredients: [...steps[i].containedIngredients, item]
+          }
+          break;
+        };
+    }
+    console.log(item);
+    setSteps(copyOfSteps);
+    //droppedItems
+
+    // setSteps((prevSteps) => 
+    //   prevSteps.count == id ? {
+    //   ...steps,
+    //   containedIngredients: [...containedIngredients, newIng];
+    //   }
     setDroppedItems((prevItems) => [...prevItems, item]);
   };
 
@@ -115,13 +136,29 @@ const CreateRecipe = () => {
   const handleStepSubmit = (event) => {
     event.preventDefault();
     stepForm.count = stepCount;
-    steps.push(stepForm);
+    addStep(stepForm);
     setStepCount(stepCount + 1);
     setStepSubmitted(true);
+    
     setStepForm({
       desc: "",
     });
   };
+
+  const addStep = (stepForm) => {
+    console.log(stepForm)
+    const newStep = {
+      count: stepForm.count,
+      desc: stepForm.desc,
+      containedIngredients: []
+    }
+    setSteps([...steps, newStep]);
+    // for(let i = 0; i < steps.length; i++) {
+    //   console.log(steps[i]);
+    // }
+    
+
+  }
 
   const GetRecipeBlock = () => {
     //console.log(recipeSubmitted + " I dont understand how this is false")
@@ -140,11 +177,12 @@ const CreateRecipe = () => {
       console.log(ingredients);
 
       if (ingredients.length != null) {
-        return ingredients.map((ing) => (
-          <IngredientBlock key={ing.name} ing={ing}>
-            {" "}
-          </IngredientBlock>
-        ));
+            return ingredients.map((ing) => (
+              <IngredientBlock key={ing.name} ing={ing} onDrop={passTheSauce(ing.name)}>
+                {" "}
+              </IngredientBlock>
+            ))
+        
       } else {
         return (
           <IngredientBlock key={ingredients.name} ing={ingredients}>
@@ -368,7 +406,12 @@ const CreateRecipe = () => {
     }
   };
 
+  const passTheSauce = (str) => {
+    console.log( "hello there " + str)
+  }
+
   return (
+    <DndProvider backend={HTML5Backend}>
     <div>
       <div className="container d-flex">
         <div className="form-container bg-success">{handlePageState()}</div>
@@ -381,30 +424,29 @@ const CreateRecipe = () => {
         </div>
       </div>
 
-      <DndProvider backend={HTML5Backend}>
-        <DragItem name="Hello there"> </DragItem>
-        <DropZone onDrop={handleDrop} />
-      </DndProvider>
-
-      {droppedItems.map((item, index) => (
-        <div
-          key={index}
-          style={{
-            border: "1px solid #ccc",
-            padding: "10px",
-            borderRadius: "5px",
-            marginTop: "10px",
-            backgroundColor: "lightblue",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <p>{item.name}</p>
-          <button onClick={() => handleRemoveItem(index)}>Remove</button>
-        </div>
-      ))}
-
+    <DropZone onDrop={handleDrop} />
+      
+    {droppedItems.map((item, index) => (
+                              <div
+                                  key={index}
+                                  style={{
+                                      border: '1px solid #ccc',
+                                      padding: '10px',
+                                      borderRadius: '5px',
+                                      marginTop: '10px',
+                                      backgroundColor: 'lightblue',
+                                      display: 'flex',
+                                      justifyContent: 'space-between',
+                                      alignItems: 'center',
+                                  }}>
+                                  <p>{item.name}</p>
+                                  <button onClick={
+                                      () => handleRemoveItem(index)}>
+                                      Remove
+                                  </button>
+                              </div>
+                          ))}
+                          
       <table className="table table-striped table-bordered table-hover mt-3">
         <thead>
           <tr>
@@ -429,6 +471,7 @@ const CreateRecipe = () => {
       </tbody> */}
       </table>
     </div>
+    </DndProvider>
   );
 };
 

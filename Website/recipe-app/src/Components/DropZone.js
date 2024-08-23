@@ -4,7 +4,7 @@ import { useDrop } from 'react-dnd';
 
 const DropZone = ({ onDrop }) => {
     const [{ isOver }, drop] = useDrop(() => ({
-        accept: 'item',
+        accept: 'ingredient-box',
         drop: (item) => onDrop(item),
         collect: (monitor) => ({
             isOver: monitor.isOver(),
