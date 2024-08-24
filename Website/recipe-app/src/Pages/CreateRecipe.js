@@ -18,7 +18,7 @@ const CreateRecipe = () => {
     cook_time: "",
     cuisine_name: "",
   });
-  var [ingredients, setIngredients] = useState([]);
+  const [ingredients, setIngredients] = useState([]);
   const [ingForm, setIngForm] = useState({
     name: "",
     quantity: "",
@@ -27,7 +27,7 @@ const CreateRecipe = () => {
   });
   const [steps, setSteps] = useState([]);
   const [stepForm, setStepForm] = useState({
-    count: 1,
+    id: 1,
     desc: "",
   });
   const [recipeSubmitted, setRecipeSubmitted] = useState(true);
@@ -37,34 +37,45 @@ const CreateRecipe = () => {
   const [stepsAllSubmitted, setStepsAllSubmitted] = useState(false);
   const [pageState, setPageState] = useState([]);
 
-  const [stepCount, setStepCount] = useState(1);
+  const [stepId, setStepId] = useState(1);
+  const [ingIdCount, setIngIdCount] = useState(1);
 
   const [droppedItems, setDroppedItems] = useState([]);
 
-  const handleDrop = (item) => {
-    console.log(item.keys + "gamer");
-    const copyOfSteps= [...steps];
+  const handleDrop = (item, stepId) => {
+    console.log(item.id + " gamer");
+    console.log(stepId + " step ")
+    // const copyOfSteps= [...steps];
+    steps[stepId] = {
+      ...copyOfSteps[stepId],
+      containedIngredients: [...copyOfSteps[stepId].containedIngredients, item]
+    }
+
+    // for(let i = 0; i < steps.length; i++)
+    // {
+    //     if(copyOfSteps[i].id == item.id)
+    //     {
+    //       copyOfSteps[i] = {
+    //         ...copyOfSteps[i],
+    //         containedIngredients: [...steps[i].containedIngredients, item]
+    //       }
+    //       break;
+    //     };
+    // }
+    //setSteps(copyOfSteps);
+
+
+    console.log("Break")
     for(let i = 0; i < steps.length; i++)
     {
-        if(copyOfSteps[i].count == item.count)
-        {
-          copyOfSteps[i] = {
-            ...copyOfSteps[i],
-            containedIngredients: [...steps[i].containedIngredients, item]
-          }
-          break;
-        };
+      console.log("first part of loop is running")
+      for(let j = 0; j < steps[i].containedIngredients.length; j++)
+      {
+        console.log(`This is ${steps[i].name} and the contained ingredient is ${steps[i].containedIngredients[j].name}`)
+      }
     }
-    console.log(item);
-    setSteps(copyOfSteps);
-    //droppedItems
-
-    // setSteps((prevSteps) => 
-    //   prevSteps.count == id ? {
-    //   ...steps,
-    //   containedIngredients: [...containedIngredients, newIng];
-    //   }
-    setDroppedItems((prevItems) => [...prevItems, item]);
+    console.log(item.name + " gaymer")
+    //setDroppedItems((prevItems) => [...prevItems, item]);
   };
 
   const handleRemoveItem = (index) => {
@@ -123,7 +134,7 @@ const CreateRecipe = () => {
   const handleIngredientSubmit = async (event) => {
     event.preventDefault();
     console.log(ingForm);
-    ingredients.push(ingForm);
+    addIngredient(ingForm)
     setIngredientSubmitted(true);
     setIngForm({
       name: "",
@@ -135,9 +146,9 @@ const CreateRecipe = () => {
 
   const handleStepSubmit = (event) => {
     event.preventDefault();
-    stepForm.count = stepCount;
+    stepForm.id = stepId;
     addStep(stepForm);
-    setStepCount(stepCount + 1);
+    setStepId(stepId + 1);
     setStepSubmitted(true);
     
     setStepForm({
@@ -148,7 +159,7 @@ const CreateRecipe = () => {
   const addStep = (stepForm) => {
     console.log(stepForm)
     const newStep = {
-      count: stepForm.count,
+      id: stepForm.id,
       desc: stepForm.desc,
       containedIngredients: []
     }
@@ -156,8 +167,20 @@ const CreateRecipe = () => {
     // for(let i = 0; i < steps.length; i++) {
     //   console.log(steps[i]);
     // }
-    
+  }
 
+  const addIngredient = (ingForm) => {
+    console.log(ingForm)
+    const newIng = {
+      id: ingIdCount,
+      name: ingForm.name,
+      quantity: ingForm.quantity,
+      additional_notes: ingForm.additional_notes,
+      category_name: ingForm.category_name,
+    }
+    setIngIdCount(ingIdCount + 1)
+    console.log(newIng)
+    setIngredients([...ingredients, newIng])
   }
 
   const GetRecipeBlock = () => {
@@ -174,18 +197,18 @@ const CreateRecipe = () => {
   const GetIngredientBlocks = () => {
     //console.log(recipeSubmitted + " I dont understand how this is false")
     if (ingredients != null && ingredientSubmitted) {
-      console.log(ingredients);
+      //console.log(ingredients);
 
       if (ingredients.length != null) {
             return ingredients.map((ing) => (
-              <IngredientBlock key={ing.name} ing={ing} onDrop={passTheSauce(ing.name)}>
+              <IngredientBlock key={ing.id} ing={ing}>
                 {" "}
               </IngredientBlock>
             ))
         
       } else {
         return (
-          <IngredientBlock key={ingredients.name} ing={ingredients}>
+          <IngredientBlock key={ingredients.name} ing={ingredients} >
             {" "}
           </IngredientBlock>
         );
@@ -200,7 +223,7 @@ const CreateRecipe = () => {
     if (steps != null && stepSubmitted) {
       if (steps.length != null) {
         return steps.map((step) => (
-          <StepBlock key={step.count} step={step}>
+          <StepBlock key={step.id} step={step} attachedIngredients={step.containedIngredients} onDrop={handleDrop}>
             {" "}
           </StepBlock>
         ));
@@ -305,7 +328,7 @@ const CreateRecipe = () => {
             <div className="mb-3 mt-3">
               <h4 className="text-center"> Add Steps </h4>
 
-              <h5> {`Step ${stepCount}`}</h5>
+              <h5> {`Step ${stepId}`}</h5>
 
               <div className="mb-3">
                 <label htmlFor="amount" className="form-label">
@@ -406,8 +429,8 @@ const CreateRecipe = () => {
     }
   };
 
-  const passTheSauce = (str) => {
-    console.log( "hello there " + str)
+  const passIngredientInfo = (data) => {
+    console.log(data.name)
   }
 
   return (
@@ -424,7 +447,7 @@ const CreateRecipe = () => {
         </div>
       </div>
 
-    <DropZone onDrop={handleDrop} />
+    <DropZone onDrop={handleDrop}/>
       
     {droppedItems.map((item, index) => (
                               <div

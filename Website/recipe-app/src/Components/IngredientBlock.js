@@ -8,10 +8,17 @@ import { useDrag } from 'react-dnd';
 const IngredientBlock = ({ing}) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: 'ingredient-box',
+    item: {
+          id: ing.id, 
+          name: ing.name,
+          quantity: ing.quantity,
+        },
     collect: (monitor) => ({
         isDragging: monitor.isDragging(),
     }),
   }));
+
+  
 
   return (
     <div ref={drag} className="w-45 m-auto mt-1">
