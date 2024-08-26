@@ -5,26 +5,44 @@ import { useDrop } from 'react-dnd';
 
 
 
-const StepBlock = ({step, attachedIngredients, onDrop}) => {
+const StepBlock = ({step, sendData}) => {
+  const [droppedItems, setDroppedItems] = useState([]);
+  const [confirmed, setConfirmed] = useState(false);
+
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'ingredient-box',
-    drop: (item) => onDrop(item, step.id),
+    drop: (item) => { 
+      setDroppedItems((prevItems) => {
+        if(prevItems.some(existingIng => existingIng.id === item.id)) {
+          //If the id already exists in the droppeditems list. Dont add
+          return prevItems
+        }
+        else
+        {
+          //Otherwise do add
+          return [...prevItems, item]
+        }
+         
+    })
+    },
     collect: (monitor) => ({
         isOver: monitor.isOver(),
     }),
   }));
 
-  const getAttachedIngredients = () => {
-    console.log("Key " + attachedIngredients)
-    if(attachedIngredients != null && attachedIngredients.length > 0)
-    {
-      return <p className="mx-1"> {attachedIngredients[0].name} </p>
-    }
-    else
-    {
-      return <p className="mx-1"> No attached ingredients</p>
-    }
+
+  const confirm = () => {
+    //sendData(step, droppedItems);
+    setConfirmed(true);
   }
+  const deleteItem = (id) => {
+    setDroppedItems((prevItems) => prevItems.filter(item => item.id != id))
+    console.log("gotta delete")
+  }
+
+  useEffect(() => {
+    sendData(step, droppedItems);
+  }, [droppedItems])
 
   return (
     
@@ -34,8 +52,15 @@ const StepBlock = ({step, attachedIngredients, onDrop}) => {
         <div className="d-flex justify-content-center">
           <p className="mx-1"> {step.desc} </p>
         </div>
-        <div className="d-flex flex-column justify-content-center">
-            {getAttachedIngredients()}
+        <div className="d-flex flex-column justify-content-center"> 
+            {droppedItems.map((ing) => (
+              <div key={ing.id} className="d-flex justify-content-around bg-warning m-1"> 
+                <p> {`${ing.quantity} ${ing.name}`}</p>
+                <button onClick={() => deleteItem(ing.id)}> Delete </button>
+              </div>
+            ))}
+             <button onClick={confirm}> print out data to console </button>
+        
         </div>
       </div>
     </div>

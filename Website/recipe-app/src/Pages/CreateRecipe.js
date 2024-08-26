@@ -7,9 +7,6 @@ import StepBlock from "../Components/StepBlock";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
-import DragItem from "../Components/DragItem";
-import DropZone from "../Components/DropZone";
-
 const CreateRecipe = () => {
   const [recipe, setRecipe] = useState([]);
   const [recipeForm, setRecipeForm] = useState({
@@ -30,59 +27,117 @@ const CreateRecipe = () => {
     id: 1,
     desc: "",
   });
-  const [recipeSubmitted, setRecipeSubmitted] = useState(true);
+  const [recipeSubmitted, setRecipeSubmitted] = useState(false);
   const [ingredientSubmitted, setIngredientSubmitted] = useState(false);
   const [ingredientsAllSubmitted, setIngredientsAllSubmitted] = useState(false);
   const [stepSubmitted, setStepSubmitted] = useState(false);
   const [stepsAllSubmitted, setStepsAllSubmitted] = useState(false);
-  const [pageState, setPageState] = useState([]);
 
-  const [stepId, setStepId] = useState(1);
+  const [stepCount, setStepCount] = useState(1);
   const [ingIdCount, setIngIdCount] = useState(1);
+  
+  const [recipeData, setRecipeData] = useState([]);
+  
+  const handleDroppedItems = (stepData, attachedIngredients) => {
+    console.log(stepData)
+    const stepsCopy = steps.map((step) => {
+      console.log(stepData.id + "''" + step.id)
+      if(stepData.id === step.id)
+      {
+        console.log("returning new step")
+        return {
+          ...step,
+          containedIngredients: [attachedIngredients]
+        }
+       
+      } else {
+        console.log("returning default step")
+        return step;
+      }
+    })
 
-  const [droppedItems, setDroppedItems] = useState([]);
+    setSteps(stepsCopy);
+  }
+
+  const tempStep = () => {
+    return {
+      id: 5,
+      desc: "Wassup",
+      containedIngredients: []
+    }
+  }
 
   const handleDrop = (item, stepId) => {
-    console.log(item.id + " gamer");
-    console.log(stepId + " step ")
+    console.log(" itemID = " + item.id);
+    console.log(" step = " + stepId);
     // const copyOfSteps= [...steps];
-    steps[stepId] = {
-      ...copyOfSteps[stepId],
-      containedIngredients: [...copyOfSteps[stepId].containedIngredients, item]
-    }
 
-    // for(let i = 0; i < steps.length; i++)
-    // {
-    //     if(copyOfSteps[i].id == item.id)
-    //     {
-    //       copyOfSteps[i] = {
-    //         ...copyOfSteps[i],
-    //         containedIngredients: [...steps[i].containedIngredients, item]
-    //       }
-    //       break;
+    // let stepsCopy = [...steps]
+    // console.log(stepsCopy)  
+    // setSteps(stepsCopy);
+    // const stepsCopy = steps.map(step => {
+    //   console.log("checking")
+    //   return step;
+    //   if(step.id != stepId)
+    //   {
+    //     //No change
+    //     return step;
+    //     step.containedIngredients = steps[stepId-1].containedIngredients
+    //     console.log('Before:', step.containedIngredients);
+    //     const updatedStep = { //change step if correct id
+    //       ...step,
+    //       containedIngredients: step.containedIngredients ? [...step.containedIngredients, item] : [item]
     //     };
-    // }
-    //setSteps(copyOfSteps);
+    //     console.log('After:', updatedStep.containedIngredients);
+    //     return  updatedStep;
+    //   }
+    // })
+  };
 
-
+  const listThing = () => {
     console.log("Break")
-    for(let i = 0; i < steps.length; i++)
-    {
-      console.log("first part of loop is running")
-      for(let j = 0; j < steps[i].containedIngredients.length; j++)
-      {
-        console.log(`This is ${steps[i].name} and the contained ingredient is ${steps[i].containedIngredients[j].name}`)
-      }
-    }
-    console.log(item.name + " gaymer")
-    //setDroppedItems((prevItems) => [...prevItems, item]);
-  };
+    console.log(steps)
+    //console.log(stepsCopy)
+    console.log("----------")
+    steps.forEach((step) => {
+      console.log(step)
+      //console.log(step.containedIngredients)
+    })
+  }
 
-  const handleRemoveItem = (index) => {
-    const updatedItems = [...droppedItems];
-    updatedItems.splice(index, 1);
-    setDroppedItems(updatedItems);
-  };
+  const submitNewRecipe = () => {
+    if(ingredientsAllSubmitted && recipeSubmitted && stepsAllSubmitted)
+    {
+      const data = {
+        recipe: recipe,
+        steps: steps, 
+      }
+      console.log(data)
+      setRecipeData(data);
+      ResetPage()
+    }
+
+   
+  }
+
+  const ResetPage = () => {
+    //Reset recipe variables
+    setRecipe([])
+    setRecipeSubmitted(false);
+
+    //Reset ingredient variables
+    setIngredients([])
+    setIngredientSubmitted(false);
+    setIngredientsAllSubmitted(false);
+    setIngIdCount(1)
+    
+    
+    //Reset step variables
+    setSteps([])
+    setStepSubmitted(false);
+    setStepsAllSubmitted(false);
+    setStepCount(1);
+  }
 
   useEffect(() => {}, []);
 
@@ -146,9 +201,9 @@ const CreateRecipe = () => {
 
   const handleStepSubmit = (event) => {
     event.preventDefault();
-    stepForm.id = stepId;
+    stepForm.id = stepCount;
     addStep(stepForm);
-    setStepId(stepId + 1);
+    setStepCount(stepCount + 1);
     setStepSubmitted(true);
     
     setStepForm({
@@ -163,6 +218,7 @@ const CreateRecipe = () => {
       desc: stepForm.desc,
       containedIngredients: []
     }
+    console.log("setting new array")
     setSteps([...steps, newStep]);
     // for(let i = 0; i < steps.length; i++) {
     //   console.log(steps[i]);
@@ -223,13 +279,13 @@ const CreateRecipe = () => {
     if (steps != null && stepSubmitted) {
       if (steps.length != null) {
         return steps.map((step) => (
-          <StepBlock key={step.id} step={step} attachedIngredients={step.containedIngredients} onDrop={handleDrop}>
+          <StepBlock key={step.id} step={step} sendData={handleDroppedItems}>
             {" "}
           </StepBlock>
         ));
       } else {
         return (
-          <StepBlock key={1} step={steps}>
+          <StepBlock key={steps.id} step={steps}>
             {" "}
           </StepBlock>
         );
@@ -328,7 +384,7 @@ const CreateRecipe = () => {
             <div className="mb-3 mt-3">
               <h4 className="text-center"> Add Steps </h4>
 
-              <h5> {`Step ${stepId}`}</h5>
+              <h5> {`Step ${stepCount}`}</h5>
 
               <div className="mb-3">
                 <label htmlFor="amount" className="form-label">
@@ -447,28 +503,9 @@ const CreateRecipe = () => {
         </div>
       </div>
 
-    <DropZone onDrop={handleDrop}/>
-      
-    {droppedItems.map((item, index) => (
-                              <div
-                                  key={index}
-                                  style={{
-                                      border: '1px solid #ccc',
-                                      padding: '10px',
-                                      borderRadius: '5px',
-                                      marginTop: '10px',
-                                      backgroundColor: 'lightblue',
-                                      display: 'flex',
-                                      justifyContent: 'space-between',
-                                      alignItems: 'center',
-                                  }}>
-                                  <p>{item.name}</p>
-                                  <button onClick={
-                                      () => handleRemoveItem(index)}>
-                                      Remove
-                                  </button>
-                              </div>
-                          ))}
+    <div>
+      <button onClick={submitNewRecipe}> Submit the data! </button>
+    </div>
                           
       <table className="table table-striped table-bordered table-hover mt-3">
         <thead>
@@ -479,21 +516,12 @@ const CreateRecipe = () => {
             <th className="text-center">Delete?</th>
           </tr>
         </thead>
-
-        {/* <tbody>
-        {recipe.map((recipe) => (
-          <tr key={recipe.id}>
-            <td>{recipe.name}</td>
-            <td>{recipe.desc}</td>
-            <td>{recipe.cuisine_id}</td>
-            <td>
-              <button onClick={() => handleDelete(recipe.id)}> Delete </button>
-            </td>
-          </tr>
-        ))}
-      </tbody> */}
       </table>
     </div>
+
+    <button type="submit" className="btn btn-primary" onClick={listThing}>
+                Print everything to the console
+    </button>
     </DndProvider>
   );
 };
