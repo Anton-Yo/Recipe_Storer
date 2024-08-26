@@ -12,6 +12,8 @@ const IngredientBlock = ({ing}) => {
           id: ing.id, 
           name: ing.name,
           quantity: ing.quantity,
+          additional_notes: ing.additional_notes,
+          category: ing.category
         },
     collect: (monitor) => ({
         isDragging: monitor.isDragging(),
@@ -27,7 +29,7 @@ const IngredientBlock = ({ing}) => {
         <div className="d-flex justify-content-center">
           <p className="mx-1"> {ing.quantity} </p>
           <p className="mx-1"> {ing.additional_notes} </p>
-          <p className="mx-1"> {ing.category_name}</p>
+          <p className="mx-1"> {ing.category}</p>
         </div>
       </div>
     </div>

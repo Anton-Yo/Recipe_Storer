@@ -41,10 +41,50 @@ def helpme():
 #    CREATE STUFF
 # -------------------
 @app.post("/submit", response_model=str)
-async def submit(data: schemas.SubmitForm, db: Session = Depends(get_db)):
-    print(data, data.name, data.desc, data.cuisine_name)
-    create_recipe(recipe_data = data, db = db)
+async def submit(data: schemas.SubmitRecipe, db: Session = Depends(get_db)):
+    print(data)
+    print(" gangsta") 
+    
+    #Separate the data into 
+    # 1. Recipe info -> Create recipe
+
+    # 2. Step info -> Create steps
+    # 3. Ingredient info -> create ingredients, referencing newly created steps/recipe
+
+     # 1. Recipe info -> Create recipe
+    recipe_id = create_recipe(recipe_data = data.recipe, db=db).id
+    print("break")
+    print(recipe_id)
+    
+    # # 2. Step info -> Create steps
+    
+    for step in data.steps:
+        stepData = schemas.StepCreate(
+            desc = step.desc,
+            recipe_id = recipe_id
+        )
+        step_id = create_step(step=stepData, db=db).id
+        print("break2")
+        print(step_id)
+     
+        for ing in step.containedIngredients:
+            ingData = schemas.SubmitIng(
+                name = ing.name,
+                quantity = ing.quantity,
+                additional_notes = ing.additional_notes,
+                category_id = get_category_id_by_name(category_name = ing.category, db=db),
+                recipe_id = recipe_id,
+                step_id = step_id
+            )
+            print(ingData)
+
+            create_ingredient(ingData, db=db)
+
+    
+    #create_recipe(recipe_data = data, db = db)
     return "New Recipe submitted successfully"
+
+
 
 @app.post("/submit_ingredient", response_model=str)
 async def submit_ing(data: schemas.SubmitIng, db: Session = Depends(get_db)):
@@ -73,9 +113,9 @@ async def fetch_ingredients_by_recipe_id(recipe_id: int, db: Session = Depends(g
 # -------------
 
 @app.post("/create_recipe", response_model= schemas.Recipe)
-def create_recipe(recipe_data: schemas.SubmitForm, db: Session = Depends(get_db)):
+def create_recipe(recipe_data: schemas.Recipe, db: Session = Depends(get_db)):
     print(recipe_data)
-    db_recipe = models.Recipe(name = recipe_data.name, desc = recipe_data.desc, cuisine_id = crud.get_cuisine_id_by_name(db, cuisine_name = recipe_data.cuisine_name))
+    db_recipe = models.Recipe(name = recipe_data.name, desc = recipe_data.desc, cook_time = recipe_data.cook_time, cuisine_id = crud.get_cuisine_id_by_name(db, cuisine_name = recipe_data.cuisine))
     db.add(db_recipe)
     db.commit()
     db.refresh(db_recipe)
@@ -197,7 +237,6 @@ def delete_cuisine(cuisine_name: str, db: Session = Depends(get_db)):
 def get_cuisine_id_by_name(cuisine_name: str, db: Session = Depends(get_db)):
     return crud.get_cuisine_id_by_name(db, cuisine_name= cuisine_name)
 
-
 # -------------
 #    STEPS
 # -------------
@@ -233,7 +272,6 @@ def get_steps(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 # -------------
 #    Categories
 # -------------
-
 
 @app.post("/create_category", response_model= schemas.Category)
 def create_category(category: schemas.CategoryCreate, db: Session = Depends(get_db)):

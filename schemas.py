@@ -1,19 +1,6 @@
 from typing import List, Optional
 from pydantic import BaseModel
 
-class StepBase(BaseModel):
-    desc: str
-    recipe_id: int
-
-class StepCreate(StepBase):
-    pass
-
-class Step(StepBase):
-    id: int
-
-    class Config:
-        from_attributes = True
-
 class CategoryBase(BaseModel):
     name: str
 
@@ -39,6 +26,20 @@ class Ingredient(IngredientBase):
     recipe_id: int
     category_id: int
     step_id: int
+
+    class Config:
+        from_attributes = True
+
+
+class StepBase(BaseModel):
+    desc: str
+    recipe_id: int
+
+class StepCreate(StepBase):
+    pass
+
+class Step(StepBase):
+    id: int
 
     class Config:
         from_attributes = True
@@ -92,7 +93,27 @@ class RecipeInfo(BaseModel):
     name: str
     desc: str
     cuisine_name: str
-    # ingredients: List[Ingredient]
-    # steps: List[Step]
+
+class IngredientFromFrontEnd(BaseModel):
+    id: int
+    name: str
+    quantity: str
+    additional_notes: str
+    category: str
+
+class StepFromFrontEnd(BaseModel):
+    containedIngredients: List[IngredientFromFrontEnd]
+    desc: str
+    id: int
+     
+class RecipeFromFrontEnd(BaseModel):
+    name: str
+    desc: str
+    cook_time: str
+    cuisine: str
+
+class SubmitRecipe(BaseModel):
+    recipe: RecipeFromFrontEnd
+    steps: List[StepFromFrontEnd]
 
 

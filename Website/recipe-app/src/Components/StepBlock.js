@@ -7,7 +7,6 @@ import { useDrop } from 'react-dnd';
 
 const StepBlock = ({step, sendData}) => {
   const [droppedItems, setDroppedItems] = useState([]);
-  const [confirmed, setConfirmed] = useState(false);
 
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'ingredient-box',
@@ -30,14 +29,13 @@ const StepBlock = ({step, sendData}) => {
     }),
   }));
 
-
   const confirm = () => {
-    //sendData(step, droppedItems);
-    setConfirmed(true);
+    console.log(droppedItems)
   }
+
   const deleteItem = (id) => {
     setDroppedItems((prevItems) => prevItems.filter(item => item.id != id))
-    console.log("gotta delete")
+    console.log("gotta delete id=" + id)
   }
 
   useEffect(() => {
@@ -45,7 +43,6 @@ const StepBlock = ({step, sendData}) => {
   }, [droppedItems])
 
   return (
-    
     <div ref={drop} className="w-45 m-auto mt-1">
       <div className="mt-1 bg-danger text-center">
         <h6 className="pt-1"> Step {step.id} </h6>
@@ -55,7 +52,7 @@ const StepBlock = ({step, sendData}) => {
         <div className="d-flex flex-column justify-content-center"> 
             {droppedItems.map((ing) => (
               <div key={ing.id} className="d-flex justify-content-around bg-warning m-1"> 
-                <p> {`${ing.quantity} ${ing.name}`}</p>
+                <p> {`${ing.quantity} ${ing.name} +  ${ing.category}`}</p>
                 <button onClick={() => deleteItem(ing.id)}> Delete </button>
               </div>
             ))}

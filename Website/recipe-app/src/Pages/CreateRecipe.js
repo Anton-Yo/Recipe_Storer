@@ -13,14 +13,14 @@ const CreateRecipe = () => {
     name: "",
     desc: "",
     cook_time: "",
-    cuisine_name: "",
+    cuisine: "",
   });
   const [ingredients, setIngredients] = useState([]);
   const [ingForm, setIngForm] = useState({
     name: "",
     quantity: "",
     additional_notes: "",
-    category_name: "",
+    category: "",
   });
   const [steps, setSteps] = useState([]);
   const [stepForm, setStepForm] = useState({
@@ -47,7 +47,7 @@ const CreateRecipe = () => {
         console.log("returning new step")
         return {
           ...step,
-          containedIngredients: [attachedIngredients]
+          containedIngredients: attachedIngredients
         }
        
       } else {
@@ -57,14 +57,6 @@ const CreateRecipe = () => {
     })
 
     setSteps(stepsCopy);
-  }
-
-  const tempStep = () => {
-    return {
-      id: 5,
-      desc: "Wassup",
-      containedIngredients: []
-    }
   }
 
   const handleDrop = (item, stepId) => {
@@ -105,7 +97,7 @@ const CreateRecipe = () => {
     })
   }
 
-  const submitNewRecipe = () => {
+  const submitNewRecipe = async () => {
     if(ingredientsAllSubmitted && recipeSubmitted && stepsAllSubmitted)
     {
       const data = {
@@ -115,9 +107,15 @@ const CreateRecipe = () => {
       console.log(data)
       setRecipeData(data);
       ResetPage()
-    }
 
-   
+      try{
+        const response = await api.post("/submit", data);
+        console.log("form shit")
+        console.log(response.data)
+      } catch (error) {
+        console.error("Error submitting form:", error.response.data);
+      }
+    }
   }
 
   const ResetPage = () => {
@@ -138,8 +136,6 @@ const CreateRecipe = () => {
     setStepsAllSubmitted(false);
     setStepCount(1);
   }
-
-  useEffect(() => {}, []);
 
   const handleInputChange = (event, id) => {
     const value =
@@ -195,7 +191,7 @@ const CreateRecipe = () => {
       name: "",
       quantity: "",
       additional_notes: "",
-      category_name: "",
+      category: "",
     });
   };
 
@@ -232,7 +228,7 @@ const CreateRecipe = () => {
       name: ingForm.name,
       quantity: ingForm.quantity,
       additional_notes: ingForm.additional_notes,
-      category_name: ingForm.category_name,
+      category: ingForm.category,
     }
     setIngIdCount(ingIdCount + 1)
     console.log(newIng)
@@ -292,8 +288,6 @@ const CreateRecipe = () => {
       }
     }
   };
-
-  const EditMode = () => {};
 
   const handlePageState = () => {
     if (recipeSubmitted && ingredientsAllSubmitted && stepsAllSubmitted) {
@@ -359,10 +353,10 @@ const CreateRecipe = () => {
                   type="text"
                   placeholder="E.g Protein, Vegetable, Grain"
                   className="form-control"
-                  id="category_name"
-                  name="category_name"
+                  id="category"
+                  name="category"
                   onChange={(event) => handleInputChange(event, 1)}
-                  value={ingForm.category_name}
+                  value={ingForm.category}
                 ></input>
               </div>
 
@@ -470,10 +464,10 @@ const CreateRecipe = () => {
             <input
               type="text"
               className="form-control"
-              id="cuisine_name"
-              name="cuisine_name"
+              id="cuisine"
+              name="cuisine"
               onChange={(event) => handleInputChange(event, 0)}
-              value={recipeForm.cuisine_name}
+              value={recipeForm.cuisine}
             ></input>
           </div>
 
@@ -484,10 +478,6 @@ const CreateRecipe = () => {
       );
     }
   };
-
-  const passIngredientInfo = (data) => {
-    console.log(data.name)
-  }
 
   return (
     <DndProvider backend={HTML5Backend}>
