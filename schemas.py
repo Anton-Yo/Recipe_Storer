@@ -25,11 +25,9 @@ class Ingredient(IngredientBase):
     id: int
     recipe_id: int
     category_id: int
-    step_id: int
 
     class Config:
         from_attributes = True
-
 
 class StepBase(BaseModel):
     desc: str
@@ -115,5 +113,12 @@ class RecipeFromFrontEnd(BaseModel):
 class SubmitRecipe(BaseModel):
     recipe: RecipeFromFrontEnd
     steps: List[StepFromFrontEnd]
+
+class RecipeID(BaseModel):
+    id: int
+
+class StepAndIngredient:
+    step_id: int
+    ing_id: int
 
 

@@ -3,7 +3,6 @@ import api from "../api"
 import '../App.css'
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import {DndContext} from '@dnd-kit/core'
 
 import DragItem from '../Components/DragItem';
 import DropZone from '../Components/DropZone';

@@ -36,6 +36,12 @@ def get_db():
 def helpme():
     return "Time to learn databases and development"
 
+# ---------------------------
+#    Testing StepAndIngs
+# --------------------------
+@app.get("/get", response_model=List[schemas.StepAndIngredient])
+def getThat(db: Session = Depends(get_db)):
+    db_steps = db.queryt(models.Step).filter_by(id=1).first()
 
 # -------------------
 #    CREATE STUFF
@@ -85,28 +91,11 @@ async def submit(data: schemas.SubmitRecipe, db: Session = Depends(get_db)):
     return "New Recipe submitted successfully"
 
 
-
 @app.post("/submit_ingredient", response_model=str)
 async def submit_ing(data: schemas.SubmitIng, db: Session = Depends(get_db)):
     print(data, data.name, data.quantity, data.additional_notes, data.category_id, data.recipe_id, data.step_id)
     create_ingredient(ing_data = data, db=db)
     return "Ingredient created successfully"
-
-# -------------------------
-#    FETCH INGREDIENTS
-# ------------------------
-@app.get("/fetch_ingredients", response_model=List[schemas.Ingredient])
-async def fetch_ingredients(db: Session = Depends(get_db)):
-    db_ings = []
-    db_ings = crud.get_ingredients(db = db)
-    return db_ings
-
-@app.get("/fetch_ingredients/{recipe_id}", response_model=List[schemas.Ingredient])
-async def fetch_ingredients_by_recipe_id(recipe_id: int, db: Session = Depends(get_db)):
-    db_ings = []
-    db_ings = crud.get_ingredients_by_recipe_id(recipe_id = recipe_id, db = db)
-    return db_ings
-
 
 # -------------
 #    RECIPES
@@ -182,6 +171,20 @@ def get_ingredients(skip: int = 0, limit: int = 100, db: Session = Depends(get_d
         raise HTTPException(status_code=404, detail="No ingredients found")
     return db_ings
 
+#Duplicate of previous func basically
+@app.get("/fetch_ingredients", response_model=List[schemas.Ingredient])
+async def fetch_ingredients(db: Session = Depends(get_db)):
+    db_ings = []
+    db_ings = crud.get_ingredients(db = db)
+    return db_ings
+
+#Grab the ingredients by recipe
+@app.get("/fetch_ingredients/{recipe_id}", response_model=List[schemas.Ingredient])
+def fetch_ingredients_by_recipe_id(recipe_id: int, db: Session = Depends(get_db)):
+    db_ings = []
+    db_ings = crud.get_ingredients_by_recipe_id(recipe_id = recipe_id, db = db)
+    return db_ings
+
 
 @app.get("/ingredients/search_ids/{ing_id}", response_model=schemas.Ingredient)
 def get_ing(ing_id:int, db: Session = Depends(get_db)):
@@ -254,7 +257,6 @@ def get_steps_by_recipe(recipe_id: int, db: Session = Depends(get_db)):
     if not db_steps:
         raise HTTPException(status_code=404, detail="there are no steps associated with those recipes")
     return db_steps
-    
 
 @app.delete("/step/{step_id}", response_model=str)
 def delete_step(step_id: int, db: Session = Depends(get_db)):
@@ -304,10 +306,11 @@ def delete_category(category_name: str, db: Session = Depends(get_db)):
 def get_category_id_by_name(category_name: str, db: Session = Depends(get_db)):
     return crud.get_category_id_by_name(db, category_name= category_name)
 
-@app.get("/categories_from_data")
-def get_categories_from_ingredient_list(db: Session = Depends(get_db)):
-    print("gamering")
-    ings = crud.get_ingredients(db, skip=0, limit=100)
+@app.get("/recipe/{recipe_id}/categories", response_model=List[schemas.Category])
+def get_categories_from_recipe_id(recipe_id: int, db: Session = Depends(get_db)):
+    print("what")
+    #ings = get_ingredients(db = db)
+    ings = fetch_ingredients_by_recipe_id(recipe_id = recipe_id, db=db)
 
     print("Got the ingredeints")
     #Get the ids of the ingredients that need to be checked

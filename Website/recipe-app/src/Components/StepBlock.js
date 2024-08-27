@@ -52,7 +52,7 @@ const StepBlock = ({step, sendData}) => {
         <div className="d-flex flex-column justify-content-center"> 
             {droppedItems.map((ing) => (
               <div key={ing.id} className="d-flex justify-content-around bg-warning m-1"> 
-                <p> {`${ing.quantity} ${ing.name} +  ${ing.category}`}</p>
+                <p> {`${ing.quantity} ${ing.name}`}</p>
                 <button onClick={() => deleteItem(ing.id)}> Delete </button>
               </div>
             ))}

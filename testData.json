@@ -36,8 +36,7 @@
             "quantity": "200g",
             "additional_notes": "Chop it up",
             "category_id": "1",
-            "recipe_id": "1",
-            "step_id": "1"
+            "recipe_id": "1"
             
         },
         {
@@ -45,8 +44,7 @@
             "quantity": "400g",
             "additional_notes": "Cook em put em rice",
             "category_id": "2",
-            "recipe_id": "1",
-            "step_id": "1"
+            "recipe_id": "1"
             
         },
         {
@@ -54,32 +52,28 @@
             "quantity": "1 tbps",
             "additional_notes": "",
             "category_id": "3",
-            "recipe_id": "1",
-            "step_id": "2"
+            "recipe_id": "1"
         },
         {
             "name": "Chicken",
             "quantity": "600g",
             "additional_notes": "Chop the legs up",
             "category_id": "1",
-            "recipe_id": "2",
-            "step_id": "3"
+            "recipe_id": "2"
         },
         {
             "name": "Noodles",
             "quantity": "200g",
             "additional_notes": "Satay these bad bois for 5 minutes",
             "category_id": "2",
-            "recipe_id": "2",
-            "step_id": "3"
+            "recipe_id": "2"
         },
         {
             "name": "Veges",
             "quantity": "100g",
             "additional_notes": "soften these bad bois for 2 minutes",
             "category_id": "3",
-            "recipe_id": "2",
-            "step_id": "4"
+            "recipe_id": "2"
         }
        
     ],

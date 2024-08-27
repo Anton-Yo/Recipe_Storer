@@ -58,34 +58,7 @@ const CreateRecipe = () => {
 
     setSteps(stepsCopy);
   }
-
-  const handleDrop = (item, stepId) => {
-    console.log(" itemID = " + item.id);
-    console.log(" step = " + stepId);
-    // const copyOfSteps= [...steps];
-
-    // let stepsCopy = [...steps]
-    // console.log(stepsCopy)  
-    // setSteps(stepsCopy);
-    // const stepsCopy = steps.map(step => {
-    //   console.log("checking")
-    //   return step;
-    //   if(step.id != stepId)
-    //   {
-    //     //No change
-    //     return step;
-    //     step.containedIngredients = steps[stepId-1].containedIngredients
-    //     console.log('Before:', step.containedIngredients);
-    //     const updatedStep = { //change step if correct id
-    //       ...step,
-    //       containedIngredients: step.containedIngredients ? [...step.containedIngredients, item] : [item]
-    //     };
-    //     console.log('After:', updatedStep.containedIngredients);
-    //     return  updatedStep;
-    //   }
-    // })
-  };
-
+  
   const listThing = () => {
     console.log("Break")
     console.log(steps)

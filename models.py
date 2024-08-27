@@ -1,6 +1,10 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Table
+from sqlalchemy.orm import relationship,DeclarativeBase
 from database import Base
+
+class Base (DeclarativeBase):
+    pass
+
 
 class Cuisine(Base):
     __tablename__ = "cuisines"
@@ -32,6 +36,13 @@ class Recipe(Base):
     ingredients = relationship("Ingredient", back_populates="recipe")
     steps = relationship("Step", back_populates="recipe")
 
+StepsAndIngredients = Table(
+    "StepsAndIngredients",
+    Base.metadata,
+    Column("step_id", Integer, ForeignKey('steps.id')),
+    Column("ing_id", Integer, ForeignKey('ingredients.id'))
+)
+
 class Ingredient(Base):
     __tablename__ = "ingredients"
     
@@ -45,7 +56,7 @@ class Ingredient(Base):
 
     recipe = relationship("Recipe", back_populates="ingredients")
     category = relationship("Category", back_populates="ingredient")
-    step = relationship("Step", back_populates="ingredients")
+    steps = relationship("Step", secondary=StepsAndIngredients, back_populates="ingredients")
 
 class Step(Base):
     __tablename__ = "steps"
@@ -55,7 +66,7 @@ class Step(Base):
     recipe_id = Column(Integer, ForeignKey("recipes.id"))
 
     recipe = relationship("Recipe", back_populates="steps")
-    ingredients = relationship("Ingredient", back_populates="step")
+    ingredients = relationship("Ingredient", secondary=StepsAndIngredients, back_populates="steps")
 
 
 

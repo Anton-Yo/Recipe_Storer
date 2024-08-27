@@ -17,11 +17,11 @@ const DisplayInfo = () => {
 
   useEffect(() => {
     fetchRecipes(SetRecipeID);
-    fetchCategories();
+    fetchCategories(SetRecipeID);
   }, []);
 
-  const fetchCategories = async() => {
-    const response = await api.get('/categories_from_data')
+  const fetchCategories = async(recipe_id) => {
+    const response = await api.get(`/recipe/${recipe_id}/categories`)
     console.log(response.data);
     if(response.data == null)
     {
