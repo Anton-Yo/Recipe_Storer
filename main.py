@@ -39,9 +39,10 @@ def helpme():
 # ---------------------------
 #    Testing StepAndIngs
 # --------------------------
-@app.get("/get", response_model=List[schemas.StepAndIngredient])
-def getThat(db: Session = Depends(get_db)):
-    db_steps = db.queryt(models.Step).filter_by(id=1).first()
+@app.get("/get")
+def getThat(id: int, db: Session = Depends(get_db)):
+    db_steps = crud.get_stuff(db=db, recipe_id = id)
+    return db_steps
 
 # -------------------
 #    CREATE STUFF
@@ -59,20 +60,12 @@ async def submit(data: schemas.SubmitRecipe, db: Session = Depends(get_db)):
 
      # 1. Recipe info -> Create recipe
     recipe_id = create_recipe(recipe_data = data.recipe, db=db).id
-    print("break")
-    print(recipe_id)
     
     # # 2. Step info -> Create steps
-    
+    ing_list = []
     for step in data.steps:
-        stepData = schemas.StepCreate(
-            desc = step.desc,
-            recipe_id = recipe_id
-        )
-        step_id = create_step(step=stepData, db=db).id
-        print("break2")
-        print(step_id)
-     
+        
+        #Loop thru and make all the ingredients
         for ing in step.containedIngredients:
             ingData = schemas.SubmitIng(
                 name = ing.name,
@@ -80,13 +73,26 @@ async def submit(data: schemas.SubmitRecipe, db: Session = Depends(get_db)):
                 additional_notes = ing.additional_notes,
                 category_id = get_category_id_by_name(category_name = ing.category, db=db),
                 recipe_id = recipe_id,
-                step_id = step_id
             )
-            print(ingData)
+            ing_list.append(create_ingredient(ingData, db=db))
 
-            create_ingredient(ingData, db=db)
+        #create the steps
+        stepData = schemas.StepCreate(
+            desc = step.desc,
+            recipe_id = recipe_id
+        )
+        new_step = create_step(step=stepData, db=db)
 
-    
+        #assign the ingredients under the step
+        for containedIng in step.containedIngredients:
+
+            for ing in ing_list:
+                if containedIng.name == ing.name and containedIng.quantity == ing.quantity:
+                    new_step.ingredients.append(ing)
+
+    db.commit()
+    db.refresh(new_step)   
+
     #create_recipe(recipe_data = data, db = db)
     return "New Recipe submitted successfully"
 
@@ -173,7 +179,7 @@ def get_ingredients(skip: int = 0, limit: int = 100, db: Session = Depends(get_d
 
 #Duplicate of previous func basically
 @app.get("/fetch_ingredients", response_model=List[schemas.Ingredient])
-async def fetch_ingredients(db: Session = Depends(get_db)):
+def fetch_ingredients(db: Session = Depends(get_db)):
     db_ings = []
     db_ings = crud.get_ingredients(db = db)
     return db_ings
@@ -271,9 +277,9 @@ def get_steps(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return db_steps
 
 
-# -------------
+# -----------------
 #    Categories
-# -------------
+# -----------------
 
 @app.post("/create_category", response_model= schemas.Category)
 def create_category(category: schemas.CategoryCreate, db: Session = Depends(get_db)):
@@ -312,7 +318,7 @@ def get_categories_from_recipe_id(recipe_id: int, db: Session = Depends(get_db))
     #ings = get_ingredients(db = db)
     ings = fetch_ingredients_by_recipe_id(recipe_id = recipe_id, db=db)
 
-    print("Got the ingredeints")
+    print("Got the ingredients")
     #Get the ids of the ingredients that need to be checked
     id_list = []
     for ing in ings:
@@ -326,7 +332,7 @@ def get_categories_from_recipe_id(recipe_id: int, db: Session = Depends(get_db))
 # ---------------------------------
 
 @app.post("/test_data", response_model=str)
-async def create_test_data(db: Session = Depends(get_db)):
+def create_test_data(db: Session = Depends(get_db)):
 
     #Opens the file
     f = open('testData.json')
@@ -335,6 +341,7 @@ async def create_test_data(db: Session = Depends(get_db)):
     data = json.load(f)
     #print(data)
 
+    ings = [] #pass this thru to steps
     #iterating through the json.
 
     #Make the cuisines
@@ -349,7 +356,7 @@ async def create_test_data(db: Session = Depends(get_db)):
     # # #make the ingredients
     for i in data["ingredients"]:
         #print(data["ingredients"])
-        create_ingredient_from_dict(i, db = db)
+        ings.append(create_ingredient_from_dict(i, db = db))
 
     # #make the categories
     for i in data["categories"]:
@@ -386,6 +393,40 @@ def create_ingredient_from_dict(ing_data: dict, db: Session = Depends(get_db)):
 
 def create_step_from_dict(step: dict, db: Session = Depends(get_db)):
     db_step = crud.create_step(db, step_desc = step["desc"], attached_recipe = step["recipe_id"])
+
+    #Get the ingredients of the recipe involved
+    ings_in_recipe = crud.get_ingredients_by_recipe_id(step["recipe_id"], db=db)
+
+    print("....................")
+    for i in ings_in_recipe:
+        print(i.name)
+    print("....................")
+
+    print("Before the loop")
+    print(step)
+
+    #for each ingredient in the step, assign the ingredient DB id to the step via relationship
+    for containedIng in step["contained_ingredients"]:
+        print("------------")
+        print(containedIng)
+        for ing in ings_in_recipe:
+        
+            print("Looping")
+            print(ing.name)
+            print(ing.quantity)
+            if containedIng["name"] == ing.name and containedIng["quantity"] == ing.quantity: 
+                print(f"{ing.name} from recipe id {ing.recipe_id} is being appended to step {db_step.id}")
+                db_step.ingredients.append(ing)
+                print("god help me")
+    
+    print("End")
+
+    for i in db_step.ingredients:
+        print(f'I contain {i.name}')
+
+    db.commit()
+    db.refresh(db_step)
+    #db_step.refresh(db_step)
     return db_step
 
 def create_category_from_dict(category: dict, db: Session = Depends(get_db)):
@@ -402,10 +443,9 @@ def delete_all(db: Session = Depends(get_db)):
     db.query(models.Ingredient).delete()
     db.query(models.Category).delete()
     db.query(models.Step).delete()
+    db.query(models.StepsAndIngredients).delete()
     db.commit()
     return "Database cleared successfully"
-
-
 
 # ---------------------------------
 #    Download Data as JSON

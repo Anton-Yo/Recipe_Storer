@@ -52,7 +52,6 @@ class Ingredient(Base):
     additional_notes = Column(String, index=True)
     category_id = Column(Integer, ForeignKey("categories.id"))
     recipe_id = Column(Integer, ForeignKey("recipes.id"))
-    step_id = Column(Integer, ForeignKey("steps.id"))
 
     recipe = relationship("Recipe", back_populates="ingredients")
     category = relationship("Category", back_populates="ingredient")

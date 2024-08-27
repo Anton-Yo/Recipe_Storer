@@ -44,7 +44,6 @@ def create_ing(db: Session, ing_data: schemas.SubmitIng):
         additional_notes  = ing_data.additional_notes,
         recipe_id = ing_data.recipe_id,
         category_id = ing_data.category_id,
-        step_id = ing_data.step_id
     )
     db.add(db_ingredient)
     db.commit()
@@ -59,7 +58,6 @@ def create_ing_from_dict(db: Session, ing_data: dict):
         additional_notes  = ing_data['additional_notes'],
         recipe_id = ing_data['recipe_id'],
         category_id = ing_data['category_id'],
-        step_id = ing_data['step_id']
     )
     db.add(db_ingredient)
     db.commit()
@@ -219,18 +217,30 @@ def get_single_recipe(db: Session, recipe_id: int):
 
     db_result = db.query(models.Recipe).options(
         joinedload(models.Recipe.cuisine),
-        joinedload(models.Recipe.ingredients),
-        joinedload(models.Recipe.steps)
+        joinedload(models.Recipe.steps).joinedload(models.Step.ingredients)
     ).filter(models.Recipe.id == recipe_id).first()
+
+    db_recipe_data = schemas.SubmitRecipe
 
     if db_result: #chatGPT helped on this one. Lambda x:x.id is like an auto sort func https://stackoverflow.com/questions/16310015/what-does-this-mean-key-lambda-x-x1
         db_result.ingredients.sort(key=lambda x: x.id)
-        db_result.steps.sort(key=lambda x: x.id)
+        db_result.steps.sort(key=lambda x: x.id)    
+
     return db_result
+
+def get_stuff(db: Session, recipe_id: int):
+
+    stuff = get_steps_by_recipe(db=db, target_id=recipe_id)
+
+    #result = db.query(models.Step).join(models.StepsAndIngredients).join(models.Ingredient).all()
+
+    result = db.query(models.Recipe).options(joinedload(models.Recipe.ingredients)).filter(models.Step.recipe_id == recipe_id).all()
+    return result
+
 
 def get_categories_from_ingredient_list(db: Session, ings: List[int]):
 
-    categories = db.query(models.Category).join(models.Ingredient).filter(models.Ingredient.id.in_(ings)).all()
+    categories = db.query(models.Category).join(models.Ingredient).filter(models.Ingredient.id.in_(ings)).filter()
 
     for category in categories:
         print(category.name)

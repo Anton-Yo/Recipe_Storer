@@ -128,11 +128,6 @@ const DisplayInfo = () => {
               <h6 className="w-25 pb-1 border-secondary border-top m-auto"> {recipeInfo.cuisine.name} </h6>
               <h6 className="w-25 py-1 border-bottom border-secondary m-auto"> {getCookTime()}  </h6>
             </div>
-            // <div className="d-flex w-100 justify-content-center">
-            //   <h4 className="w-25 text-end mx-1"> {getCookTime()}  </h4>
-            //   <h4>|</h4>
-            //   <h4 className="w-25 text-start mx-1"> {recipeInfo.cuisine.name} </h4>
-            // </div>
           ) : (
             <p> Loading cuisine...</p>
           )}

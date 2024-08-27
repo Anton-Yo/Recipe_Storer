@@ -1,120 +1,163 @@
 {
-    "recipes": [
-        {
-            "name": "Butter Chicken",
-            "desc": "chicken and butter baby",
-            "cook_time": 70,
-            "cuisine_name": "Indian"
-        },
+  "recipes": [
+    {
+      "name": "Butter Chicken",
+      "desc": "chicken and butter baby",
+      "cook_time": 70,
+      "cuisine_name": "Indian"
+    },
 
+    {
+      "name": "Pad thai",
+      "desc": "Good shit",
+      "cook_time": 20,
+      "cuisine_name": "Thai"
+    }
+  ],
+
+  "cuisines": [
+    {
+      "name": "Indian"
+    },
+
+    {
+      "name": "Thai"
+    },
+
+    {
+      "name": "French"
+    }
+  ],
+
+  "ingredients": [
+    {
+      "name": "Chicken",
+      "quantity": "200g",
+      "additional_notes": "Chop it up",
+      "category_id": "1",
+      "recipe_id": "1"
+    },
+    {
+      "name": "Rice",
+      "quantity": "400g",
+      "additional_notes": "Cook em put em rice",
+      "category_id": "2",
+      "recipe_id": "1"
+    },
+    {
+      "name": "Secret sauce",
+      "quantity": "1 tbps",
+      "additional_notes": "",
+      "category_id": "3",
+      "recipe_id": "1"
+    },
+    {
+      "name": "Chicken",
+      "quantity": "600g",
+      "additional_notes": "Chop the legs up",
+      "category_id": "1",
+      "recipe_id": "2"
+    },
+    {
+      "name": "Noodles",
+      "quantity": "200g",
+      "additional_notes": "Satay these bad bois for 5 minutes",
+      "category_id": "2",
+      "recipe_id": "2"
+    },
+    {
+      "name": "Veges",
+      "quantity": "100g",
+      "additional_notes": "soften these bad bois for 2 minutes",
+      "category_id": "3",
+      "recipe_id": "2"
+    }
+  ],
+
+  "categories": [
+    {
+      "name": "Meat"
+    },
+    {
+      "name": "Grain"
+    },
+    {
+      "name": "Vegetables"
+    },
+    {
+      "name": "4th category"
+    }
+  ],
+
+  "steps": [
+    {
+      "desc": "Take the chicken and cook it",
+      "recipe_id": "1",
+      "contained_ingredients": [
         {
-            "name": "Pad thai",
-            "desc": "Good shit",
-            "cook_time": 20,
-            "cuisine_name": "Thai"
+          "name": "Chicken",
+          "quantity": "200g",
+          "additional_notes": "Chop it up",
+          "category_id": "1",
+          "recipe_id": "1"
+        },
+        {
+          "name": "Rice",
+          "quantity": "400g",
+          "additional_notes": "Cook em put em rice",
+          "category_id": "2",
+          "recipe_id": "1"
         }
+      ]
+    },
 
-    ],
-
-    "cuisines": [
+    {
+      "desc": "Combine the chicken and rice et Voila",
+      "recipe_id": "1",
+      "contained_ingredients": [
         {
-            "name": "Indian"
-        },
-
-        {
-            "name": "Thai"
-        },
-
-        {
-            "name": "French"
+          "name": "Secret sauce",
+          "quantity": "1 tbps",
+          "additional_notes": "",
+          "category_id": "3",
+          "recipe_id": "1"
         }
-    ],
+      ]
+    },
 
-    "ingredients": [
+    {
+      "desc": "Cook em boil em put them in a stew",
+      "recipe_id": "2",
+      "contained_ingredients": [
         {
-            "name": "Chicken",
-            "quantity": "200g",
-            "additional_notes": "Chop it up",
-            "category_id": "1",
-            "recipe_id": "1"
-            
-        },
-        {
-            "name": "Rice",
-            "quantity": "400g",
-            "additional_notes": "Cook em put em rice",
-            "category_id": "2",
-            "recipe_id": "1"
-            
-        },
-        {
-            "name": "Secret sauce",
-            "quantity": "1 tbps",
-            "additional_notes": "",
-            "category_id": "3",
-            "recipe_id": "1"
-        },
-        {
-            "name": "Chicken",
-            "quantity": "600g",
-            "additional_notes": "Chop the legs up",
-            "category_id": "1",
-            "recipe_id": "2"
-        },
-        {
-            "name": "Noodles",
-            "quantity": "200g",
-            "additional_notes": "Satay these bad bois for 5 minutes",
-            "category_id": "2",
-            "recipe_id": "2"
-        },
-        {
-            "name": "Veges",
-            "quantity": "100g",
-            "additional_notes": "soften these bad bois for 2 minutes",
-            "category_id": "3",
-            "recipe_id": "2"
+          "name": "Chicken",
+          "quantity": "600g",
+          "additional_notes": "Chop it up",
+          "category_id": "1",
+          "recipe_id": "2"
         }
-       
-    ],
+      ]
+    },
 
-    "categories": [
+    {
+      "desc": "You got potato stew",
+      "recipe_id": "2",
+      "contained_ingredients": [
         {
-            "name": "Meat"
+          "name": "Noodles",
+          "quantity": "200g",
+          "additional_notes": "Satay these bad bois for 5 minutes",
+          "category_id": "2",
+          "recipe_id": "2"
         },
         {
-            "name": "Grain"
-        },
-        {
-            "name": "Vegetables"
-        },
-        {
-            "name": "4th category"
+         "name": "Veges",
+        "quantity": "100g",
+        "additional_notes": "soften these bad bois for 2 minutes",
+        "category_id": "3",
+        "recipe_id": "2"
         }
-    ],
-
-    "steps": [
-        {
-            "desc": "Take the chicken and cook it",
-            "recipe_id": "1"
-        },
-
-        {
-            "desc": "Combine the chicken and rice et Voila",
-            "recipe_id": "1"
- 
-        },
-
-        {
-            "desc": "Cook em boil em put them in a stew",
-            "recipe_id": "2"
-
-        },
-
-        {
-            "desc": "You got potato stew",
-            "recipe_id": "2"
-       
-        }
-    ]
+      ]
+    }
+  ]
 }

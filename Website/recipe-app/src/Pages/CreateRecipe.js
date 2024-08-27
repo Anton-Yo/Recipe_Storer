@@ -35,80 +35,73 @@ const CreateRecipe = () => {
 
   const [stepCount, setStepCount] = useState(1);
   const [ingIdCount, setIngIdCount] = useState(1);
-  
-  const [recipeData, setRecipeData] = useState([]);
-  
+
   const handleDroppedItems = (stepData, attachedIngredients) => {
-    console.log(stepData)
+    console.log(stepData);
     const stepsCopy = steps.map((step) => {
-      console.log(stepData.id + "''" + step.id)
-      if(stepData.id === step.id)
-      {
-        console.log("returning new step")
+      console.log(stepData.id + "''" + step.id);
+      if (stepData.id === step.id) {
+        console.log("returning new step");
         return {
           ...step,
-          containedIngredients: attachedIngredients
-        }
-       
+          containedIngredients: attachedIngredients,
+        };
       } else {
-        console.log("returning default step")
+        console.log("returning default step");
         return step;
       }
-    })
+    });
 
     setSteps(stepsCopy);
-  }
-  
+  };
+
   const listThing = () => {
-    console.log("Break")
-    console.log(steps)
+    console.log("Break");
+    console.log(steps);
     //console.log(stepsCopy)
-    console.log("----------")
+    console.log("----------");
     steps.forEach((step) => {
-      console.log(step)
+      console.log(step);
       //console.log(step.containedIngredients)
-    })
-  }
+    });
+  };
 
   const submitNewRecipe = async () => {
-    if(ingredientsAllSubmitted && recipeSubmitted && stepsAllSubmitted)
-    {
+    if (ingredientsAllSubmitted && recipeSubmitted && stepsAllSubmitted) {
       const data = {
         recipe: recipe,
-        steps: steps, 
-      }
-      console.log(data)
-      setRecipeData(data);
-      ResetPage()
+        steps: steps,
+      };
+      console.log(data);
+      ResetPage();
 
-      try{
+      try {
         const response = await api.post("/submit", data);
-        console.log("form shit")
-        console.log(response.data)
+        console.log("form shit");
+        console.log(response.data);
       } catch (error) {
         console.error("Error submitting form:", error.response.data);
       }
     }
-  }
+  };
 
   const ResetPage = () => {
     //Reset recipe variables
-    setRecipe([])
+    setRecipe([]);
     setRecipeSubmitted(false);
 
     //Reset ingredient variables
-    setIngredients([])
+    setIngredients([]);
     setIngredientSubmitted(false);
     setIngredientsAllSubmitted(false);
-    setIngIdCount(1)
-    
-    
+    setIngIdCount(1);
+
     //Reset step variables
-    setSteps([])
+    setSteps([]);
     setStepSubmitted(false);
     setStepsAllSubmitted(false);
     setStepCount(1);
-  }
+  };
 
   const handleInputChange = (event, id) => {
     const value =
@@ -141,12 +134,22 @@ const CreateRecipe = () => {
 
   const ingredientsComplete = () => {
     setIngredientsAllSubmitted(true);
+    setIngForm({
+      name: "",
+      quantity: "",
+      additional_notes: "",
+      category: "",
+    });
     console.log("Ingredients all submitted");
   };
 
   const stepsComplete = () => {
     setStepsAllSubmitted(true);
     console.log("Steps all submitted");
+    submitNewRecipe()
+    setStepForm({
+      desc: "",
+    });
   };
 
   const handleRecipeSubmit = (event) => {
@@ -158,7 +161,7 @@ const CreateRecipe = () => {
   const handleIngredientSubmit = async (event) => {
     event.preventDefault();
     console.log(ingForm);
-    addIngredient(ingForm)
+    addIngredient(ingForm);
     setIngredientSubmitted(true);
     setIngForm({
       name: "",
@@ -174,39 +177,39 @@ const CreateRecipe = () => {
     addStep(stepForm);
     setStepCount(stepCount + 1);
     setStepSubmitted(true);
-    
+
     setStepForm({
       desc: "",
     });
   };
 
   const addStep = (stepForm) => {
-    console.log(stepForm)
+    console.log(stepForm);
     const newStep = {
       id: stepForm.id,
       desc: stepForm.desc,
-      containedIngredients: []
-    }
-    console.log("setting new array")
+      containedIngredients: [],
+    };
+    console.log("setting new array");
     setSteps([...steps, newStep]);
     // for(let i = 0; i < steps.length; i++) {
     //   console.log(steps[i]);
     // }
-  }
+  };
 
   const addIngredient = (ingForm) => {
-    console.log(ingForm)
+    console.log(ingForm);
     const newIng = {
       id: ingIdCount,
       name: ingForm.name,
       quantity: ingForm.quantity,
       additional_notes: ingForm.additional_notes,
       category: ingForm.category,
-    }
-    setIngIdCount(ingIdCount + 1)
-    console.log(newIng)
-    setIngredients([...ingredients, newIng])
-  }
+    };
+    setIngIdCount(ingIdCount + 1);
+    console.log(newIng);
+    setIngredients([...ingredients, newIng]);
+  };
 
   const GetRecipeBlock = () => {
     //console.log(recipeSubmitted + " I dont understand how this is false")
@@ -225,15 +228,14 @@ const CreateRecipe = () => {
       //console.log(ingredients);
 
       if (ingredients.length != null) {
-            return ingredients.map((ing) => (
-              <IngredientBlock key={ing.id} ing={ing}>
-                {" "}
-              </IngredientBlock>
-            ))
-        
+        return ingredients.map((ing) => (
+          <IngredientBlock key={ing.id} ing={ing}>
+            {" "}
+          </IngredientBlock>
+        ));
       } else {
         return (
-          <IngredientBlock key={ingredients.name} ing={ingredients} >
+          <IngredientBlock key={ingredients.name} ing={ingredients}>
             {" "}
           </IngredientBlock>
         );
@@ -272,6 +274,7 @@ const CreateRecipe = () => {
           <form onSubmit={handleIngredientSubmit} id="ing-form">
             <div className="mb-3 mt-3">
               <h4 className="text-center"> Add Ingredients </h4>
+              <p className="text-center"> Add all your ingredients here. When ready, go to next section to enter steps</p>
               <div>
                 <label htmlFor="ing-name" className="form-label">
                   Ingredient Name
@@ -287,7 +290,7 @@ const CreateRecipe = () => {
                 ></input>
               </div>
 
-              <div className="mb-3">
+              <div className="mb-3 mt-3">
                 <label htmlFor="amount" className="form-label">
                   Quantity
                 </label>
@@ -298,6 +301,7 @@ const CreateRecipe = () => {
                   id="quantity"
                   name="quantity"
                   onChange={(event) => handleInputChange(event, 1)}
+                  placeholder="e.g 500g, 1kg"
                   value={ingForm.quantity}
                 ></input>
               </div>
@@ -333,13 +337,17 @@ const CreateRecipe = () => {
                 ></input>
               </div>
 
-              <button type="submit" className="btn btn-primary">
-                Add
-              </button>
+              <div className="container justify-content-around d-flex">
+                <button type="submit" className="btn btn-dark w-30">
+                  Add
+                </button>
+
+                <button onClick={ingredientsComplete} className="btn btn-dark w-30">
+                  Next Section
+                </button>
+              </div>
             </div>
           </form>
-
-          <button onClick={ingredientsComplete}> Submit all </button>
         </div>
       );
     }
@@ -352,6 +360,11 @@ const CreateRecipe = () => {
               <h4 className="text-center"> Add Steps </h4>
 
               <h5> {`Step ${stepCount}`}</h5>
+              <p>
+                {" "}
+                The steps automatically increment by by 1 on submission. E.g
+                Step 1 -&gt; Step 2{" "}
+              </p>
 
               <div className="mb-3">
                 <label htmlFor="amount" className="form-label">
@@ -363,19 +376,23 @@ const CreateRecipe = () => {
                   className="form-control"
                   id="desc"
                   name="desc"
-                  placeholder="Write step here"
+                  placeholder="Write the instructions here"
                   onChange={(event) => handleInputChange(event, 2)}
                   value={stepForm.desc}
                 />
               </div>
 
-              <button type="submit" className="btn btn-primary">
-                Add
-              </button>
+              <div className="container justify-content-around d-flex">
+                <button type="submit" className="btn btn-dark w-30">
+                  Add
+                </button>
+
+                <button onClick={stepsComplete} className="btn btn-dark w-30">
+                  Submit Recipe
+                </button>
+              </div>
             </div>
           </form>
-
-          <button onClick={stepsComplete}> Submit all </button>
         </div>
       );
     }
@@ -416,7 +433,7 @@ const CreateRecipe = () => {
 
           <div className="mb-3">
             <label htmlFor="amount" className="form-label">
-              Cook Time
+              Cook Time (Minutes)
             </label>
 
             <input
@@ -444,9 +461,11 @@ const CreateRecipe = () => {
             ></input>
           </div>
 
-          <button type="submit" className="btn btn-primary">
-            Submit
-          </button>
+          <div className="container justify-content-around d-flex pb-3">
+            <button type="submit" className="btn btn-dark w-30">
+              Next Section
+            </button>
+          </div>
         </form>
       );
     }
@@ -454,37 +473,24 @@ const CreateRecipe = () => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-    <div>
-      <div className="container d-flex">
-        <div className="form-container bg-success">{handlePageState()}</div>
+      <div>
+        <div className="container d-flex mt-4">
+          <div className="form-container bg-success">{handlePageState()}</div>
 
-        <div className="visual-box bg-secondary">
-          {GetRecipeBlock()}
-          <div className="d-flex flex-wrap">{GetIngredientBlocks()}</div>
+          <div className="visual-box bg-secondary">
+            {GetRecipeBlock()}
+            <div className="d-flex flex-wrap">{GetIngredientBlocks()}</div>
 
-          <div className="d-flex flex-wrap">{GetStepBlocks()}</div>
+            <div className="d-flex flex-wrap">{GetStepBlocks()}</div>
+          </div>
         </div>
+
+      
+
+        <button type="submit" className="btn btn-primary" onClick={listThing}>
+          Print data to the console
+        </button>
       </div>
-
-    <div>
-      <button onClick={submitNewRecipe}> Submit the data! </button>
-    </div>
-                          
-      <table className="table table-striped table-bordered table-hover mt-3">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Cuisine</th>
-            <th className="text-center">Delete?</th>
-          </tr>
-        </thead>
-      </table>
-    </div>
-
-    <button type="submit" className="btn btn-primary" onClick={listThing}>
-                Print everything to the console
-    </button>
     </DndProvider>
   );
 };

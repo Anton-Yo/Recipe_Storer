@@ -85,7 +85,6 @@ class SubmitIng(BaseModel):
     additional_notes: str
     category_id: int
     recipe_id: int
-    step_id: int
 
 class RecipeInfo(BaseModel):
     name: str
