@@ -49,11 +49,10 @@ const CreateRecipe = () => {
     <div className="container">
       <h1 className="text-center m-4">Select A Recipe</h1>
 
-      <div id="recipe-select-container" className="bg-dark d-flex flex-wrap">
+      <div id="recipe-select-container" className="d-flex flex-wrap bg-papaya border border-dark border-5">
         {recipes.map((recipe) => (
-          <button className="w-25 p-2" key={recipe.id} onClick={() => GoToPage(recipe.id)}>
-            
-            <div className="recipe-button-info mt-1">
+          <button className="w-20 p-2 mr-1 mt-2 mb-2 shadow bg-white" key={recipe.id} onClick={() => GoToPage(recipe.id)}>
+            <div className="recipe-button-info">
               <h4> {recipe.name} </h4>
               <p> {recipe.desc} </p>
 
@@ -74,6 +73,8 @@ const CreateRecipe = () => {
           </button>
         ))}
       </div>
+
+      <h4 className="text-center mt-5"> Deleting table </h4>
       <table className="table table-striped table-bordered table-hover mt-3">
         <thead>
           <tr>
@@ -91,10 +92,12 @@ const CreateRecipe = () => {
               <td>{recipe.desc}</td>
               <td>{recipe.cuisine.name}</td>
               <td>
-                <button onClick={() => handleDelete(recipe.id)}>
-                  {" "}
-                  Delete{" "}
-                </button>
+                <div className="w-100 d-flex justify-content-center">
+                  <button onClick={() => handleDelete(recipe.id)} className="btn btn-primary">
+                    {" "}
+                    Delete{" "}
+                  </button>
+                </div>
               </td>
             </tr>
           ))}

@@ -52,6 +52,13 @@
       "recipe_id": "1"
     },
     {
+      "name": "Another ingredient??",
+      "quantity": "1 tbps",
+      "additional_notes": "",
+      "category_id": "3",
+      "recipe_id": "1"
+    },
+    {
       "name": "Chicken",
       "quantity": "600g",
       "additional_notes": "Chop the legs up",

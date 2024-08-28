@@ -8,19 +8,10 @@
 .recipe-box {
   margin: 10px;
   padding: 20px;
-  width: calc(33.33% - 20px);
+  width: calc(33.33% - 60px);
   background-color: aqua;
   border: 1px solid black;
   box-shadow: 0 0 10px black;
-}
-
-.dashed {
-  list-style-type: none;
-}
-
-.ing-list {
-  background-color: blue;
-  display: flex;
 }
 
 li {
@@ -37,12 +28,11 @@ li {
   width: 40%;
   margin-left: 5%;
   position: relative;
-  background-color: red;
 }
 
 
 .step-container {
-  width: 60%
+  min-width: 60%;
 }
 
 #step-list {
@@ -53,15 +43,11 @@ li {
 }
 
 .step-ingredients-container {
-  background-color: blueviolet;
+  min-width: 40%;
 }
 
 .display-wrapper {
   width: 70%;
-}
-
-.circle-list {
-  list-style-type: circle;
 }
 
 .m-auto {
@@ -85,5 +71,83 @@ li {
 .w-30 {
   width: 30%;
 }
+
+.bg-lightblue {
+  background-color: rgb(216, 232, 250);
+}
+
+.bg-lightorange {
+  background-color: rgba(248, 220, 169, 0.663);
+}
+
+.bg-papaya {
+  background-color: papayawhip;
+}
+
+.bg-turquoise {
+  background-color: paleturquoise
+}
+
+.bg-pink {
+  background-color: rgba(253, 119, 121, 0.701);
+}
+
+.bg-recipe {
+  background-color: rgb(247, 188, 244);
+}
+
+.bg-blue {
+  background-color: rgb(134, 134, 255);
+}
+
+
+.close-button {
+  margin-top: -0.5%;
+  width: 45px;
+  height: 35px;
+  border: none;
+  background: none;
+}
+
+.contained-ing {
+  margin: auto;
+  left: 0;
+}
+
+.w-125{
+  width: 125%;
+}
+
+.h-125 {
+  height: 125%;
+}
+
+.wrap {
+  text-wrap: wrap;
+}
+
+.w-20 {
+  width: 20%;
+
+}
+
+.mr-1 {
+  margin-left: 2.5%;
+  margin-right: 2.5%;
+}
+
+.circle-list{
+  list-style: circle;
+}
+
+.item {
+  display: list-item;
+  margin-left: -0.6em;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
 
 

@@ -17,16 +17,13 @@ const getCookTime = () => {
 
   return (
     <div className="w-50 m-auto">
-      <div className="mt-1 bg-warning text-center">
-        <h6 className="pt-1"> {recipe.name} </h6>
+      <div className="mt-2 bg-recipe text-center border border-dark border-2">
+        <h5 className="pt-1"> {recipe.name} </h5>
         <div className="d-flex justify-content-center">
-        <p className="mx-4"> {recipe.desc} </p>
-        <p className="mx-4"> {getCookTime()} </p>
-        <p className="mx-4"> {recipe.cuisine_name}</p>
+        <p className="mx-2"> {recipe.desc} </p>
+        <p className="mx-2"> {getCookTime()} </p>
+        <p className="mx-2"> {recipe.cuisine}</p>
         </div>
-       
-       
-        {/* {recipeInfo.desc} */}
       </div>
     </div>
   );

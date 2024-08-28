@@ -361,6 +361,7 @@ const CreateRecipe = () => {
                   className="form-control"
                   id="additional_notes"
                   name="additional_notes"
+                  placeholder="Leave empty if necessary"
                   onChange={(event) => handleInputChange(event, 1)}
                   value={ingForm.additional_notes}
                 ></input>
@@ -523,19 +524,19 @@ const CreateRecipe = () => {
     <DndProvider backend={HTML5Backend}>
       <div>
         <div className="container d-flex mt-4">
-          <div className="form-container bg-success">{handlePageState()}</div>
+          <div className="form-container p-2 bg-lightblue border border-secondary rounded">{handlePageState()}</div>
 
-          <div className="visual-box bg-secondary">
+          <div className="visual-box bg-papaya border border-secondary rounded">
             {GetRecipeBlock()}
-            <div className="d-flex flex-wrap">{GetIngredientBlocks()}</div>
+            <div className="d-flex mt-2 flex-wrap">{GetIngredientBlocks()}</div>
 
-            <div className="d-flex flex-wrap">{GetStepBlocks()}</div>
+            <div className="d-flex mt-2 flex-wrap">{GetStepBlocks()}</div>
           </div>
         </div>
 
-        <button type="submit" className="btn btn-primary" onClick={listThing}>
+        {/* <button type="submit" className="btn btn-primary" onClick={listThing}>
           Print data to the console
-        </button>
+        </button> */}
       </div>
     </DndProvider>
   );

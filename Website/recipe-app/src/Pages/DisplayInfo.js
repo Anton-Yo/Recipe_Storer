@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from "react"
 import api from "../api"
 import '../App.css'
-import image from './Images/cows.png'
 import image2 from './Images/First Pic.PNG'
 import {useLocation} from 'react-router-dom';
 
@@ -71,7 +70,7 @@ const DisplayInfo = () => {
       }
 
       return step.ingredients.map((ing) => (
-        <li key={ing.id}>
+        <li key={ing.id} className="item">
           {`${ing.quantity} ${ing.name} - ${ing.additional_notes}`}
         </li>
       ))
@@ -98,8 +97,8 @@ const DisplayInfo = () => {
     if(resultArr.length > 0)
       {
         return resultArr.map((ing) => (
-          <li key={ing.id} className="mx-2">
-            {`${ing.quantity} ${ing.name} - ${ing.additional_notes}`}
+          <li key={ing.id} className="item">
+            {getDescriptor(ing)}
           </li>
         ))
       
@@ -110,31 +109,42 @@ const DisplayInfo = () => {
     }
   }
 
+  const getDescriptor = (ing) => {
+    if(ing.additional_notes == "" || ing.additional_notes == null) {
+      return `${ing.name} ${ing.quantity}`
+    }
+    else
+    {
+      return `${ing.name} ${ing.quantity} - ${ing.additional_notes}`
+    }
+  }
+
   return (
     <div className="container display-wrapper">
       <div id="title" className="text-center mt-4">
-        <h1>{recipeInfo.name || "Loading..."} </h1>
+        <h1>{recipeInfo.name || ""} </h1>
           {isDataLoaded() ? (
-
             <div className="w-100 justify-content-center align-items-center text-center">
-              <h6 className="w-25 pb-1 border-secondary border-top m-auto"> {recipeInfo.cuisine.name} </h6>
-              <h6 className="w-25 py-1 border-bottom border-secondary m-auto"> {getCookTime()}  </h6>
+              <h6 className="w-25 pb-1 pt-1 border-secondary border-dark border-top m-auto"> {recipeInfo.cuisine.name} </h6>
+              <h6 className="w-25 py-1 border-bottom border-secondary border-dark m-auto"> {getCookTime()}  </h6>
             </div>
           ) : (
             <p> Loading cuisine...</p>
           )}
       </div>
 
-      <div className="container d-flex w-100 mt-3 bg-info px-0">
-        <div className="w-50 bg-warning">
-          <h2 className="text-center">Ingredients</h2>
+      <div className="container d-flex w-100 mt-3 px-0 justify-content-around">
+        <div className="w-50 bg-lightblue border border-2 border-dark shadow-sm">
+          <h2 className="text-center mt-1">Ingredients</h2>
           <div className="mx-2">
             {isDataLoaded() ? (
               categories.map((cat) => (
-                <ul key={cat.id} className="circle-list">
-                  <h6>{`${cat.name}`} </h6>
-                  {GetIngsUnderCategories(cat.id)}
-                </ul>
+                <div>
+                  <h6 className="">{`${cat.name}`} </h6>
+                  <ul key={cat.id} className="circle-list">
+                    {GetIngsUnderCategories(cat.id)}
+                  </ul>
+                </div>
               ))
             ) : (
               <li> Loading recipes...</li>
@@ -148,20 +158,28 @@ const DisplayInfo = () => {
       </div>
        
       <div id="step-list" className="mt-2">
-        <h2 className="text-center mt-1">Steps</h2>
+        <h2 className="text-center mt-3">Steps</h2>
         {isDataLoaded() ? (
           recipeInfo.steps.map((step) => (
-            <li key={step.id} className="mx-3 mt-2 bg-primary">
-              <div className="container d-flex">
-                <div className="step-container">
-                  <h4> {`- Step ${stepCount++}`} </h4>
-                  <div className="block mx-4">{`${step.desc}`}</div>
+            <div key={step.id} className="mx-3 mt-2 border-secondary border-2">
+              <div className="container d-flex w-100 justify-content-between">
+                <h4 className="py-1 w-25 border-bottom border-dark border-1"> {`Step ${stepCount++}`} </h4>
+                <div className="step-ingredients-container d-flex justify-contents-start">
+                  <h6 className="border-bottom border-dark border-1 mt-3"> Associated Ingredients: </h6>
                 </div>
+                {/* <h5 className="mt-2 step-ingredients-container"> Associated Ingredients </h5> */}
+              </div>
+              
+
+              <div className="container d-flex w-100 justify-content-between">
+                <div className="step-container">{`${step.desc}`}</div>
                 <div className="step-ingredients-container">
-                  <ul className="bg.secondary">{returnIngs(step.id)}</ul>
+                  <ul className="circle-list"> 
+                    {returnIngs(step.id)}
+                  </ul>
                 </div>
               </div>
-            </li>
+            </div>
           ))
         ) : (
           <p> Loading recipes...</p>
