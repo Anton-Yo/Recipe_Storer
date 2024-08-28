@@ -84,7 +84,7 @@ async def submit(data: schemas.SubmitRecipe, db: Session = Depends(get_db)):
         )
         new_step = create_step(step=stepData, db=db)
 
-        #assign the ingredients under the step
+         # 3. Ingredient info -> create ingredients, referencing newly created steps/recipe
         for containedIng in step.containedIngredients:
 
             for ing in ing_list:

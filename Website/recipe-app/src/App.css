@@ -149,5 +149,12 @@ li {
   text-decoration: underline;
 }
 
+.home-list {
+  list-style: square;
+}
+.home-list > li {
+  display: list-item;
+}
+
 
 

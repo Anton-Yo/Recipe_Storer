@@ -71,7 +71,7 @@ const DisplayInfo = () => {
 
       return step.ingredients.map((ing) => (
         <li key={ing.id} className="item">
-          {`${ing.quantity} ${ing.name} - ${ing.additional_notes}`}
+          {getDescriptor(ing)}
         </li>
       ))
     }
@@ -111,11 +111,11 @@ const DisplayInfo = () => {
 
   const getDescriptor = (ing) => {
     if(ing.additional_notes == "" || ing.additional_notes == null) {
-      return `${ing.name} ${ing.quantity}`
+      return `${ing.quantity} ${ing.name}`
     }
     else
     {
-      return `${ing.name} ${ing.quantity} - ${ing.additional_notes}`
+      return `${ing.quantity} ${ing.name} - ${ing.additional_notes}`
     }
   }
 
