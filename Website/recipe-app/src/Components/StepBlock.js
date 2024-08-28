@@ -56,8 +56,6 @@ const StepBlock = ({step, sendData}) => {
                 <button onClick={() => deleteItem(ing.id)}> Delete </button>
               </div>
             ))}
-             <button onClick={confirm}> print out data to console </button>
-        
         </div>
       </div>
     </div>

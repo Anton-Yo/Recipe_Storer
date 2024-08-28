@@ -58,33 +58,27 @@ const DisplayInfo = () => {
 
   const returnIngs = (step_id) => {
    
-    //Grab all the ingredients associated with the step id
-    var returnArr = []
-
-    for(var i = 0; i < recipeInfo.ingredients.length; i++)
+    //Return ingredient <li> objects, associated with the step
+    if(recipeInfo.steps.length > 0)
     {
-      if(recipeInfo.ingredients[i].step_id == step_id)
+      let step;
+      for(let i = 0; i < recipeInfo.steps.length; i++)
       {
-        returnArr.push(recipeInfo.ingredients[i])
-      }
-    }
-
-    for(var i = 0; i < returnArr.length; i++)
-      {
-       console.log(returnArr[i])
+        if(recipeInfo.steps[i].id == step_id)
+        {
+          step = recipeInfo.steps[i]
+        }
       }
 
-    if(returnArr.length > 0)
-    {
-      return returnArr.map((ing) => (
+      return step.ingredients.map((ing) => (
         <li key={ing.id}>
-          {`${ing.quantity} ${ing.name} // ${ing.additional_notes}`}
+          {`${ing.quantity} ${ing.name} - ${ing.additional_notes}`}
         </li>
       ))
     }
     else
     {
-      return <p>No ingredients for this step</p>
+      return <li>No ingredients for this step</li>
     }
   }
 
@@ -105,7 +99,7 @@ const DisplayInfo = () => {
       {
         return resultArr.map((ing) => (
           <li key={ing.id} className="mx-2">
-            {`${ing.quantity} ${ing.name} // ${ing.additional_notes}`}
+            {`${ing.quantity} ${ing.name} - ${ing.additional_notes}`}
           </li>
         ))
       
@@ -114,14 +108,12 @@ const DisplayInfo = () => {
     {
       return <p> No ingredients for this category </p>
     }
-
   }
 
   return (
     <div className="container display-wrapper">
       <div id="title" className="text-center mt-4">
         <h1>{recipeInfo.name || "Loading..."} </h1>
-
           {isDataLoaded() ? (
 
             <div className="w-100 justify-content-center align-items-center text-center">
@@ -131,10 +123,7 @@ const DisplayInfo = () => {
           ) : (
             <p> Loading cuisine...</p>
           )}
-        
       </div>
-
-      
 
       <div className="container d-flex w-100 mt-3 bg-info px-0">
         <div className="w-50 bg-warning">
@@ -158,8 +147,6 @@ const DisplayInfo = () => {
         </div>
       </div>
        
-   
-
       <div id="step-list" className="mt-2">
         <h2 className="text-center mt-1">Steps</h2>
         {isDataLoaded() ? (

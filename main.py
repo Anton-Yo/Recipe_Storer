@@ -63,18 +63,19 @@ async def submit(data: schemas.SubmitRecipe, db: Session = Depends(get_db)):
     
     # # 2. Step info -> Create steps
     ing_list = []
+    print(data.ingredients)
+    #Loop thru and make all the ingredients
+    for ing in data.ingredients:
+        ingData = schemas.SubmitIng(
+            name = ing.name,
+            quantity = ing.quantity,
+            additional_notes = ing.additional_notes,
+            category_id = get_category_id_by_name(category_name = ing.category, db=db),
+            recipe_id = recipe_id,
+        )
+        ing_list.append(create_ingredient(ingData, db=db))
+
     for step in data.steps:
-        
-        #Loop thru and make all the ingredients
-        for ing in step.containedIngredients:
-            ingData = schemas.SubmitIng(
-                name = ing.name,
-                quantity = ing.quantity,
-                additional_notes = ing.additional_notes,
-                category_id = get_category_id_by_name(category_name = ing.category, db=db),
-                recipe_id = recipe_id,
-            )
-            ing_list.append(create_ingredient(ingData, db=db))
 
         #create the steps
         stepData = schemas.StepCreate(
@@ -87,7 +88,7 @@ async def submit(data: schemas.SubmitRecipe, db: Session = Depends(get_db)):
         for containedIng in step.containedIngredients:
 
             for ing in ing_list:
-                if containedIng.name == ing.name and containedIng.quantity == ing.quantity:
+                if containedIng.name == ing.name and containedIng.quantity == ing.quantity and containedIng.additional_notes == ing.additional_notes:
                     new_step.ingredients.append(ing)
 
     db.commit()
@@ -150,7 +151,7 @@ def get_recipes_info(db: Session = Depends(get_db)):
     print("Got that sweet sweet recipe info")
     return db_recipes
 
-@app.get("/recipes/{recipe_id}", response_model=schemas.Recipe)
+@app.get("/recipes/{recipe_id}", response_model=schemas.RecipeToSend)
 def get_single_recipe_info(recipe_id: int, db: Session = Depends(get_db)):
     db_recipe = crud.get_single_recipe(db, recipe_id = recipe_id)
     print("Got that sweet sweet recipe info")

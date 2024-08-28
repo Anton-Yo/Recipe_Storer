@@ -111,13 +111,29 @@ class RecipeFromFrontEnd(BaseModel):
 
 class SubmitRecipe(BaseModel):
     recipe: RecipeFromFrontEnd
+    ingredients: List[IngredientFromFrontEnd]
     steps: List[StepFromFrontEnd]
 
 class RecipeID(BaseModel):
     id: int
 
-class StepAndIngredient:
+class StepAndIngredient(BaseModel):
     step_id: int
     ing_id: int
+
+class StepV2(BaseModel):
+    id: int
+    desc: str
+    recipe_id: int
+    ingredients: List[Ingredient]
+
+class RecipeToSend(BaseModel):
+    name: str
+    desc: str
+    cook_time: int
+    cuisine: CuisineBase
+    ingredients: List[Ingredient]
+    steps: List[StepV2]
+
 
 

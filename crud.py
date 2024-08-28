@@ -217,10 +217,10 @@ def get_single_recipe(db: Session, recipe_id: int):
 
     db_result = db.query(models.Recipe).options(
         joinedload(models.Recipe.cuisine),
-        joinedload(models.Recipe.steps).joinedload(models.Step.ingredients)
+        joinedload(models.Recipe.ingredients),
+        joinedload(models.Recipe.steps).options(joinedload(models.Step.ingredients))
     ).filter(models.Recipe.id == recipe_id).first()
 
-    db_recipe_data = schemas.SubmitRecipe
 
     if db_result: #chatGPT helped on this one. Lambda x:x.id is like an auto sort func https://stackoverflow.com/questions/16310015/what-does-this-mean-key-lambda-x-x1
         db_result.ingredients.sort(key=lambda x: x.id)
@@ -234,7 +234,10 @@ def get_stuff(db: Session, recipe_id: int):
 
     #result = db.query(models.Step).join(models.StepsAndIngredients).join(models.Ingredient).all()
 
-    result = db.query(models.Recipe).options(joinedload(models.Recipe.ingredients)).filter(models.Step.recipe_id == recipe_id).all()
+    #result = db.query(models.Step).join(models.StepsAndIngredients).join(models.Ingredient).first()
+    #result = db.query(models.Recipe).join(models.Recipe.ingredients).join(models.Recipe.steps).first()
+    result = db.query(models.Recipe).options(joinedload(models.Recipe.cuisine),joinedload(models.Recipe.ingredients),joinedload(models.Recipe.steps).options(joinedload(models.Step.ingredients))).filter(models.Recipe.id == 1).first()
+    #result = db.query(models.Step).options(joinedload(models.Step.ingredients)).filter(models.Step.recipe_id == recipe_id).all()
     return result
 
 

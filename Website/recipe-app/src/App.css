@@ -74,6 +74,7 @@ li {
 
 .form-container {
   width: 40%;
+  min-height: 400px;
   margin-right: 2%;
 }
 

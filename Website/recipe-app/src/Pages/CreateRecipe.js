@@ -70,6 +70,7 @@ const CreateRecipe = () => {
     if (ingredientsAllSubmitted && recipeSubmitted && stepsAllSubmitted) {
       const data = {
         recipe: recipe,
+        ingredients: ingredients,
         steps: steps,
       };
       console.log(data);
@@ -89,18 +90,33 @@ const CreateRecipe = () => {
     //Reset recipe variables
     setRecipe([]);
     setRecipeSubmitted(false);
+    setRecipeForm({
+      name: "",
+      desc: "",
+      cook_time: "",
+      cuisine: "",
+    });
 
     //Reset ingredient variables
     setIngredients([]);
     setIngredientSubmitted(false);
     setIngredientsAllSubmitted(false);
     setIngIdCount(1);
+    setIngForm({
+      name: "",
+      quantity: "",
+      additional_notes: "",
+      category: "",
+    });
 
     //Reset step variables
     setSteps([]);
     setStepSubmitted(false);
     setStepsAllSubmitted(false);
     setStepCount(1);
+    setStepForm({
+      desc: "",
+    });
   };
 
   const handleInputChange = (event, id) => {
@@ -134,22 +150,13 @@ const CreateRecipe = () => {
 
   const ingredientsComplete = () => {
     setIngredientsAllSubmitted(true);
-    setIngForm({
-      name: "",
-      quantity: "",
-      additional_notes: "",
-      category: "",
-    });
+
     console.log("Ingredients all submitted");
   };
 
   const stepsComplete = () => {
     setStepsAllSubmitted(true);
     console.log("Steps all submitted");
-    submitNewRecipe()
-    setStepForm({
-      desc: "",
-    });
   };
 
   const handleRecipeSubmit = (event) => {
@@ -218,7 +225,11 @@ const CreateRecipe = () => {
       return <RecipeBlock recipe={recipe}> </RecipeBlock>;
     } else {
       //console.log(`${recipeSubmitted} + ${recipe}`)
-      return `<div> empty <div/>`;
+      return (
+        <div className="container d-flex justify-content-center mt-3">
+          *Recipe will appear here*
+        </div>
+      );
     }
   };
 
@@ -242,7 +253,12 @@ const CreateRecipe = () => {
       }
     } else {
       //console.log(`${recipeSubmitted} + ${recipe}`)
-      return `No ingredients added yet`;
+      return (
+        <div className="mt-5 container d-flex justify-content-center">
+          {" "}
+          *Ingredients will appear here*
+        </div>
+      );
     }
   };
 
@@ -261,20 +277,49 @@ const CreateRecipe = () => {
           </StepBlock>
         );
       }
+    } else {
+      return (
+        <div className="mt-5 container d-flex justify-content-center">
+          *Steps will appear here*
+        </div>
+      );
     }
   };
 
   const handlePageState = () => {
     if (recipeSubmitted && ingredientsAllSubmitted && stepsAllSubmitted) {
+      return (
+        <div>
+          <h4 className="mt-3"> Test zone </h4>
+
+          <p> Drag the ingredients on the steps to pair them up! </p>
+
+          <p> When done, submit the recipe </p>
+
+          <div className="container justify-content-around d-flex pb-3 mt-4">
+            <button
+              type="submit"
+              onClick={submitNewRecipe}
+              className="btn btn-dark w-30"
+            >
+              Send to Server
+            </button>
+          </div>
+        </div>
+      );
     }
     //If recipe submitted, show ingredient from
-    if (recipeSubmitted && !ingredientsAllSubmitted) {
+    else if (recipeSubmitted && !ingredientsAllSubmitted) {
       return (
         <div>
           <form onSubmit={handleIngredientSubmit} id="ing-form">
             <div className="mb-3 mt-3">
               <h4 className="text-center"> Add Ingredients </h4>
-              <p className="text-center"> Add all your ingredients here. When ready, go to next section to enter steps</p>
+              <p className="text-center">
+                {" "}
+                Add all your ingredients here. When ready, go to next section to
+                enter steps
+              </p>
               <div>
                 <label htmlFor="ing-name" className="form-label">
                   Ingredient Name
@@ -342,7 +387,10 @@ const CreateRecipe = () => {
                   Add
                 </button>
 
-                <button onClick={ingredientsComplete} className="btn btn-dark w-30">
+                <button
+                  onClick={ingredientsComplete}
+                  className="btn btn-dark w-30"
+                >
                   Next Section
                 </button>
               </div>
@@ -388,7 +436,7 @@ const CreateRecipe = () => {
                 </button>
 
                 <button onClick={stepsComplete} className="btn btn-dark w-30">
-                  Submit Recipe
+                  Next Section
                 </button>
               </div>
             </div>
@@ -484,8 +532,6 @@ const CreateRecipe = () => {
             <div className="d-flex flex-wrap">{GetStepBlocks()}</div>
           </div>
         </div>
-
-      
 
         <button type="submit" className="btn btn-primary" onClick={listThing}>
           Print data to the console
