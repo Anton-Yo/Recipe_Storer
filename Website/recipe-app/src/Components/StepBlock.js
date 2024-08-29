@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from "react"
-import api from "../api"
 import '../App.css'
 import { useDrop } from 'react-dnd';
 import closeImage from '../Pages/Images/close.png'

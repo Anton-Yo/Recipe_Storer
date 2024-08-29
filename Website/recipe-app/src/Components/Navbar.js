@@ -1,6 +1,5 @@
-import React, {useState, useEffect} from "react"
+import React from "react"
 import { NavLink } from "react-router-dom";
-import api from "../api"
 import '../App.css'
 
 

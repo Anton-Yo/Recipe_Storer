@@ -1,23 +1,12 @@
-import React, {useState, useEffect} from "react"
+import React from "react"
 import api from "../api"
 import '../App.css'
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
 
-import DragItem from '../Components/DragItem';
-import DropZone from '../Components/DropZone';
 
 const Home = () => {
-  const [droppedItems, setDroppedItems] = useState([]);
 
-  const handleDrop = (item) => {
-      setDroppedItems((prevItems) => [...prevItems, item]);
-  };
-
-  const handleRemoveItem = (index) => {
-      const updatedItems = [...droppedItems];
-      updatedItems.splice(index, 1);
-      setDroppedItems(updatedItems);
+  const print = () => {
+      console.log(api.baseURL)
   };
 
   return (
@@ -68,8 +57,10 @@ const Home = () => {
             Major: Add a User database and login system, so each person's recipe collection can be separated instead of being contained in one big database
         </li>
       </ul>
-
+      <button onClick={print}> Print URL </button>
     </div>
+
+    
   );
 };
 
