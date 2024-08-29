@@ -6,8 +6,6 @@ import '../App.css'
 const Home = () => {
 
   const print = () => {
-      console.log(process.env.VERCEL_URL)
-      console.log(process.env.NEXT_PUBLIC_VERCEL_URL)
       console.log(process.env.REACT_APP_VERCEL_URL)
       console.log('https://recipe-storer-alpha.vercel.app/')
       console.log('https://recipe-storer-git-main-anton-yos-projects.vercel.app/')
