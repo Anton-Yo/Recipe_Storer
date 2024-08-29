@@ -62,7 +62,7 @@ const DisplayInfo = () => {
       let step;
       for(let i = 0; i < recipeInfo.steps.length; i++)
       {
-        if(recipeInfo.steps[i].id == step_id)
+        if(recipeInfo.steps[i].id === step_id)
         {
           step = recipeInfo.steps[i]
         }
@@ -86,7 +86,7 @@ const DisplayInfo = () => {
    
     for(var i = 0; i < recipeInfo.ingredients.length; i++)
     {
-      if(recipeInfo.ingredients[i].category_id == category_id)
+      if(recipeInfo.ingredients[i].category_id === category_id)
       {
         //console.log("Added  " + recipeInfo.ingredients[i].name + " to category " + category_id)
         resultArr.push(recipeInfo.ingredients[i])
@@ -109,7 +109,7 @@ const DisplayInfo = () => {
   }
 
   const getDescriptor = (ing) => {
-    if(ing.additional_notes == "" || ing.additional_notes == null) {
+    if(ing.additional_notes === "" || ing.additional_notes == null) {
       return `${ing.quantity} ${ing.name}`
     }
     else
