@@ -37,33 +37,22 @@ const CreateRecipe = () => {
   const [ingIdCount, setIngIdCount] = useState(1);
 
   const handleDroppedItems = (stepData, attachedIngredients) => {
-    console.log(stepData);
+    //console.log(stepData);
     const stepsCopy = steps.map((step) => {
-      console.log(stepData.id + "''" + step.id);
+      //console.log(stepData.id + "''" + step.id);
       if (stepData.id === step.id) {
-        console.log("returning new step");
+        //console.log("returning new step");
         return {
           ...step,
           containedIngredients: attachedIngredients,
         };
       } else {
-        console.log("returning default step");
+        //console.log("returning default step");
         return step;
       }
     });
 
     setSteps(stepsCopy);
-  };
-
-  const listThing = () => {
-    console.log("Break");
-    console.log(steps);
-    //console.log(stepsCopy)
-    console.log("----------");
-    steps.forEach((step) => {
-      console.log(step);
-      //console.log(step.containedIngredients)
-    });
   };
 
   const submitNewRecipe = async () => {
@@ -73,13 +62,12 @@ const CreateRecipe = () => {
         ingredients: ingredients,
         steps: steps,
       };
+      console.log("Submitting form data, below:")
       console.log(data);
       ResetPage();
 
       try {
         const response = await api.post("/submit", data);
-        console.log("form shit");
-        console.log(response.data);
       } catch (error) {
         console.error("Error submitting form:", error.response.data);
       }
@@ -150,7 +138,6 @@ const CreateRecipe = () => {
 
   const ingredientsComplete = () => {
     setIngredientsAllSubmitted(true);
-
     console.log("Ingredients all submitted");
   };
 
@@ -167,7 +154,6 @@ const CreateRecipe = () => {
 
   const handleIngredientSubmit = async (event) => {
     event.preventDefault();
-    console.log(ingForm);
     addIngredient(ingForm);
     setIngredientSubmitted(true);
     setIngForm({
@@ -191,21 +177,15 @@ const CreateRecipe = () => {
   };
 
   const addStep = (stepForm) => {
-    console.log(stepForm);
     const newStep = {
       id: stepForm.id,
       desc: stepForm.desc,
       containedIngredients: [],
     };
-    console.log("setting new array");
     setSteps([...steps, newStep]);
-    // for(let i = 0; i < steps.length; i++) {
-    //   console.log(steps[i]);
-    // }
   };
 
   const addIngredient = (ingForm) => {
-    console.log(ingForm);
     const newIng = {
       id: ingIdCount,
       name: ingForm.name,
@@ -214,17 +194,13 @@ const CreateRecipe = () => {
       category: ingForm.category,
     };
     setIngIdCount(ingIdCount + 1);
-    console.log(newIng);
     setIngredients([...ingredients, newIng]);
   };
 
   const GetRecipeBlock = () => {
-    //console.log(recipeSubmitted + " I dont understand how this is false")
     if (recipeSubmitted && recipe != null) {
-      //console.log("agsemea")
       return <RecipeBlock recipe={recipe}> </RecipeBlock>;
     } else {
-      //console.log(`${recipeSubmitted} + ${recipe}`)
       return (
         <div className="container d-flex justify-content-center mt-3">
           *Recipe will appear here*
@@ -234,10 +210,7 @@ const CreateRecipe = () => {
   };
 
   const GetIngredientBlocks = () => {
-    //console.log(recipeSubmitted + " I dont understand how this is false")
     if (ingredients != null && ingredientSubmitted) {
-      //console.log(ingredients);
-
       if (ingredients.length != null) {
         return ingredients.map((ing) => (
           <IngredientBlock key={ing.id} ing={ing}>
@@ -252,7 +225,6 @@ const CreateRecipe = () => {
         );
       }
     } else {
-      //console.log(`${recipeSubmitted} + ${recipe}`)
       return (
         <div className="mt-5 container d-flex justify-content-center">
           {" "}
@@ -533,10 +505,6 @@ const CreateRecipe = () => {
             <div className="d-flex mt-2 flex-wrap">{GetStepBlocks()}</div>
           </div>
         </div>
-
-        {/* <button type="submit" className="btn btn-primary" onClick={listThing}>
-          Print data to the console
-        </button> */}
       </div>
     </DndProvider>
   );

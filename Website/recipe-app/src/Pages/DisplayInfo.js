@@ -7,7 +7,6 @@ import {useLocation} from 'react-router-dom';
 const DisplayInfo = () => {
   const [recipeInfo, setRecipeInfo] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [otherLoading, setOther] = useState(true);
   const [categories, SetCategories] = useState([]);
 
   //Set the recipe_id passed thru from the select recipe page
@@ -24,13 +23,14 @@ const DisplayInfo = () => {
     console.log(response.data);
     if(response.data == null)
     {
-        console.log("categories is empty")
+      console.log("categories is empty")
     }
     SetCategories(response.data)
   }
 
   const fetchRecipes = async(recipe_id) => {
     const response = await api.get(`/recipes/${recipe_id}`)
+    console.log("Fetching recipes...")
     console.log(response.data)
     if(response.data == null)
     {
@@ -38,7 +38,6 @@ const DisplayInfo = () => {
     }
     setRecipeInfo(response.data);
     setLoading(false);
-    console.log(response.data)
   };
 
 
@@ -89,7 +88,7 @@ const DisplayInfo = () => {
     {
       if(recipeInfo.ingredients[i].category_id == category_id)
       {
-        console.log("Added  " + recipeInfo.ingredients[i].name + " to category " + category_id)
+        //console.log("Added  " + recipeInfo.ingredients[i].name + " to category " + category_id)
         resultArr.push(recipeInfo.ingredients[i])
       }
     }

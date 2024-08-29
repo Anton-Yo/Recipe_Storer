@@ -40,9 +40,8 @@ const CreateRecipe = () => {
   }
 
   const GoToPage = (recipe_id) => {
-    
     navigate("/display", {state: recipe_id});
-    console.log(recipe_id)
+    console.log(`Going to the recipe with an id of ${recipe.id}`)
   }
 
   return (

@@ -5,16 +5,6 @@ import '../App.css'
 
 const Home = () => {
 
-  const print = () => {
-      console.log(process.env.REACT_APP_VERCEL_URL)
-      console.log('https://recipe-storer-alpha.vercel.app/')
-      console.log('https://recipe-storer-git-main-anton-yos-projects.vercel.app/')
-  };
-
-  const printLoc = () => {
-    console.log(window.location.origin)
-};
-
   return (
     <div className=" mt-5 display-wrapper container">
       <h3 className="mt-5"> Welcome </h3>
