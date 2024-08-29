@@ -6,7 +6,7 @@ import '../App.css'
 const Home = () => {
 
   const print = () => {
-      console.log(api)
+      console.log(process.env.VERCEL_URL)
   };
 
   const printLoc = () => {
