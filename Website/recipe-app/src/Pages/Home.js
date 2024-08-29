@@ -57,10 +57,7 @@ const Home = () => {
             Major: Add a User database and login system, so each person's recipe collection can be separated instead of being contained in one big database
         </li>
       </ul>
-      <button onClick={print}> Print URL </button>
     </div>
-
-    
   );
 };
 
