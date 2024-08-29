@@ -6,8 +6,12 @@ import '../App.css'
 const Home = () => {
 
   const print = () => {
-      console.log(api.baseURL)
+      console.log(api)
   };
+
+  const printLoc = () => {
+    console.log(window.location.origin)
+};
 
   return (
     <div className=" mt-5 display-wrapper container">
@@ -57,7 +61,8 @@ const Home = () => {
             Major: Add a User database and login system, so each person's recipe collection can be separated instead of being contained in one big database
         </li>
       </ul>
-      <button onClick={print}> Print URL </button>
+      <button onClick={print}> Print baseURL </button>
+      <button onClick={printLoc}> Print window.location </button>
     </div>
 
     
