@@ -47,7 +47,16 @@ const Home = () => {
             Minor: Downloadable JSON file for each recipe. 
         </li>
         <li>
+            Minor: Add back button to navigate between sections in 'Create page' 
+        </li>
+        <li>
+            Minor: Auto create obj if form is full on create page 
+        </li>
+        <li>
             Minor: Optimise website (specifically display page) for mobile. Because realistically thats what will be used for viewing the website when cooking.
+        </li>
+        <li>
+            Major: Add ability to edit a recipe, on the display page.
         </li>
         <li>
             Major: Add ability to add pictures for the recipe. Currently, I'm not sure where to store a bunch of images online for this website to access :(
