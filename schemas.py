@@ -57,7 +57,7 @@ class Cuisine(CuisineBase):
 class RecipeBase(BaseModel):
     name: str
     desc: str
-    cook_time: int
+    cook_time: float
     cuisine: Optional[CuisineBase]
     steps: Optional[List[StepBase]]
     ingredients: Optional[List[IngredientBase]]
@@ -106,7 +106,7 @@ class StepFromFrontEnd(BaseModel):
 class RecipeFromFrontEnd(BaseModel):
     name: str
     desc: str
-    cook_time: str
+    cook_time: float
     cuisine: str
 
 class SubmitRecipe(BaseModel):
@@ -130,7 +130,7 @@ class StepV2(BaseModel):
 class RecipeToSend(BaseModel):
     name: str
     desc: str
-    cook_time: int
+    cook_time: float
     cuisine: CuisineBase
     ingredients: List[Ingredient]
     steps: List[StepV2]

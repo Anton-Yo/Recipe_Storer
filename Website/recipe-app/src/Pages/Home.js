@@ -26,10 +26,7 @@ const Home = () => {
       </h6>
 
       <h6 className="mt-2"> I will record other ideas here for the future: </h6>
-      <ul className="home-list"> 
-        <li>
-            Minor: Downloadable JSON file for each recipe. 
-        </li>
+      <ul className="home-list">
         <li>
             Minor: Add back button to navigate between sections in 'Create page' 
         </li>

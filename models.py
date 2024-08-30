@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Table
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Table, Float
 from sqlalchemy.orm import relationship,DeclarativeBase
 from database import Base
 
@@ -29,7 +29,7 @@ class Recipe(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
     desc = Column(String, index=True)
-    cook_time = Column(Integer, index=True)
+    cook_time = Column(Float, index=True)
     cuisine_id = Column(Integer, ForeignKey("cuisines.id"))
 
     cuisine = relationship("Cuisine", back_populates="recipe")

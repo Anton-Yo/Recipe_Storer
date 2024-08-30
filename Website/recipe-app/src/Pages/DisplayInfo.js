@@ -118,6 +118,16 @@ const DisplayInfo = () => {
     }
   }
 
+  const exportRecipeInfo = (ing) => {
+    const fileData = JSON.stringify(recipeInfo)
+    const blob = new Blob([fileData]);
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement("a");
+    link.download = "user-info.json"
+    link.href = url;
+    link.click()
+  }
+
   return (
     <div className="container display-wrapper">
       <div id="title" className="text-center mt-4">
@@ -184,6 +194,8 @@ const DisplayInfo = () => {
           <p> Loading recipes...</p>
         )}
       </div>
+
+      <div className="container text-center"> <button className='btn btn-secondary mt-4' onClick={exportRecipeInfo}>Download me as JSON</button> </div>
     </div>
   );
 }
