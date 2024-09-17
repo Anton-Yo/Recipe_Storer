@@ -3,6 +3,7 @@ import api from "../api"
 import '../App.css'
 import image2 from './Images/First Pic.PNG'
 import {useLocation} from 'react-router-dom';
+import validator from 'validator';
 
 const DisplayInfo = () => {
   const [recipeInfo, setRecipeInfo] = useState([]);
@@ -128,6 +129,30 @@ const DisplayInfo = () => {
     link.click()
   }
 
+  const handleBottomButtons = () => {
+    const sourceLink = recipeInfo.source;
+
+    if(validator.isURL(sourceLink))
+    {
+      return (
+      <div className="w-50 d-flex mt-2 bg-primary justify-content-evenly">
+        <button className='btn btn-secondary w-20' onClick={exportRecipeInfo}>Download JSON</button>
+        <button className="btn btn-secondary w-20" onClick={goToSource}> Go To Source </button>
+      </div>
+    );
+    }
+    else
+    {
+      return <div className="w-50 d-flex justify-content-around"> 
+          <button className='btn btn-secondary mt-4' onClick={exportRecipeInfo}>Download me as JSON</button>
+        </div>
+    }
+  }
+
+  const goToSource = () => {
+    window.location.href = recipeInfo.source;
+  }
+
   return (
     <div className="container display-wrapper">
       <div id="title" className="text-center mt-4">
@@ -194,8 +219,14 @@ const DisplayInfo = () => {
           <p> Loading recipes...</p>
         )}
       </div>
+        <div className="container d-flex justify-content-center">
+        {isDataLoaded() ? (
+          handleBottomButtons()
+        ) : (
+          <div> Loading... </div>
+        )}
+        </div>
 
-      <div className="container text-center"> <button className='btn btn-secondary mt-4' onClick={exportRecipeInfo}>Download me as JSON</button> </div>
     </div>
   );
 }

@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 import models, schemas, crud, json
 from database import SessionLocal, engine
 from fastapi.middleware.cors import CORSMiddleware
+import bleach;
 
 # Create the database tables
 models.Base.metadata.create_all(bind=engine)
@@ -50,21 +51,21 @@ def getThat(id: int, db: Session = Depends(get_db)):
 @app.post("/submit", response_model=str)
 async def submit(data: schemas.SubmitRecipe, db: Session = Depends(get_db)):
     print(data)
-    print(" gangsta") 
     
     #Separate the data into 
     # 1. Recipe info -> Create recipe
-
+    # 2. Ingredient info -> Create the list of ingredients
     # 2. Step info -> Create steps
-    # 3. Ingredient info -> create ingredients, referencing newly created steps/recipe
+    # 3. Assignment -> Append newly created steps with their contain ingredients
 
      # 1. Recipe info -> Create recipe
     recipe_id = create_recipe(recipe_data = data.recipe, db=db).id
     
-    # # 2. Step info -> Create steps
+    
     ing_list = []
     print(data.ingredients)
-    #Loop thru and make all the ingredients
+
+    #2. Step info -> Create stepsLoop thru and make all the ingredients
     for ing in data.ingredients:
         ingData = schemas.SubmitIng(
             name = ing.name,
@@ -84,7 +85,7 @@ async def submit(data: schemas.SubmitRecipe, db: Session = Depends(get_db)):
         )
         new_step = create_step(step=stepData, db=db)
 
-         # 3. Ingredient info -> create ingredients, referencing newly created steps/recipe
+         # 4. Ingredient info -> create ingredients, referencing newly created steps/recipe
         for containedIng in step.containedIngredients:
 
             for ing in ing_list:
@@ -111,11 +112,10 @@ async def submit_ing(data: schemas.SubmitIng, db: Session = Depends(get_db)):
 @app.post("/create_recipe", response_model= schemas.Recipe)
 def create_recipe(recipe_data: schemas.Recipe, db: Session = Depends(get_db)):
     print(recipe_data)
-    db_recipe = models.Recipe(name = recipe_data.name, desc = recipe_data.desc, cook_time = recipe_data.cook_time, cuisine_id = crud.get_cuisine_id_by_name(db, cuisine_name = recipe_data.cuisine))
+    db_recipe = models.Recipe(name = recipe_data.name, desc = recipe_data.desc, cook_time = recipe_data.cook_time, source = bleach.clean(recipe_data.source), cuisine_id = crud.get_cuisine_id_by_name(db, cuisine_name = recipe_data.cuisine))
     db.add(db_recipe)
     db.commit()
     db.refresh(db_recipe)
-    #db_recipe = crud.create_recipe(db=db, recipe=recipe)
     return db_recipe
 
 @app.get("/recipes/search_ids/{recipe_id}", response_model=schemas.Recipe)
@@ -374,7 +374,7 @@ def create_test_data(db: Session = Depends(get_db)):
 
 def create_recipe_from_dict(recipe_data: dict, db: Session = Depends(get_db)):
     print(recipe_data)
-    db_recipe = models.Recipe(name = recipe_data.get("name"), desc = recipe_data.get("desc"), cook_time = recipe_data.get("cook_time"), cuisine_id = crud.get_cuisine_id_by_name(db, cuisine_name = recipe_data.get("cuisine_name")))
+    db_recipe = models.Recipe(name = recipe_data.get("name"), desc = recipe_data.get("desc"), cook_time = recipe_data.get("cook_time"), source = bleach.clean(recipe_data.get("source")), cuisine_id = crud.get_cuisine_id_by_name(db, cuisine_name = recipe_data.get("cuisine_name")))
     db.add(db_recipe)
     db.commit()
     db.refresh(db_recipe)

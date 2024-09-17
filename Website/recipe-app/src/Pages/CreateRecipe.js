@@ -14,6 +14,7 @@ const CreateRecipe = () => {
     desc: "",
     cook_time: "",
     cuisine: "",
+    source: "",
   });
   const [ingredients, setIngredients] = useState([]);
   const [ingForm, setIngForm] = useState({
@@ -432,6 +433,7 @@ const CreateRecipe = () => {
               className="form-control"
               id="name"
               name="name"
+              maxLength="40"
               onChange={(event) => handleInputChange(event, 0)}
               value={recipeForm.name}
             ></input>
@@ -447,6 +449,7 @@ const CreateRecipe = () => {
               className="form-control"
               id="desc"
               name="desc"
+              maxLength="100"
               onChange={(event) => handleInputChange(event, 0)}
               value={recipeForm.desc}
             ></input>
@@ -477,8 +480,26 @@ const CreateRecipe = () => {
               className="form-control"
               id="cuisine"
               name="cuisine"
+              maxLength="30"
               onChange={(event) => handleInputChange(event, 0)}
               value={recipeForm.cuisine}
+            ></input>
+          </div>
+
+          <div className="mb-3">
+            <label htmlFor="amount" className="form-label">
+              Source
+            </label>
+
+            <input
+              type="text"
+              className="form-control"
+              id="source"
+              name="source"
+              maxLength="100"
+              placeholder="(optional)"
+              onChange={(event) => handleInputChange(event, 0)}
+              value={recipeForm.source}
             ></input>
           </div>
 

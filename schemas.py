@@ -1,5 +1,5 @@
 from typing import List, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, HttpUrl
 
 class CategoryBase(BaseModel):
     name: str
@@ -58,6 +58,7 @@ class RecipeBase(BaseModel):
     name: str
     desc: str
     cook_time: float
+    source: Optional[HttpUrl]
     cuisine: Optional[CuisineBase]
     steps: Optional[List[StepBase]]
     ingredients: Optional[List[IngredientBase]]
@@ -107,6 +108,7 @@ class RecipeFromFrontEnd(BaseModel):
     name: str
     desc: str
     cook_time: float
+    source: str
     cuisine: str
 
 class SubmitRecipe(BaseModel):
@@ -131,6 +133,7 @@ class RecipeToSend(BaseModel):
     name: str
     desc: str
     cook_time: float
+    source: str
     cuisine: CuisineBase
     ingredients: List[Ingredient]
     steps: List[StepV2]
