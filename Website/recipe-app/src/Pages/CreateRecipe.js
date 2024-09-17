@@ -6,6 +6,8 @@ import IngredientBlock from "../Components/IngredientBlock";
 import StepBlock from "../Components/StepBlock";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { TouchBackend } from "react-dnd-touch-backend";
+import { isMobile } from 'react-device-detect';
 
 const CreateRecipe = () => {
   const [recipe, setRecipe] = useState([]);
@@ -36,6 +38,9 @@ const CreateRecipe = () => {
 
   const [stepCount, setStepCount] = useState(1);
   const [ingIdCount, setIngIdCount] = useState(1);
+
+  //From and modified for detect isMobile library https://stackoverflow.com/questions/70561995/drag-drop-library-of-react-js-is-not-working-in-mobile-platform
+  const Backend = isMobile ? TouchBackend : HTML5Backend;
 
   const handleDroppedItems = (stepData, attachedIngredients) => {
     //console.log(stepData);
@@ -252,7 +257,7 @@ const CreateRecipe = () => {
       }
     } else {
       return (
-        <div className="mt-5 container d-flex justify-content-center">
+        <div className="mt-5 mb-4 container d-flex justify-content-center">
           *Steps will appear here*
         </div>
       );
@@ -513,19 +518,42 @@ const CreateRecipe = () => {
     }
   };
 
-  return (
-    <DndProvider backend={HTML5Backend}>
-      <div>
-        <div className="container d-flex mt-4">
+  const getPageOrder = () => {
+    if(isMobile)
+    {
+      return (
+      <div className="container-fluid d-flex flex-column flex-lg-row mt-4"> {/* This one is the overall container */}
+        <div className="visual-box bg-papaya border border-secondary rounded">
+          {GetRecipeBlock()}
+          <div className="d-flex mt-2 flex-wrap">{GetIngredientBlocks()}</div>
+          <div className="d-flex mt-2 flex-wrap">{GetStepBlocks()}</div>
+        </div>
+
+        <div className="form-container p-2 bg-lightblue border border-secondary rounded">{handlePageState()}</div>
+      </div>
+      )
+    }
+    else //The order should be reversed for mobile cos the keyboard pops up, so I want to see the visual up the top
+    {
+      return (
+        
+        <div className="container-fluid d-flex flex-column flex-lg-row mt-4"> {/* This one is the overall container */}
           <div className="form-container p-2 bg-lightblue border border-secondary rounded">{handlePageState()}</div>
 
           <div className="visual-box bg-papaya border border-secondary rounded">
             {GetRecipeBlock()}
             <div className="d-flex mt-2 flex-wrap">{GetIngredientBlocks()}</div>
-
             <div className="d-flex mt-2 flex-wrap">{GetStepBlocks()}</div>
           </div>
         </div>
+        )
+    }
+  }
+
+  return (
+    <DndProvider backend={Backend}>
+      <div>
+        {getPageOrder()}
       </div>
     </DndProvider>
   );

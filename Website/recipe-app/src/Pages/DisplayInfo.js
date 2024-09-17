@@ -9,6 +9,7 @@ const DisplayInfo = () => {
   const [recipeInfo, setRecipeInfo] = useState([]);
   const [loading, setLoading] = useState(true);
   const [categories, SetCategories] = useState([]);
+  const [isMobile, SetIsMobile] = useState(false);
 
   //Set the recipe_id passed thru from the select recipe page
   let location = useLocation();
@@ -154,8 +155,8 @@ const DisplayInfo = () => {
   }
 
   return (
-    <div className="container display-wrapper">
-      <div id="title" className="text-center mt-4">
+    <div className="container-md display-wrapper">
+      <div id="title" className="w-100 text-center mt-4">
         <h1>{recipeInfo.name || ""} </h1>
           {isDataLoaded() ? (
             <div className="w-100 justify-content-center align-items-center text-center">
@@ -167,8 +168,8 @@ const DisplayInfo = () => {
           )}
       </div>
 
-      <div className="container d-flex w-100 mt-3 px-0 justify-content-around">
-        <div className="w-50 bg-lightblue border border-2 border-dark shadow-sm">
+      <div className="container d-flex flex-column flex-lg-row w-100 mt-3 px-0 justify-content-around">
+        <div className="w-lg-50 w-100 bg-lightblue border border-2 border-dark shadow-sm">
           <h2 className="text-center mt-1">Ingredients</h2>
           <div className="mx-2">
             {isDataLoaded() ? (

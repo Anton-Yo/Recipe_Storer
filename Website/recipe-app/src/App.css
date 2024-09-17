@@ -47,7 +47,7 @@ li {
 }
 
 .display-wrapper {
-  width: 70%;
+  /* width: 70%; */
 }
 
 .m-auto {
@@ -62,6 +62,25 @@ li {
   width: 40%;
   min-height: 400px;
   margin-right: 2%;
+  background-color: yellow;
+}
+
+@media only screen and (max-width: 992px)
+{
+  .display-wrapper {
+    background-color: green;
+  }
+
+  /* The form box should be 100% of container for Create screen on mobile */
+  .form-container {
+    width: 100%;
+  }
+
+  .visual-box {
+    margin-top: 2em;
+    margin-bottom: 2em;
+    width: 100%;
+  }
 }
 
 .w-45 {
