@@ -33,7 +33,6 @@ class Recipe(Base):
     source = Column(String)
     cuisine_id = Column(Integer, ForeignKey("cuisines.id"))
     
-
     cuisine = relationship("Cuisine", back_populates="recipe")
     ingredients = relationship("Ingredient", back_populates="recipe")
     steps = relationship("Step", back_populates="recipe")

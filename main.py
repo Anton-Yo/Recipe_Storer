@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, Form, Request
+from fastapi import FastAPI, Depends, HTTPException, Body
 from typing import Annotated, List
 from sqlalchemy.orm import Session
 import models, schemas, crud, json
@@ -111,7 +111,11 @@ async def submit_ing(data: schemas.SubmitIng, db: Session = Depends(get_db)):
 @app.post("/create_recipe", response_model= schemas.Recipe)
 def create_recipe(recipe_data: schemas.Recipe, db: Session = Depends(get_db)):
     print(recipe_data)
-    db_recipe = models.Recipe(name = recipe_data.name, desc = recipe_data.desc, cook_time = recipe_data.cook_time, source = bleach.clean(recipe_data.source), cuisine_id = crud.get_cuisine_id_by_name(db, cuisine_name = recipe_data.cuisine))
+    if recipe_data.source:
+        db_recipe = models.Recipe(name = recipe_data.name, desc = recipe_data.desc, cook_time = recipe_data.cook_time, source = recipe_data.source, cuisine_id = crud.get_cuisine_id_by_name(db, cuisine_name = recipe_data.cuisine))
+    else:
+        db_recipe = models.Recipe(name = recipe_data.name, desc = recipe_data.desc, cook_time = recipe_data.cook_time, source = '', cuisine_id = crud.get_cuisine_id_by_name(db, cuisine_name = recipe_data.cuisine))
+    
     db.add(db_recipe)
     db.commit()
     db.refresh(db_recipe)
@@ -314,10 +318,7 @@ def get_category_id_by_name(category_name: str, db: Session = Depends(get_db)):
 
 @app.get("/recipe/{recipe_id}/categories", response_model=List[schemas.Category])
 def get_categories_from_recipe_id(recipe_id: int, db: Session = Depends(get_db)):
-    print("what")
-    #ings = get_ingredients(db = db)
     ings = fetch_ingredients_by_recipe_id(recipe_id = recipe_id, db=db)
-
     print("Got the ingredients")
     #Get the ids of the ingredients that need to be checked
     id_list = []
@@ -349,31 +350,87 @@ def create_test_data(db: Session = Depends(get_db)):
         #print(i)
         create_cuisine_from_dict(i, db = db)
 
+    recipeID = 0
     #Make the recipes
     for i in data["recipes"]:
-        create_recipe_from_dict(i, db = db)
+        recipe = create_recipe_from_dict(i, db = db)
 
-    # # #make the ingredients
-    for i in data["ingredients"]:
-        #print(data["ingredients"])
-        ings.append(create_ingredient_from_dict(i, db = db))
+        # # #make the ingredients for the newly created recipe
+        for i in data["ingredients"]:
+            #Only include the ingredients that are related to current recipe
+            if(i["recipe"] == recipe.name):
+                ings.append(create_ingredient_from_dict(i, recipe.id, db = db))
+
+        # #make the steps
+        for i in data["steps"]:
+            if(i["recipe"] == recipe.name):
+                create_step_from_dict(i, recipe.id, db=db)
 
     # #make the categories
     for i in data["categories"]:
         create_category_from_dict(i, db=db)
 
-    # #make the steps
-    for i in data["steps"]:
-        create_step_from_dict(i, db=db)
-
     f.close()
     #print(data)
     #create_recipe_from_dict(recipe_data = recipes, db=db)
-    return "done"
+    return "Data successfully created from JSON"
+
+@app.post("/load_from_JSON", response_model=str)
+def load_from_JSON(dataContainer: list = Body(...), db: Session = Depends(get_db)):
+    data = dataContainer[0]
+    print(data)
+    r_data = models.Recipe(
+        name = data["name"], 
+        desc = data["desc"], 
+        cook_time = data["cook_time"], 
+        source = data["source"], 
+        cuisine_id = crud.get_cuisine_id_by_name(db, cuisine_name = data["cuisine"]))
+        
+    recipe_id = create_recipe(recipe_data = r_data, db=db).id
+    
+    ing_list = []
+    print(data["ingredients"])
+
+    #2. Step info -> Create stepsLoop thru and make all the ingredients
+    for ing in data.ingredients:
+        ingData = schemas.SubmitIng(
+            name = ing["name"],
+            quantity = ing["quantity"],
+            additional_notes = ing["additional_notes"],
+            category_id = get_category_id_by_name(category_name = ing["category"], db=db),
+            recipe_id = ["recipe"],
+        )
+        ing_list.append(create_ingredient(ingData, db=db))
+
+    for step in data["step"]:
+
+        #create the steps
+        stepData = schemas.StepCreate(
+            desc = step["desc"],
+            recipe_id = recipe_id
+        )
+        new_step = create_step(step = stepData, db=db)
+
+         # 4. Ingredient info -> create ingredients, referencing newly created steps/recipe
+        for containedIng in step["contained_ingredients"]:
+
+            for ing in ing_list:
+                if containedIng["name"] == ing["name"] and containedIng["quantity"] == ing["quantity"] and containedIng["additional_notes"] == ing["additional_notes"]:
+                    new_step.ingredients.append(ing)
+
+    db.commit()
+    db.refresh(new_step)
+    return   
+    
 
 def create_recipe_from_dict(recipe_data: dict, db: Session = Depends(get_db)):
     print(recipe_data)
-    db_recipe = models.Recipe(name = recipe_data.get("name"), desc = recipe_data.get("desc"), cook_time = recipe_data.get("cook_time"), source = bleach.clean(recipe_data.get("source")), cuisine_id = crud.get_cuisine_id_by_name(db, cuisine_name = recipe_data.get("cuisine_name")))
+    db_recipe = models.Recipe(
+        name = recipe_data.get("name"), 
+        desc = recipe_data.get("desc"), 
+        cook_time = recipe_data.get("cook_time"), 
+        source = recipe_data.get("source"), 
+        cuisine_id = crud.get_cuisine_id_by_name(db, cuisine_name = recipe_data.get("cuisine")))
     db.add(db_recipe)
     db.commit()
     db.refresh(db_recipe)
@@ -385,17 +442,17 @@ def create_cuisine_from_dict(cuisine: dict, db: Session = Depends(get_db)):
     #db_recipe = crud.create_recipe(db=db, recipe=recipe)
     return db_cuisine
 
-def create_ingredient_from_dict(ing_data: dict, db: Session = Depends(get_db)):
-    db_ing = crud.create_ing_from_dict(db, ing_data = ing_data)
+def create_ingredient_from_dict(ing_data: dict, recipe_id: int, db: Session = Depends(get_db)):
+    db_ing = crud.create_ing_from_dict(db, ing_data = ing_data, recipe_id = recipe_id)
     if db_ing is None:
         raise HTTPException(status_code=404, detail="Ingredient creation failed")
     return db_ing
 
-def create_step_from_dict(step: dict, db: Session = Depends(get_db)):
-    db_step = crud.create_step(db, step_desc = step["desc"], attached_recipe = step["recipe_id"])
+def create_step_from_dict(step: dict, recipe_id: int, db: Session = Depends(get_db)):
+    db_step = crud.create_step(db, step_desc = step["desc"], attached_recipe = recipe_id)
 
     #Get the ingredients of the recipe involved
-    ings_in_recipe = crud.get_ingredients_by_recipe_id(step["recipe_id"], db=db)
+    ings_in_recipe = crud.get_ingredients_by_recipe_id(recipe_id, db=db)
 
     print("....................")
     for i in ings_in_recipe:
@@ -433,7 +490,7 @@ def create_category_from_dict(category: dict, db: Session = Depends(get_db)):
     print(category)
     db_category = crud.create_category(db, category_name = category["name"])
     if db_category is None:
-        raise HTTPException(status_code=404, detail="Category is not found")
+        raise HTTPException(status_code=404, detail="Category creation has failed")
     return db_category
 
 @app.delete("/clear_db", response_model=str)

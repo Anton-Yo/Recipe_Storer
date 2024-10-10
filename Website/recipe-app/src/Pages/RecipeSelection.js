@@ -61,7 +61,6 @@ const CreateRecipe = () => {
     //If window is small or mobile, use 45% size for boxes for 2 per row.
     if(!isLarge || isMobile)
     {
-      console.log("This is running as true")
       return "w-45 p-2 mr-1 mt-2 mb-2 shadow bg-white"
     }
     else //Otherwise use 20% for 4 boxes per row
@@ -85,12 +84,12 @@ const CreateRecipe = () => {
               <div>
                 <div className="container">
                   <div className="row">
-                    <div className="col text-decoration-underline"> <h6>Time</h6> </div>
-                    <div className="col text-decoration-underline"> <h6>Cuisine</h6> </div>
+                    <div className="col-6 col-md-6 text-decoration-underline"> <h6>Time</h6> </div>
+                    <div className="col-6 col-md-6 text-decoration-underline"> <h6>Cuisine</h6> </div>
                   </div>
-                  <div className="row">
-                    <div className="col"> {getCookTime(recipe)} </div>
-                    <div className="col"> {recipe.cuisine.name} </div>
+                  <div className="row"> 
+                    <div className="col-6 col-md-6"> {getCookTime(recipe)} </div>
+                    <div className="col-6 col-md-6"> {recipe.cuisine.name} </div>
                   </div>
                 </div>
               </div>

@@ -1,5 +1,6 @@
-import React, {useState, useEffect} from "react"
+import React from "react"
 import '../App.css'
+import { isMobile } from "react-device-detect"
 
 
 
@@ -13,9 +14,8 @@ const getCookTime = () => {
   return resultStr
 }
 
-
   return (
-    <div className="w-50 m-auto">
+    <div className="recipe-block">
       <div className="mt-2 bg-recipe text-center border border-dark border-2">
         <h5 className="pt-1"> {recipe.name} </h5>
         <div className="d-flex justify-content-center">

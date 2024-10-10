@@ -218,7 +218,6 @@ const CreateRecipe = () => {
     });
   };
 
- 
   const handleStepSubmit = (event) => {
     event.preventDefault();
     stepForm.id = stepCount;

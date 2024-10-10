@@ -74,6 +74,12 @@ li {
   width: 30%;
 }
 
+.recipe-block {
+  width: 50%;
+  margin: auto;
+  margin-top: 0.8em;
+}
+
 @media only screen and (max-width: 992px)
 {
   .display-wrapper {
@@ -96,6 +102,12 @@ li {
 
   .display-title-border {
     width: 50%;
+  }
+
+  .recipe-block {
+    width: 95%;
+    margin: auto;
+    margin-top: 1em;
   }
 
 }
@@ -196,6 +208,8 @@ li {
 .h-60 {
   height: 70%;
 }
+
+
 
 
 

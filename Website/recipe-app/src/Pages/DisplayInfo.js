@@ -11,6 +11,7 @@ const DisplayInfo = () => {
   const [loading, setLoading] = useState(true);
   const [categories, SetCategories] = useState([]);
   const [isLarge, SetIsLarge] = useState(window.innerWidth > 992)
+  const [downloadableData, setDownloadableData] = useState([]);
 
   //Set the recipe_id passed thru from the select recipe page
   let location = useLocation();
@@ -33,6 +34,13 @@ const DisplayInfo = () => {
       console.log("categories is empty")
     }
     SetCategories(response.data)
+
+    //If haven't made JSON formattable data, and recipe info exists, do that.
+    // if(downloadableData.length == 0 && recipeInfo.length != 0)
+    // {
+    //   createAlternateForm(recipeInfo)
+    //   setLoading(false);
+    // }
   }
 
   const fetchRecipes = async(recipe_id) => {
@@ -42,10 +50,53 @@ const DisplayInfo = () => {
     if(response.data == null)
     {
       console.log("Empty array")
+      return;
     }
     setRecipeInfo(response.data);
     setLoading(false);
+
+    // //If haven't made JSON formattable data, and category info exists, do that.
+    // if(downloadableData.length == 0 && categories.length != 0)
+    // {
+    //   createAlternateForm(response.data)
+    //   setLoading(false);
+    // }
   };
+
+  const createAlternateForm = (data) => {
+    
+    const newData = JSON.parse(JSON.stringify(data));
+
+    //Now change things from the messy original data that is sent thru
+    newData.cuisine = newData.cuisine.name //Set the cuisine name directly to the cuisine name, rather than a nested arr
+    newData.ingredients.forEach(ing => {
+      //Grab the name of the category, that corresponds to ing.cat_id == categories.cat_id
+      ing.category = categories.find(element => element.id == ing.category_id).name
+      ing.recipe = data.name;
+      delete ing.id
+      delete ing.recipe_id
+      delete ing.category_id
+    });
+
+    //Change the steps
+    newData.steps.forEach(step => {
+      step.recipe = data.name;
+      step.ingredients.forEach(ing => {
+        //Grab the name of the category, that corresponds to ing.cat_id == categories.cat_id
+        ing.category = categories.find(element => element.id == ing.category_id).name
+        ing.recipe = data.name;
+        delete ing.id
+        delete ing.recipe_id
+        delete ing.category_id
+      })
+
+      delete step.id
+      delete step.recipe_id;
+    })
+
+    setDownloadableData(newData);
+    console.log("Created JSON data for download");
+  }
 
 
   const getCookTime = () => {
@@ -57,7 +108,11 @@ const DisplayInfo = () => {
   }
 
   const isDataLoaded = () => {
-      return !loading & recipeInfo != null
+      if(!loading & recipeInfo.length != 0 & categories != 0 && downloadableData.length == 0)
+      {
+        createAlternateForm(recipeInfo);
+      }
+      return !loading & recipeInfo.length != 0 & categories != 0
   }
   var stepCount = 1;
 
@@ -107,7 +162,6 @@ const DisplayInfo = () => {
             {getDescriptor(ing)}
           </li>
         ))
-      
     } 
     else 
     {
@@ -125,12 +179,12 @@ const DisplayInfo = () => {
     }
   }
 
-  const exportRecipeInfo = (ing) => {
-    const fileData = JSON.stringify(recipeInfo)
+  const exportRecipeInfo = () => { //ChatGPT told me about blobs
+    const fileData = JSON.stringify(downloadableData)
     const blob = new Blob([fileData]);
     const url = URL.createObjectURL(blob)
     const link = document.createElement("a");
-    link.download = "user-info.json"
+    link.download = `${downloadableData.name}.json`
     link.href = url;
     link.click()
   }
@@ -236,13 +290,13 @@ const DisplayInfo = () => {
 
       <div className="container d-flex flex-column flex-lg-row w-100 mt-3 px-0 justify-content-around">
         <div className="w-lg-50 w-100 bg-lightblue border border-2 border-dark shadow-sm">
-          <h2 className="text-center mt-3">Ingredients</h2>
+          <h2 className="text-center mt-3" >Ingredients</h2>
           <div className="d-flex flex-column align-items-center justify-content-center mt-3">
             {isDataLoaded() ? (
               categories.map((cat) => (
-                <div className="ing-list">
+                <div className="ing-list" key={cat.id}>
                   <h6 className="text-center">{`${cat.name}`} </h6>
-                  <ul key={cat.id} className="text-left w-100 circle-list">
+                  <ul className="text-left w-100 circle-list">
                     {GetIngsUnderCategories(cat.id)}
                   </ul>
                 </div>

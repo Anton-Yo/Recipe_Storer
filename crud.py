@@ -50,14 +50,14 @@ def create_ing(db: Session, ing_data: schemas.SubmitIng):
     db.refresh(db_ingredient)
     return db_ingredient
 
-def create_ing_from_dict(db: Session, ing_data: dict):
+def create_ing_from_dict(db: Session, ing_data: dict, recipe_id: int):
     print(ing_data)
     db_ingredient = models.Ingredient(
         name = ing_data["name"], 
         quantity = ing_data['quantity'], 
         additional_notes  = ing_data['additional_notes'],
-        recipe_id = ing_data['recipe_id'],
-        category_id = ing_data['category_id'],
+        recipe_id = recipe_id, #Pass in the newly created recipe_ID, in case there are duplicate names (so I cant use above func)
+        category_id = get_category_id_by_name(db = db, category_name = ing_data['category']), #get id of category from the name
     )
     db.add(db_ingredient)
     db.commit()
@@ -177,7 +177,7 @@ def create_category(db: Session, category_name: str):
         db.commit()
         db.refresh(db_cat)
         return db_cat
-    return None
+    return exists
 
 def delete_category(db: Session, category_name:str):
     print("deleting category")

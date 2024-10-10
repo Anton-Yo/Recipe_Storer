@@ -4,7 +4,7 @@
       "name": "Butter Chicken",
       "desc": "chicken and butter baby",
       "cook_time": 70,
-      "cuisine_name": "Indian",
+      "cuisine": "Indian",
       "source": "https://anton-yo.github.io/"
     },
 
@@ -12,7 +12,7 @@
       "name": "Pad thai",
       "desc": "Good shit",
       "cook_time": 20,
-      "cuisine_name": "Thai",
+      "cuisine": "Thai",
       "source": "https://anton-yo.github.io/"
     }
   ],
@@ -36,50 +36,50 @@
       "name": "Chicken",
       "quantity": "200g",
       "additional_notes": "Chop it up",
-      "category_id": "1",
-      "recipe_id": "1"
+      "category": "Meat",
+      "recipe": "Butter Chicken"
     },
     {
       "name": "Rice",
       "quantity": "400g",
       "additional_notes": "Cook em put em rice",
-      "category_id": "2",
-      "recipe_id": "1"
+      "category": "Grain",
+      "recipe": "Butter Chicken"
     },
     {
       "name": "Secret sauce",
       "quantity": "1 tbps",
       "additional_notes": "",
-      "category_id": "3",
-      "recipe_id": "1"
+      "category": "Vegetables",
+      "recipe": "Butter Chicken"
     },
     {
       "name": "Another ingredient??",
       "quantity": "1 tbps",
       "additional_notes": "",
-      "category_id": "3",
-      "recipe_id": "1"
+      "category": "Vegetables",
+      "recipe": "Butter Chicken"
     },
     {
       "name": "Chicken",
       "quantity": "600g",
       "additional_notes": "Chop the legs up",
-      "category_id": "1",
-      "recipe_id": "2"
+      "category": "Meat",
+      "recipe": "Pad thai"
     },
     {
       "name": "Noodles",
       "quantity": "200g",
       "additional_notes": "Satay these bad bois for 5 minutes",
-      "category_id": "2",
-      "recipe_id": "2"
+      "category": "Grain",
+      "recipe": "Pad thai"
     },
     {
       "name": "Veges",
       "quantity": "100g",
       "additional_notes": "soften these bad bois for 2 minutes",
-      "category_id": "3",
-      "recipe_id": "2"
+      "category": "Vegetables",
+      "recipe": "Pad thai"
     }
   ],
 
@@ -101,70 +101,70 @@
   "steps": [
     {
       "desc": "Take the chicken and cook it",
-      "recipe_id": "1",
+      "recipe": "Butter Chicken",
       "contained_ingredients": [
         {
           "name": "Chicken",
           "quantity": "200g",
           "additional_notes": "Chop it up",
-          "category_id": "1",
-          "recipe_id": "1"
+          "category_id": "Meat",
+          "recipe_id": "Butter Chicken"
         },
         {
           "name": "Rice",
           "quantity": "400g",
           "additional_notes": "Cook em put em rice",
-          "category_id": "2",
-          "recipe_id": "1"
+          "category_id": "Grain",
+          "recipe_id": "Butter Chicken"
         }
       ]
     },
 
     {
       "desc": "Combine the chicken and rice et Voila",
-      "recipe_id": "1",
+      "recipe": "Butter Chicken",
       "contained_ingredients": [
         {
           "name": "Secret sauce",
           "quantity": "1 tbps",
           "additional_notes": "",
-          "category_id": "3",
-          "recipe_id": "1"
+          "category_id": "Vegetables",
+          "recipe_id": "Butter Chicken"
         }
       ]
     },
 
     {
       "desc": "Cook em boil em put them in a stew",
-      "recipe_id": "2",
+      "recipe": "Pad thai",
       "contained_ingredients": [
         {
           "name": "Chicken",
           "quantity": "600g",
           "additional_notes": "Chop it up",
-          "category_id": "1",
-          "recipe_id": "2"
+          "category_id": "Meat",
+          "recipe_id": "Pad thai"
         }
       ]
     },
 
     {
       "desc": "You got potato stew",
-      "recipe_id": "2",
+      "recipe": "Pad thai",
       "contained_ingredients": [
         {
           "name": "Noodles",
           "quantity": "200g",
           "additional_notes": "Satay these bad bois for 5 minutes",
-          "category_id": "2",
-          "recipe_id": "2"
+          "category_id": "Grain",
+          "recipe_id": "Pad thai"
         },
         {
          "name": "Veges",
         "quantity": "100g",
         "additional_notes": "soften these bad bois for 2 minutes",
-        "category_id": "3",
-        "recipe_id": "2"
+        "category_id": "Vegetables",
+        "recipe_id": "Pad thai"
         }
       ]
     }
