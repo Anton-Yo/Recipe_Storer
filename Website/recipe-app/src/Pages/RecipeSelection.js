@@ -2,10 +2,13 @@ import React, {useState, useEffect} from "react"
 import api from "../api"
 import '../App.css'
 import {useNavigate} from 'react-router-dom'
+import { isMobile } from 'react-device-detect';
 
 
 const CreateRecipe = () => {
   const [recipes, setRecipes] = useState([]);
+  const [isLarge, SetIsLarge] = useState(window.innerWidth > 992)
+
   let navigate = useNavigate()
 
   const fetchRecipes = async() => {
@@ -16,6 +19,11 @@ const CreateRecipe = () => {
 
   useEffect(() => {
     fetchRecipes();
+
+
+    //Add listener to update page when dimensions change. to swap between 2/4 boxes per row
+    window.addEventListener('resize', checkSize);
+    return () => window.removeEventListener('resize', checkSize);
   }, []);
 
   const handleDelete = async(recipe_id) => {
@@ -39,9 +47,28 @@ const CreateRecipe = () => {
     return resultStr
   }
 
-  const GoToPage = (recipe_id) => {
+  const goToPage = (recipe_id) => {
     navigate("/display", {state: recipe_id});
     console.log(`Going to the recipe with an id of ${recipe_id}`)
+  }
+
+  //Based off 992 px standard for large from bootstrap
+  const checkSize = () => {
+    SetIsLarge(window.innerWidth > 992)
+  }
+
+  const mobileCheck = () => {
+    //If window is small or mobile, use 45% size for boxes for 2 per row.
+    if(!isLarge || isMobile)
+    {
+      console.log("This is running as true")
+      return "w-45 p-2 mr-1 mt-2 mb-2 shadow bg-white"
+    }
+    else //Otherwise use 20% for 4 boxes per row
+    {
+  
+      return "w-20 p-2 mr-1 mt-2 mb-2 shadow bg-white"
+    }
   }
 
   return (
@@ -50,7 +77,7 @@ const CreateRecipe = () => {
 
       <div id="recipe-select-container" className="d-flex flex-wrap bg-papaya border border-dark border-5">
         {recipes.map((recipe) => (
-          <button className="w-20 p-2 mr-1 mt-2 mb-2 shadow bg-white" key={recipe.id} onClick={() => GoToPage(recipe.id)}>
+          <button className={mobileCheck()} key={recipe.id} onClick={() => goToPage(recipe.id)}>
             <div className="recipe-button-info">
               <h4> {recipe.name} </h4>
               <p> {recipe.desc} </p>
@@ -68,7 +95,6 @@ const CreateRecipe = () => {
                 </div>
               </div>
             </div>
-           
           </button>
         ))}
       </div>

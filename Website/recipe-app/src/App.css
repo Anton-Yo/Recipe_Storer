@@ -65,10 +65,18 @@ li {
   background-color: yellow;
 }
 
+/* Options that need to change on resizing*/
+.ing-list {
+  width: 30%;
+}
+
+.display-title-border {
+  width: 30%;
+}
+
 @media only screen and (max-width: 992px)
 {
   .display-wrapper {
-    background-color: green;
   }
 
   /* The form box should be 100% of container for Create screen on mobile */
@@ -81,6 +89,15 @@ li {
     margin-bottom: 2em;
     width: 100%;
   }
+
+  .ing-list {
+    width: 80%;
+  }
+
+  .display-title-border {
+    width: 50%;
+  }
+
 }
 
 .w-45 {
@@ -157,6 +174,7 @@ li {
 
 .circle-list{
   list-style: circle;
+  list-style-position: inside;
 }
 
 .item {
@@ -173,6 +191,10 @@ li {
 }
 .home-list > li {
   display: list-item;
+}
+
+.h-60 {
+  height: 70%;
 }
 
 

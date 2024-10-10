@@ -28,13 +28,13 @@ const Home = () => {
       <h6 className="mt-2"> I will record other ideas here for the future: </h6>
       <ul className="home-list">
         <li>
-            Minor: Add back button to navigate between sections in 'Create page' 
+            <s> Minor: Add back button to navigate between sections in 'Create page' </s>
         </li>
         <li>
             Minor: Auto create obj if form is full on create page 
         </li>
         <li>
-            Minor: Optimise website (specifically display page) for mobile. Because realistically thats what will be used for viewing the website when cooking.
+          <s> Minor: Optimise website (specifically display page) for mobile. Because realistically thats what will be used for viewing the website when cooking.</s>
         </li>
         <li>
             Major: Add ability to edit a recipe, on the display page.

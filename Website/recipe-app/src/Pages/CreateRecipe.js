@@ -35,6 +35,7 @@ const CreateRecipe = () => {
   const [ingredientsAllSubmitted, setIngredientsAllSubmitted] = useState(false);
   const [stepSubmitted, setStepSubmitted] = useState(false);
   const [stepsAllSubmitted, setStepsAllSubmitted] = useState(false);
+  const [displayUnfilledMessage, setDisplayUnfilledMessage] = useState(false);
 
   const [stepCount, setStepCount] = useState(1);
   const [ingIdCount, setIngIdCount] = useState(1);
@@ -113,6 +114,41 @@ const CreateRecipe = () => {
     });
   };
 
+  const handleGoBack = () => {
+    if(stepsAllSubmitted) //If its on the submission page, go back to step page
+    {
+      setStepsAllSubmitted(false);
+      setStepForm({
+        desc: "",
+      });
+      return;
+    }
+
+    if(ingredientsAllSubmitted) { //If its on the steps page, go back to ingredients
+      setIngredientsAllSubmitted(false);
+      setIngForm({
+        name: "",
+        quantity: "",
+        additional_notes: "",
+        category: "",
+      });
+      return;
+    }
+
+    if(recipeSubmitted) {
+      setRecipeSubmitted(false);
+      setRecipe([]); //Recipe must be deleted because there can only be one and no editing yet.
+      setRecipeForm({
+        name: "",
+        desc: "",
+        cook_time: "",
+        cuisine: "",
+      });
+      return;
+    }
+  }
+
+
   const handleInputChange = (event, id) => {
     const value =
       event.target.type === "checkbox"
@@ -154,8 +190,20 @@ const CreateRecipe = () => {
 
   const handleRecipeSubmit = (event) => {
     event.preventDefault();
-    setRecipeSubmitted(true);
     setRecipe(recipeForm);
+    setRecipeSubmitted(true);
+
+    //TODO, Some fields are optional so I must check only the compulsory ones. Ill do later
+    // const allFieldsFilled = Object.values(recipeForm).every((field => field != ''));
+    // if(allFieldsFilled) //If fields are all filled out, proceed to next step, otherwise send an error msg
+    // {
+    //   setRecipeSubmitted(true);
+    // }
+    // else
+    // {
+    //   setDisplayUnfilledMessage(true);
+    // }
+    
   };
 
   const handleIngredientSubmit = async (event) => {
@@ -170,6 +218,7 @@ const CreateRecipe = () => {
     });
   };
 
+ 
   const handleStepSubmit = (event) => {
     event.preventDefault();
     stepForm.id = stepCount;
@@ -264,24 +313,32 @@ const CreateRecipe = () => {
     }
   };
 
+
   const handlePageState = () => {
     if (recipeSubmitted && ingredientsAllSubmitted && stepsAllSubmitted) {
       return (
-        <div>
-          <h4 className="mt-3"> Test zone </h4>
+        <div className="h-100">
+          <h4 className="mt-3"> Final Check! </h4>
 
           <p> Drag the ingredients on the steps to pair them up! </p>
 
           <p> When done, submit the recipe </p>
 
-          <div className="container justify-content-around d-flex pb-3 mt-4">
-            <button
-              type="submit"
-              onClick={submitNewRecipe}
-              className="btn btn-dark w-30"
-            >
-              Send to Server
-            </button>
+          <div className="container h-50 flex-column justify-content-center d-flex mt-4">
+            <div className="flex-row justify-content-around d-flex pb-3 mt-4">
+              <button
+                type="submit"
+                onClick={submitNewRecipe}
+                className="btn btn-dark w-30"
+              >
+                Send to Server
+              </button>
+
+              <button type="submit" onClick={handleGoBack} className="btn btn-dark w-30">
+                    Back
+              </button>
+            </div>
+        
           </div>
         </div>
       );
@@ -339,7 +396,7 @@ const CreateRecipe = () => {
                   className="form-control"
                   id="additional_notes"
                   name="additional_notes"
-                  placeholder="Leave empty if necessary"
+                  placeholder="(optional)"
                   onChange={(event) => handleInputChange(event, 1)}
                   value={ingForm.additional_notes}
                 ></input>
@@ -361,17 +418,22 @@ const CreateRecipe = () => {
                 ></input>
               </div>
 
-              <div className="container justify-content-around d-flex">
-                <button type="submit" className="btn btn-dark w-30">
+              <div className="container justify-content-around d-flex mt-4">
+                <button type="submit" className="btn btn-dark w-25">
                   Add
                 </button>
 
                 <button
                   onClick={ingredientsComplete}
-                  className="btn btn-dark w-30"
+                  className="btn btn-dark w-25"
                 >
                   Next Section
                 </button>
+
+                <button type="submit" onClick={handleGoBack} className="btn btn-dark w-25">
+                  Back
+                </button>
+
               </div>
             </div>
           </form>
@@ -409,13 +471,17 @@ const CreateRecipe = () => {
                 />
               </div>
 
-              <div className="container justify-content-around d-flex">
-                <button type="submit" className="btn btn-dark w-30">
+              <div className="container justify-content-around d-flex mt-4">
+                <button type="submit" className="btn btn-dark w-25">
                   Add
                 </button>
 
-                <button onClick={stepsComplete} className="btn btn-dark w-30">
+                <button onClick={stepsComplete} className="btn btn-dark w-25">
                   Next Section
+                </button>
+
+                <button type="submit" onClick={handleGoBack} className="btn btn-dark w-25">
+                  Back
                 </button>
               </div>
             </div>
@@ -508,7 +574,7 @@ const CreateRecipe = () => {
             ></input>
           </div>
 
-          <div className="container justify-content-around d-flex pb-3">
+          <div className="container justify-content-around d-flex pb-3 mt-4">
             <button type="submit" className="btn btn-dark w-30">
               Next Section
             </button>
