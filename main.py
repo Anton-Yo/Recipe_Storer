@@ -4,7 +4,6 @@ from sqlalchemy.orm import Session
 import models, schemas, crud, json
 from database import SessionLocal, engine
 from fastapi.middleware.cors import CORSMiddleware
-import bleach;
 
 # Create the database tables
 models.Base.metadata.create_all(bind=engine)
