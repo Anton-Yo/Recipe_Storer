@@ -28,25 +28,18 @@ const DisplayInfo = () => {
 
   const fetchCategories = async(recipe_id) => {
     const response = await api.get(`/recipe/${recipe_id}/categories`)
-    console.log(response.data);
+    //console.log(response.data);
     if(response.data == null)
     {
       console.log("categories is empty")
     }
     SetCategories(response.data)
-
-    //If haven't made JSON formattable data, and recipe info exists, do that.
-    // if(downloadableData.length == 0 && recipeInfo.length != 0)
-    // {
-    //   createAlternateForm(recipeInfo)
-    //   setLoading(false);
-    // }
   }
 
   const fetchRecipes = async(recipe_id) => {
     const response = await api.get(`/recipes/${recipe_id}`)
     console.log("Fetching recipes...")
-    console.log(response.data)
+    //console.log(response.data)
     if(response.data == null)
     {
       console.log("Empty array")
@@ -54,37 +47,22 @@ const DisplayInfo = () => {
     }
     setRecipeInfo(response.data);
     setLoading(false);
-
-    // //If haven't made JSON formattable data, and category info exists, do that.
-    // if(downloadableData.length == 0 && categories.length != 0)
-    // {
-    //   createAlternateForm(response.data)
-    //   setLoading(false);
-    // }
   };
 
   const createAlternateForm = (data) => {
     
-    const newData = JSON.parse(JSON.stringify(data));
-
+    let newData = JSON.parse(JSON.stringify(data));
+    
     //Now change things from the messy original data that is sent thru
     newData.cuisine = newData.cuisine.name //Set the cuisine name directly to the cuisine name, rather than a nested arr
-    newData.ingredients.forEach(ing => {
-      //Grab the name of the category, that corresponds to ing.cat_id == categories.cat_id
-      ing.category = categories.find(element => element.id == ing.category_id).name
-      ing.recipe = data.name;
-      delete ing.id
-      delete ing.recipe_id
-      delete ing.category_id
-    });
+    delete newData.ingredients //Get rid of ingredients 
 
     //Change the steps
     newData.steps.forEach(step => {
-      step.recipe = data.name;
       step.ingredients.forEach(ing => {
         //Grab the name of the category, that corresponds to ing.cat_id == categories.cat_id
         ing.category = categories.find(element => element.id == ing.category_id).name
-        ing.recipe = data.name;
+
         delete ing.id
         delete ing.recipe_id
         delete ing.category_id
@@ -93,6 +71,12 @@ const DisplayInfo = () => {
       delete step.id
       delete step.recipe_id;
     })
+
+    //Make it into a form of recipes:[{data}]
+    let tempData = {
+      recipes: [newData]
+    }
+    newData = tempData
 
     setDownloadableData(newData);
     console.log("Created JSON data for download");
@@ -184,7 +168,7 @@ const DisplayInfo = () => {
     const blob = new Blob([fileData]);
     const url = URL.createObjectURL(blob)
     const link = document.createElement("a");
-    link.download = `${downloadableData.name}.json`
+    link.download = `${downloadableData.recipes[0].name}.json` //JSON is an arr of recipes, so grab the first and only entry
     link.href = url;
     link.click()
   }
@@ -349,23 +333,3 @@ const DisplayInfo = () => {
 }
 
 export default DisplayInfo;
-
-
-// <div key={step.id} className="mx-3 mt-2 border-secondary border-2">
-// <div className="container d-flex w-100 justify-content-between">
-//   <h4 className="py-1 w-25 border-bottom border-dark border-1"> {`Step ${stepCount++}`} </h4>
-//   <div className="step-ingredients-container d-flex justify-contents-start">
-//     <h6 className="border-bottom border-dark border-1 mt-3"> Associated Ingredients: </h6>
-//   </div>
-//   {/* <h5 className="mt-2 step-ingredients-container"> Associated Ingredients </h5> */}
-// </div>
-
-
-// <div className="container d-flex w-100 justify-content-between">
-//   <div className="step-container">{`${step.desc}`}</div>
-//   <div className="step-ingredients-container">
-//     <ul className="circle-list"> 
-//       {returnIngs(step.id)}
-//     </ul>
-//   </div>
-// </div>

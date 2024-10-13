@@ -228,17 +228,17 @@ def get_single_recipe(db: Session, recipe_id: int):
 
     return db_result
 
-def get_stuff(db: Session, recipe_id: int):
+# def get_stuff(db: Session, recipe_id: int):
 
-    stuff = get_steps_by_recipe(db=db, target_id=recipe_id)
+#     stuff = get_steps_by_recipe(db=db, target_id=recipe_id)
 
-    #result = db.query(models.Step).join(models.StepsAndIngredients).join(models.Ingredient).all()
+#     #result = db.query(models.Step).join(models.StepsAndIngredients).join(models.Ingredient).all()
 
-    #result = db.query(models.Step).join(models.StepsAndIngredients).join(models.Ingredient).first()
-    #result = db.query(models.Recipe).join(models.Recipe.ingredients).join(models.Recipe.steps).first()
-    result = db.query(models.Recipe).options(joinedload(models.Recipe.cuisine),joinedload(models.Recipe.ingredients),joinedload(models.Recipe.steps).options(joinedload(models.Step.ingredients))).filter(models.Recipe.id == 1).first()
-    #result = db.query(models.Step).options(joinedload(models.Step.ingredients)).filter(models.Step.recipe_id == recipe_id).all()
-    return result
+#     #result = db.query(models.Step).join(models.StepsAndIngredients).join(models.Ingredient).first()
+#     #result = db.query(models.Recipe).join(models.Recipe.ingredients).join(models.Recipe.steps).first()
+#     result = db.query(models.Recipe).options(joinedload(models.Recipe.cuisine),joinedload(models.Recipe.ingredients),joinedload(models.Recipe.steps).options(joinedload(models.Step.ingredients))).filter(models.Recipe.id == 1).first()
+#     #result = db.query(models.Step).options(joinedload(models.Step.ingredients)).filter(models.Step.recipe_id == recipe_id).all()
+#     return result
 
 
 def get_categories_from_ingredient_list(db: Session, ings: List[int]):

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import api from "../api";
 import "../App.css";
 import RecipeBlock from "../Components/RecipeBlock";
@@ -8,6 +8,7 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { TouchBackend } from "react-dnd-touch-backend";
 import { isMobile } from 'react-device-detect';
+
 
 const CreateRecipe = () => {
   const [recipe, setRecipe] = useState([]);
@@ -30,12 +31,14 @@ const CreateRecipe = () => {
     id: 1,
     desc: "",
   });
+  const [uploadedFile, setUploadedFile] = useState()
   const [recipeSubmitted, setRecipeSubmitted] = useState(false);
   const [ingredientSubmitted, setIngredientSubmitted] = useState(false);
   const [ingredientsAllSubmitted, setIngredientsAllSubmitted] = useState(false);
   const [stepSubmitted, setStepSubmitted] = useState(false);
   const [stepsAllSubmitted, setStepsAllSubmitted] = useState(false);
   const [displayUnfilledMessage, setDisplayUnfilledMessage] = useState(false);
+  const [isLarge, SetIsLarge] = useState(window.innerWidth > 992)
 
   const [stepCount, setStepCount] = useState(1);
   const [ingIdCount, setIngIdCount] = useState(1);
@@ -148,14 +151,13 @@ const CreateRecipe = () => {
     }
   }
 
-
   const handleInputChange = (event, id) => {
     const value =
       event.target.type === "checkbox"
         ? event.target.checked
         : event.target.value;
     switch (id) {
-      case 0:
+      case 0: 
         setRecipeForm({
           ...recipeForm,
           [event.target.name]: value,
@@ -175,6 +177,7 @@ const CreateRecipe = () => {
           [event.target.name]: value,
         });
         break;
+
     }
   };
 
@@ -583,37 +586,190 @@ const CreateRecipe = () => {
     }
   };
 
+  //Based off 992 px standard for large from bootstrap
+  const checkSize = () => {
+    SetIsLarge(window.innerWidth > 992)
+  }
+
+  useEffect(() => {
+    //Add listener to update page when dimensions change. to swap between 2/4 boxes per row
+    window.addEventListener('resize', checkSize);
+    return () => window.removeEventListener('resize', checkSize);
+  }, []);
+
   const getPageOrder = () => {
-    if(isMobile)
+    if(isMobile || !isLarge)
     {
       return (
-      <div className="container-fluid d-flex flex-column flex-lg-row mt-4"> {/* This one is the overall container */}
-        <div className="visual-box bg-papaya border border-secondary rounded">
-          {GetRecipeBlock()}
-          <div className="d-flex mt-2 flex-wrap">{GetIngredientBlocks()}</div>
-          <div className="d-flex mt-2 flex-wrap">{GetStepBlocks()}</div>
+      <div>
+        <div className="container-fluid d-flex flex-column flex-lg-row mt-4"> {/* This one is the overall container */}
+          <div className="visual-box bg-papaya border border-secondary rounded">
+            {GetRecipeBlock()}
+            <div className="d-flex mt-2 flex-wrap">{GetIngredientBlocks()}</div>
+            <div className="d-flex mt-2 flex-wrap">{GetStepBlocks()}</div>
+          </div>
+
+          <div className="form-container p-2 bg-lightblue border border-secondary rounded">{handlePageState()}</div>
         </div>
 
-        <div className="form-container p-2 bg-lightblue border border-secondary rounded">{handlePageState()}</div>
+        <div className="container-lg w-75 mb-4 p-2">
+          <details className="mt-3">
+            <summary> Click to upload a JSON file </summary>
+              <div className="d-flex flex-column container justify-content-center">
+
+                <div className="container-lg w-100 bg-file d-flex flex-column w-25 pb-3"> 
+                  <form onSubmit={submitJSONFile} className="text-center mt-2">
+                    <h6> Upload JSON File: </h6>
+                    <label htmlFor="jsonToUpload">  <p> Make sure it is the right format!</p></label>
+                    <div className="text-center"> 
+                      <input type='file' onChange={handleFile} className="p-2" id="file-upload" name='fileToUpload'></input> 
+                    </div>
+                    <input type="submit" value="Submit" className="btn btn-dark"></input> 
+                  </form>
+                </div>
+
+                <div className="container-lg text-center bg-string mt-3 d-flex flex-column">
+                  <h6 className="mt-2"> Paste JSON String </h6> 
+                  <textarea id="json-textarea" rows="6" cols="50" placeholder="Paste your JSON string here" className="mt-1 "/>
+                  <div className="container">
+                    <button className="my-2 btn btn-dark w-50 overflow-hidden" onClick={submitJSONString}> Submit String </button>
+                  </div>
+                </div>
+
+              </div>
+            </details>
+            </div>
       </div>
       )
     }
     else //The order should be reversed for mobile cos the keyboard pops up, so I want to see the visual up the top
     {
       return (
-        
-        <div className="container-fluid d-flex flex-column flex-lg-row mt-4"> {/* This one is the overall container */}
-          <div className="form-container p-2 bg-lightblue border border-secondary rounded">{handlePageState()}</div>
+        <div>
+          <div className="container-fluid d-flex flex-column flex-lg-row mt-4"> {/* This one is the overall container */}
+            <div className="form-container p-2 bg-lightblue border border-secondary rounded">{handlePageState()}</div>
 
-          <div className="visual-box bg-papaya border border-secondary rounded">
-            {GetRecipeBlock()}
-            <div className="d-flex mt-2 flex-wrap">{GetIngredientBlocks()}</div>
-            <div className="d-flex mt-2 flex-wrap">{GetStepBlocks()}</div>
+            <div className="visual-box bg-papaya border border-secondary rounded">
+              {GetRecipeBlock()}
+              <div className="d-flex mt-2 flex-wrap">{GetIngredientBlocks()}</div>
+              <div className="d-flex mt-2 flex-wrap">{GetStepBlocks()}</div>
+            </div>
           </div>
-        </div>
+
+          <div className="container-lg w-50 my-2 p-2">
+          <details className="p-2">
+          <summary> Click to upload a JSON file </summary>
+              <div className="d-flex flex-row container justify-content-center">
+
+                <div className="container-lg w-50 bg-file d-flex flex-column w-25"> 
+                  <form onSubmit={submitJSONFile} className="text-center mt-2">
+                    <h6> Upload JSON File: </h6>
+                    <label htmlFor="jsonToUpload"> <p> Make sure it is the right format!</p></label>
+                    <div className="text-center"> 
+                      <input type='file' onChange={handleFile} className="p-2 special-margin" id="file-upload" name='fileToUpload'></input> 
+                    </div>
+                    <input type="submit" value="Submit" className="btn btn-dark mt-2"></input> 
+                  </form>
+                </div>
+
+                <div className="container-lg w-50 text-center bg-string justify-contents-center d-flex flex-column">
+                  <h6 className="mt-2"> Paste JSON String </h6> 
+                  <textarea id="json-textarea" rows="6" cols="50" placeholder="Paste your JSON string here" className="mt-1 "/>
+                  <div className="container">
+                    <button className="my-2 btn btn-dark overflow-hidden" onClick={submitJSONString}> Submit String </button>
+                  </div>
+                </div>
+
+              </div>
+            </details>
+            </div>
+          </div>
         )
     }
   }
+
+  const handleFile = (event) => {
+    setUploadedFile(event.target.files[0])
+  }
+
+  const submitJSONFile = async (event) => {
+    event.preventDefault()
+    let response 
+    const submittedFile = uploadedFile;
+    const inputField = document.getElementById("file-upload")
+  
+
+    const formData = new FormData();
+    formData.append('file', submittedFile)
+
+    console.log(submittedFile)
+
+    if(submittedFile == null) //Dont do anything if the file is null
+    {
+      alert("File is missing")
+      return;
+    }
+
+    if(submittedFile.type !== "application/json") //Dont do anything if its not JSON
+    {
+      alert("Please submit a valid JSON file")
+      return;
+    }
+
+    try {
+        //Send to server
+        try {
+          response = await api.post("/load_from_JSON_file", formData);
+          inputField.value = '';
+          setUploadedFile()
+        } catch (error) {
+          console.error("Error submitting form:", error.response.data);
+        }
+
+        //if submission to server failed, throw an error so the alert provides feedback
+        if(response.data == "Error in JSON formatting")
+          throw new Error("Upload failed");
+        
+        alert("Upload was a success")
+    }
+    catch (error)
+    {
+      alert("Upload failed :(\nMake sure the uploaded file is of in the correct JSON format")
+    }
+  }
+
+  const submitJSONString = async () => {
+      const input = document.getElementById("json-textarea");
+
+      try {
+        const jString = "[" + input.value + "]" //Need to add this for FASTAPI body
+        const parsedInput = JSON.parse(jString); 
+        
+        
+        let response
+        
+        //Send to server
+        try {
+          response = await api.post("/load_from_JSON_string", parsedInput);
+          input.value = ''
+        } catch (error) {
+          console.error("Error submitting form:", error.response.data);
+        }
+
+        //if submission to server failed, throw an error so the alert provides feedback
+        if(response.data == "Error in JSON formatting")
+          throw new Error("Upload failed");
+
+        alert("Upload was a success")
+      }
+      catch (e) {
+        alert("Upload failed :(\nMake sure the JSON string follows the format shown in the downloadable files")
+      }
+
+    
+  }
+
+
 
   return (
     <DndProvider backend={Backend}>

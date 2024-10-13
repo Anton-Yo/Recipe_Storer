@@ -1,0 +1,92 @@
+{
+  "recipes": [
+    {
+      "name": "Butter Chicken (test)",
+      "desc": "chicken and butter baby",
+      "cook_time": 70,
+      "cuisine": "Indian",
+      "source": "https://anton-yo.github.io/",
+      "steps": [
+        {
+          "desc": "Cook em boil em put them in a stew",
+          "ingredients": [
+            {
+                "name": "Chicken",
+                "quantity": "200g",
+                "additional_notes": "Chop it up",
+                "category": "Meat"
+              },
+              {
+                "name": "Rice",
+                "quantity": "400g",
+                "additional_notes": "Cook em put em rice",
+                "category": "Grain"
+              }
+          ]
+        },
+        {
+          "desc": "You got potato stew",
+          "ingredients": [
+            {
+                "name": "Secret sauce",
+                "quantity": "1 tbps",
+                "additional_notes": "",
+                "category": "Vegetables"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "Pad thai (test)",
+      "desc": "Good shit",
+      "cook_time": 20,
+      "source": "https://anton-yo.github.io/",
+      "cuisine": "Thai",
+      "steps": [
+        {
+          "desc": "Cook em boil em put them in a stew",
+          "ingredients": [
+            {
+              "name": "Chicken",
+              "quantity": "600g",
+              "additional_notes": "Chop the legs up",
+              "category": "Meat"
+            }
+          ]
+        },
+        {
+          "desc": "You got potato stew",
+          "ingredients": [
+            {
+              "name": "Noodles",
+              "quantity": "200g",
+              "additional_notes": "Satay these bad bois for 5 minutes",
+              "category": "Grain"
+            },
+            {
+              "name": "Veges",
+              "quantity": "100g",
+              "additional_notes": "soften these bad bois for 2 minutes",
+              "category": "Vegetables"
+            },
+            {
+              "name": "Veges2",
+              "quantity": "100g",
+              "additional_notes": "soften these bad bois for 2 minutes",
+              "category": "Vegetables"
+            },
+            {
+              "name": "Veges3",
+              "quantity": "100g",
+              "additional_notes": "soften these bad bois for 2 minutes",
+              "category": "Vegetables"
+            }
+          ]
+        }
+      ]
+    }
+
+  ]
+}

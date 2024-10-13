@@ -1,9 +1,14 @@
-from fastapi import FastAPI, Depends, HTTPException, Body
+from fastapi import FastAPI, Depends, File, HTTPException, Body, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from typing import Annotated, List
 from sqlalchemy.orm import Session
 import models, schemas, crud, json
 from database import SessionLocal, engine
-from fastapi.middleware.cors import CORSMiddleware
+import os
+import shutil
+from datetime import datetime
+
 
 # Create the database tables
 models.Base.metadata.create_all(bind=engine)
@@ -39,10 +44,10 @@ def helpme():
 # ---------------------------
 #    Testing StepAndIngs
 # --------------------------
-@app.get("/get")
-def getThat(id: int, db: Session = Depends(get_db)):
-    db_steps = crud.get_stuff(db=db, recipe_id = id)
-    return db_steps
+# @app.get("/get")
+# def getThat(id: int, db: Session = Depends(get_db)):
+#     db_steps = crud.get_stuff(db=db, recipe_id = id)
+#     return db_steps
 
 # -------------------
 #    CREATE STUFF
@@ -327,171 +332,122 @@ def get_categories_from_recipe_id(recipe_id: int, db: Session = Depends(get_db))
 
     return crud.get_categories_from_ingredient_list(db, id_list)
 
-
 # ---------------------------------
 #    CREATE TEST DATA WITH JSON
 # ---------------------------------
 
-@app.post("/test_data", response_model=str)
-def create_test_data(db: Session = Depends(get_db)):
-
-    #Opens the file
-    f = open('testData.json')
-
-    #returns as dictionary
+@app.post("/create_test_data2", response_model=str)
+def post(db: Session = Depends(get_db)):
+    f = open('testDataV2.json')
     data = json.load(f)
-    #print(data)
 
-    ings = [] #pass this thru to steps
-    #iterating through the json.
-
-    #Make the cuisines
-    for i in data["cuisines"]:
-        #print(i)
-        create_cuisine_from_dict(i, db = db)
-
-    recipeID = 0
     #Make the recipes
-    for i in data["recipes"]:
-        recipe = create_recipe_from_dict(i, db = db)
+    for recipe in data["recipes"]:
+        db_recipe = create_recipe_from_dict(recipe, db = db)
+        new_recipe_id = db_recipe.id #pass recipe id to ingredients and steps
+        
+        print(recipe["steps"])
+        #Make the steps first
+        for step in recipe["steps"]:
+            db_step = create_step_from_dict(step, recipe_id=new_recipe_id, db=db)
+            new_step_id = db_step.id #pass step id to ingredients
 
-        # # #make the ingredients for the newly created recipe
-        for i in data["ingredients"]:
-            #Only include the ingredients that are related to current recipe
-            if(i["recipe"] == recipe.name):
-                ings.append(create_ingredient_from_dict(i, recipe.id, db = db))
+            for ing in step["ingredients"]: #use the recipe id, and append the ing
+                new_ing = create_ingredient_from_dict(ing, recipe_id=new_recipe_id, db=db)
+                print(f"appending {new_ing.name} to {db_step.desc}")
+                db_step.ingredients.append(new_ing)
+                
+                #db_step.append(new_ing)   
+        db.add(db_step)
+        db.commit()   
+    return "test data v2 loaded successfully"
 
-        # #make the steps
-        for i in data["steps"]:
-            if(i["recipe"] == recipe.name):
-                create_step_from_dict(i, recipe.id, db=db)
-
-    # #make the categories
-    for i in data["categories"]:
-        create_category_from_dict(i, db=db)
-
-    f.close()
-    #print(data)
-    #create_recipe_from_dict(recipe_data = recipes, db=db)
-    return "Data successfully created from JSON"
-
-@app.post("/load_from_JSON", response_model=str)
+@app.post("/load_from_JSON_string", response_model=str)
 def load_from_JSON(dataContainer: list = Body(...), db: Session = Depends(get_db)):
     data = dataContainer[0]
-    print(data)
-    r_data = models.Recipe(
-        name = data["name"], 
-        desc = data["desc"], 
-        cook_time = data["cook_time"], 
-        source = data["source"], 
-        cuisine_id = crud.get_cuisine_id_by_name(db, cuisine_name = data["cuisine"]))
-        
-    recipe_id = create_recipe(recipe_data = r_data, db=db).id
+    try:
+    #Make the recipes
+        for recipe in data["recipes"]:
+            db_recipe = create_recipe_from_dict(recipe, db = db)
+            new_recipe_id = db_recipe.id #pass recipe id to ingredients and steps
+            
+            print(recipe["steps"])
+            #Make the steps first
+            for step in recipe["steps"]:
+                db_step = create_step_from_dict(step, recipe_id=new_recipe_id, db=db)
+
+                for ing in step["ingredients"]: #use the recipe id, and append the ing
+                    new_ing = create_ingredient_from_dict(ing, recipe_id=new_recipe_id, db=db)
+                    print(f"appending {new_ing.name} to {db_step.desc}")
+                    db_step.ingredients.append(new_ing)
+                    
+                    #db_step.append(new_ing)   
+            db.add(db_step)
+            db.commit()
+    except:
+        return "Error in JSON formatting"
     
-    ing_list = []
-    print(data["ingredients"])
+    return "Created new entry from string"
 
-    #2. Step info -> Create stepsLoop thru and make all the ingredients
-    for ing in data.ingredients:
-        ingData = schemas.SubmitIng(
-            name = ing["name"],
-            quantity = ing["quantity"],
-            additional_notes = ing["additional_notes"],
-            category_id = get_category_id_by_name(category_name = ing["category"], db=db),
-            recipe_id = ["recipe"],
-        )
-        ing_list.append(create_ingredient(ingData, db=db))
-
-    for step in data["step"]:
-
-        #create the steps
-        stepData = schemas.StepCreate(
-            desc = step["desc"],
-            recipe_id = recipe_id
-        )
-        new_step = create_step(step = stepData, db=db)
-
-         # 4. Ingredient info -> create ingredients, referencing newly created steps/recipe
-        for containedIng in step["contained_ingredients"]:
-
-            for ing in ing_list:
-                if containedIng["name"] == ing["name"] and containedIng["quantity"] == ing["quantity"] and containedIng["additional_notes"] == ing["additional_notes"]:
-                    new_step.ingredients.append(ing)
-
-    db.commit()
-    db.refresh(new_step)
-    return   
+@app.post("/load_from_JSON_file", response_model=str)
+async def load_from_JSON(file: UploadFile = File(...), db: Session = Depends(get_db)):
+    if not file:
+        return "No upload file sent"
     
+    if file.content_type != "application/json":
+        raise HTTPException(status_code=400, detail="Invalid file type")
+    
+    fileData = await file.read()
+    data = json.loads(fileData)
+
+    try:
+    #Make the recipes
+        for recipe in data["recipes"]:
+            db_recipe = create_recipe_from_dict(recipe, db = db)
+            new_recipe_id = db_recipe.id #pass recipe id to ingredients and steps
+            
+            print(recipe["steps"])
+            #Make the steps first
+            for step in recipe["steps"]:
+                db_step = create_step_from_dict(step, recipe_id=new_recipe_id, db=db)
+
+                for ing in step["ingredients"]: #use the recipe id, and append the ing
+                    new_ing = create_ingredient_from_dict(ing, recipe_id=new_recipe_id, db=db)
+                    print(f"appending {new_ing.name} to {db_step.desc}")
+                    db_step.ingredients.append(new_ing)
+                    
+                    #db_step.append(new_ing)   
+            db.add(db_step)
+            db.commit()   
+    except:
+        return "Error in JSON formatting"
+
+    return "Created new entry from JSON file"
 
 def create_recipe_from_dict(recipe_data: dict, db: Session = Depends(get_db)):
-    print(recipe_data)
     db_recipe = models.Recipe(
-        name = recipe_data.get("name"), 
-        desc = recipe_data.get("desc"), 
-        cook_time = recipe_data.get("cook_time"), 
-        source = recipe_data.get("source"), 
-        cuisine_id = crud.get_cuisine_id_by_name(db, cuisine_name = recipe_data.get("cuisine")))
+        name = recipe_data["name"], 
+        desc = recipe_data["desc"], 
+        cook_time = recipe_data["cook_time"], 
+        source = recipe_data["source"], 
+        cuisine_id = crud.get_cuisine_id_by_name(db, cuisine_name = recipe_data["cuisine"]))
     db.add(db_recipe)
     db.commit()
     db.refresh(db_recipe)
     #db_recipe = crud.create_recipe(db=db, recipe=recipe)
     return db_recipe
 
-def create_cuisine_from_dict(cuisine: dict, db: Session = Depends(get_db)):
-    db_cuisine = crud.create_cuisine(db, cuisine_name = cuisine["name"])
-    #db_recipe = crud.create_recipe(db=db, recipe=recipe)
-    return db_cuisine
+def create_step_from_dict(step: dict, recipe_id: int, db: Session = Depends(get_db)):
+    db_step = crud.create_step(db, step_desc = step["desc"], attached_recipe = recipe_id)
+    db.commit()
+    db.refresh(db_step)
+    return db_step
 
 def create_ingredient_from_dict(ing_data: dict, recipe_id: int, db: Session = Depends(get_db)):
     db_ing = crud.create_ing_from_dict(db, ing_data = ing_data, recipe_id = recipe_id)
     if db_ing is None:
         raise HTTPException(status_code=404, detail="Ingredient creation failed")
     return db_ing
-
-def create_step_from_dict(step: dict, recipe_id: int, db: Session = Depends(get_db)):
-    db_step = crud.create_step(db, step_desc = step["desc"], attached_recipe = recipe_id)
-
-    #Get the ingredients of the recipe involved
-    ings_in_recipe = crud.get_ingredients_by_recipe_id(recipe_id, db=db)
-
-    print("....................")
-    for i in ings_in_recipe:
-        print(i.name)
-    print("....................")
-
-    print("Before the loop")
-    print(step)
-
-    #for each ingredient in the step, assign the ingredient DB id to the step via relationship
-    for containedIng in step["contained_ingredients"]:
-        print("------------")
-        print(containedIng)
-        for ing in ings_in_recipe:
-        
-            print("Looping")
-            print(ing.name)
-            print(ing.quantity)
-            if containedIng["name"] == ing.name and containedIng["quantity"] == ing.quantity: 
-                print(f"{ing.name} from recipe id {ing.recipe_id} is being appended to step {db_step.id}")
-                db_step.ingredients.append(ing)
-                print("god help me")
-    
-    print("End")
-
-    for i in db_step.ingredients:
-        print(f'I contain {i.name}')
-
-    db.commit()
-    db.refresh(db_step)
-    #db_step.refresh(db_step)
-    return db_step
-
-def create_category_from_dict(category: dict, db: Session = Depends(get_db)):
-    print(category)
-    db_category = crud.create_category(db, category_name = category["name"])
-    if db_category is None:
-        raise HTTPException(status_code=404, detail="Category creation has failed")
-    return db_category
 
 @app.delete("/clear_db", response_model=str)
 def delete_all(db: Session = Depends(get_db)):
@@ -505,9 +461,36 @@ def delete_all(db: Session = Depends(get_db)):
     return "Database cleared successfully"
 
 # ---------------------------------
-#    Download Data as JSON
+#       Database Backups 
 # ---------------------------------
 
+BACKUP_PATH = "backup.db"
+DB_PATH = "recipes.db"
+
+#CHATGPT helped with these ones
+@app.get("/backup") 
+def backup_db():
+    source = DB_PATH
+    dest = BACKUP_PATH
+
+    shutil.copy(source, dest)
+    return "Database backup created successfully"
+
+@app.get("/download_current")
+def download_recipe_db():
+    print("Downloading current db")
+    if not os.path.exists(BACKUP_PATH):
+        raise HTTPException(status_code=404, detail="Database file not found")
+    now = datetime.now()
+    return FileResponse(BACKUP_PATH, filename="recipes " + now.strftime("%d/%m/%Y %H:%M") + ".db")
+
+@app.get("/download_backup")
+def download_backup():
+    print("Downloading backup db")
+    if not os.path.exists(BACKUP_PATH):
+        raise HTTPException(status_code=404, detail="Backup file not found, have you saved a backup yet?")
+    now = datetime.now()
+    return FileResponse(BACKUP_PATH, filename="backup " + now.strftime("%d/%m/%Y %H:%M") + ".db")
 
 
 

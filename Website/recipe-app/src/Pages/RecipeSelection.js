@@ -117,7 +117,7 @@ const CreateRecipe = () => {
               <td>{recipe.cuisine.name}</td>
               <td>
                 <div className="w-100 d-flex justify-content-center">
-                  <button onClick={() => handleDelete(recipe.id)} className="btn btn-primary">
+                  <button onClick={() => handleDelete(recipe.id)} className="btn btn-dark">
                     {" "}
                     Delete{" "}
                   </button>
