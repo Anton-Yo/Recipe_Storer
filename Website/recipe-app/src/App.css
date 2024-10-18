@@ -222,6 +222,7 @@ summary {
   align-items: center;
   padding: 10px 15px;
   font-weight: bold;
+  user-select: none;
 }
 
 summary::after {
