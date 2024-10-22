@@ -7,7 +7,7 @@ const getBaseURL = () => {
     }
     else
     {
-        return 'https://recipe-storer-1.onrender.com'
+        return 'recipestorer-production.up.railway.app'
     }
 }
 
