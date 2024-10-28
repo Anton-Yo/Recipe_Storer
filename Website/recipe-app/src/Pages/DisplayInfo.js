@@ -55,7 +55,15 @@ const DisplayInfo = () => {
     
     //Now change things from the messy original data that is sent thru
     newData.cuisine = newData.cuisine.name //Set the cuisine name directly to the cuisine name, rather than a nested arr
-    delete newData.ingredients //Get rid of ingredients 
+    //delete newData.ingredients //Get rid of ingredients 
+
+    newData.ingredients.forEach(ing => {
+      ing.category = categories.find(element => element.id == ing.category_id).name
+
+      delete ing.id
+      delete ing.recipe_id
+      delete ing.category_id
+    })
 
     //Change the steps
     newData.steps.forEach(step => {
@@ -225,8 +233,8 @@ const DisplayInfo = () => {
     {
       return(
         <div className="row">
-          <div className="col"> Hey {step.desc} </div>
-          <div className="col"> U </div>
+          <div className="col"> {step.desc} </div>
+          <div className="col"> N/A </div>
         </div>
       )
     }
@@ -310,7 +318,6 @@ const DisplayInfo = () => {
                 <div className="col-1"> </div>
                 <div className="col-5 text-decoration-underline"> <h4> Components: </h4> </div>
               </div>
-             
               <div> {setupGrid(step)} </div>
             </div>
          

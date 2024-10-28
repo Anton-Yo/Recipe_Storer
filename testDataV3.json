@@ -2,7 +2,7 @@
   "recipes": [
     {
       "name": "Butter Chicken (test)",
-      "desc": "chicken and butter baby",
+      "desc": "Chicken and Butter!",
       "cook_time": 70,
       "cuisine": "Indian",
       "source": "https://anton-yo.github.io/",
@@ -10,48 +10,48 @@
         {
           "name": "Chicken",
           "quantity": "200g",
-          "additional_notes": "Chop it up",
+          "additional_notes": "Chopped",
           "category": "Meat"
         },
         {
           "name": "Rice",
           "quantity": "400g",
-          "additional_notes": "Cook em put em rice",
+          "additional_notes": "Precooked",
           "category": "Grain"
         },
         {
           "name": "Secret sauce",
           "quantity": "1 tbps",
           "additional_notes": "",
-          "category": "Vegetables"
+          "category": "Sauce"
         }
       ],
       "steps": [
         {
-          "desc": "Cook em boil em put them in a stew",
+          "desc": "Cook the chicken and the rice",
           "ingredients": [
             {
               "name": "Chicken",
               "quantity": "200g",
-              "additional_notes": "Chop it up",
+              "additional_notes": "Chopped",
               "category": "Meat"
             },
             {
               "name": "Rice",
               "quantity": "400g",
-              "additional_notes": "Cook em put em rice",
+              "additional_notes": "Precooked",
               "category": "Grain"
             }
           ]
         },
         {
-          "desc": "You got potato stew",
+          "desc": "Combine together with the sauce",
           "ingredients": [
             {
               "name": "Secret sauce",
               "quantity": "1 tbps",
               "additional_notes": "",
-              "category": "Vegetables"
+              "category": "Sauce"
             }
           ]
         }
@@ -60,7 +60,7 @@
 
     {
       "name": "Pad thai (test)",
-      "desc": "Good shit",
+      "desc": "A classic thai dish",
       "cook_time": 20,
       "source": "https://anton-yo.github.io/",
       "cuisine": "Thai",
@@ -68,47 +68,47 @@
         {
           "name": "Chicken",
           "quantity": "600g",
-          "additional_notes": "Chop the legs up",
+          "additional_notes": "Chunky Chicken!",
           "category": "Meat"
         },
         {
           "name": "Noodles",
           "quantity": "200g",
-          "additional_notes": "Satay these bad bois for 5 minutes",
+          "additional_notes": "Precooked",
           "category": "Grain"
         },
         {
           "name": "Veges",
           "quantity": "100g",
-          "additional_notes": "soften these bad bois for 2 minutes",
+          "additional_notes": "Use whatever you want",
           "category": "Vegetables"
         }
       ],
       "steps": [
         {
-          "desc": "Cook em boil em put them in a stew",
+          "desc": "Cook the chicken with some oil ",
           "ingredients": [
             {
               "name": "Chicken",
               "quantity": "600g",
-              "additional_notes": "Chop the legs up",
+              "additional_notes": "Chunky Chicken!",
               "category": "Meat"
             }
           ]
         },
         {
-          "desc": "You got potato stew",
+          "desc": "Combine these with noodles and veges",
           "ingredients": [
             {
               "name": "Noodles",
               "quantity": "200g",
-              "additional_notes": "Satay these bad bois for 5 minutes",
+              "additional_notes": "Precooked",
               "category": "Grain"
             },
             {
               "name": "Veges",
               "quantity": "100g",
-              "additional_notes": "soften these bad bois for 2 minutes",
+              "additional_notes": "Use whatever you want",
               "category": "Vegetables"
             }
           ]

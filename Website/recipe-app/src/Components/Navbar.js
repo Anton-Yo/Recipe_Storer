@@ -11,7 +11,7 @@ const NavBar = () => {
           <NavLink to="/" className="nav-link text-light"> <h4>Home</h4> </NavLink>
           <NavLink to="/choose" className= "nav-link text-light"> <h4>Choose a recipe</h4> </NavLink>
           <NavLink to="/create" className= "nav-link text-light font-weight-bold"> <h4>Create</h4> </NavLink>
-          <NavLink to="/display" className= "nav-link text-light"> <h4>Display page</h4> </NavLink>
+          {/* <NavLink to="/display" className= "nav-link text-light"> <h4>Display page</h4> </NavLink> */}
       </div>
     </nav>
   )

@@ -39,15 +39,7 @@ def get_db():
 
 @app.get("/")
 def helpme():
-    return "Time to learn databases and development"
-
-# ---------------------------
-#    Testing StepAndIngs
-# --------------------------
-# @app.get("/get")
-# def getThat(id: int, db: Session = Depends(get_db)):
-#     db_steps = crud.get_stuff(db=db, recipe_id = id)
-#     return db_steps
+    return "Backend for recipe storer application"
 
 # -------------------
 #    CREATE STUFF
@@ -65,7 +57,6 @@ async def submit(data: schemas.SubmitRecipe, db: Session = Depends(get_db)):
      # 1. Recipe info -> Create recipe
     recipe_id = create_recipe(recipe_data = data.recipe, db=db).id
     
-    
     ing_list = []
     print(data.ingredients)
 
@@ -81,7 +72,6 @@ async def submit(data: schemas.SubmitRecipe, db: Session = Depends(get_db)):
         ing_list.append(create_ingredient(ingData, db=db))
 
     for step in data.steps:
-
         #create the steps
         stepData = schemas.StepCreate(
             desc = step.desc,
@@ -338,7 +328,7 @@ def get_categories_from_recipe_id(recipe_id: int, db: Session = Depends(get_db))
 
 @app.post("/create_test_data2", response_model=str)
 def post(db: Session = Depends(get_db)):
-    f = open('testDataV2.json')
+    f = open('testDataV3.json')
     data = json.load(f)
 
     #Make the recipes
@@ -347,17 +337,24 @@ def post(db: Session = Depends(get_db)):
         new_recipe_id = db_recipe.id #pass recipe id to ingredients and steps
         
         print(recipe["steps"])
-        #Make the steps first
+
+        #Create ings first
+        created_ings = [] 
+        print(recipe["ingredients"])
+        for ing in recipe["ingredients"]:
+            new_ing = create_ingredient_from_dict(ing, recipe_id=new_recipe_id, db=db)
+            created_ings.append(new_ing)
+
+        #Make the steps second and append the necessary ingredients
         for step in recipe["steps"]:
             db_step = create_step_from_dict(step, recipe_id=new_recipe_id, db=db)
-            new_step_id = db_step.id #pass step id to ingredients
 
-            for ing in step["ingredients"]: #use the recipe id, and append the ing
-                new_ing = create_ingredient_from_dict(ing, recipe_id=new_recipe_id, db=db)
-                print(f"appending {new_ing.name} to {db_step.desc}")
-                db_step.ingredients.append(new_ing)
-                
-                #db_step.append(new_ing)   
+            for ing in created_ings: #check each ingredient in the recipe and compare to ings in each step
+                for contained_ing in step["ingredients"]:
+                    #If ingredient is the same, append it to step
+                    if (ing.name == contained_ing["name"]) & (ing.quantity == contained_ing["quantity"]) & (ing.additional_notes == contained_ing["additional_notes"]):
+                        db_step.ingredients.append(ing)
+
         db.add(db_step)
         db.commit()   
     return "test data v2 loaded successfully"
@@ -371,17 +368,22 @@ def load_from_JSON(dataContainer: list = Body(...), db: Session = Depends(get_db
             db_recipe = create_recipe_from_dict(recipe, db = db)
             new_recipe_id = db_recipe.id #pass recipe id to ingredients and steps
             
-            print(recipe["steps"])
-            #Make the steps first
+            #Create ings first
+            created_ings = [] 
+            print(recipe["ingredients"])
+            for ing in recipe["ingredients"]:
+                new_ing = create_ingredient_from_dict(ing, recipe_id=new_recipe_id, db=db)
+                created_ings.append(new_ing)
+
+            #Make the steps second and append the necessary ingredients
             for step in recipe["steps"]:
                 db_step = create_step_from_dict(step, recipe_id=new_recipe_id, db=db)
 
-                for ing in step["ingredients"]: #use the recipe id, and append the ing
-                    new_ing = create_ingredient_from_dict(ing, recipe_id=new_recipe_id, db=db)
-                    print(f"appending {new_ing.name} to {db_step.desc}")
-                    db_step.ingredients.append(new_ing)
-                    
-                    #db_step.append(new_ing)   
+                for ing in created_ings: #check each ingredient in the recipe and compare to ings in each step
+                    for contained_ing in step["ingredients"]:
+                        #If ingredient is the same, append it to step
+                        if (ing.name == contained_ing["name"]) & (ing.quantity == contained_ing["quantity"]) & (ing.additional_notes == contained_ing["additional_notes"]):
+                            db_step.ingredients.append(ing)
             db.add(db_step)
             db.commit()
     except:
@@ -406,17 +408,24 @@ async def load_from_JSON(file: UploadFile = File(...), db: Session = Depends(get
             db_recipe = create_recipe_from_dict(recipe, db = db)
             new_recipe_id = db_recipe.id #pass recipe id to ingredients and steps
             
-            print(recipe["steps"])
-            #Make the steps first
+
+            #Create ings first
+            created_ings = [] 
+            print(recipe["ingredients"])
+            for ing in recipe["ingredients"]:
+                new_ing = create_ingredient_from_dict(ing, recipe_id=new_recipe_id, db=db)
+                created_ings.append(new_ing)
+
+            #Make the steps second and append the necessary ingredients
             for step in recipe["steps"]:
                 db_step = create_step_from_dict(step, recipe_id=new_recipe_id, db=db)
 
-                for ing in step["ingredients"]: #use the recipe id, and append the ing
-                    new_ing = create_ingredient_from_dict(ing, recipe_id=new_recipe_id, db=db)
-                    print(f"appending {new_ing.name} to {db_step.desc}")
-                    db_step.ingredients.append(new_ing)
-                    
-                    #db_step.append(new_ing)   
+                for ing in created_ings: #check each ingredient in the recipe and compare to ings in each step
+                    for contained_ing in step["ingredients"]:
+                        #If ingredient is the same, append it to step
+                        if (ing.name == contained_ing["name"]) & (ing.quantity == contained_ing["quantity"]) & (ing.additional_notes == contained_ing["additional_notes"]):
+                            db_step.ingredients.append(ing)
+                  
             db.add(db_step)
             db.commit()   
     except:
@@ -475,14 +484,6 @@ def backup_db():
 
     shutil.copy(source, dest)
     return "Database backup created successfully"
-
-@app.get("/download_current")
-def download_recipe_db():
-    print("Downloading current db")
-    if not os.path.exists(BACKUP_PATH):
-        raise HTTPException(status_code=404, detail="Database file not found")
-    now = datetime.now()
-    return FileResponse(BACKUP_PATH, filename="recipes " + now.strftime("%d/%m/%Y %H:%M") + ".db")
 
 @app.get("/download_backup")
 def download_backup():

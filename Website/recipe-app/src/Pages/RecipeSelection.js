@@ -7,19 +7,26 @@ import { isMobile } from 'react-device-detect';
 
 const CreateRecipe = () => {
   const [recipes, setRecipes] = useState([]);
-  const [isLarge, SetIsLarge] = useState(window.innerWidth > 992)
+  const [isLarge, setIsLarge] = useState(window.innerWidth > 992)
+  //const [isLoaded, setIsLoaded] = useState([false])
 
   let navigate = useNavigate()
 
   const fetchRecipes = async() => {
     const response = await api.get("/recipes");
     setRecipes(response.data)
-    console.log(response.data);
+    console.log(response.data.length)
+
+    // if(response.data.length != 0)
+    // {
+    //   setIsLoaded(true);
+    //   console.log(isLoaded)
+    // }
+    
   };
 
   useEffect(() => {
     fetchRecipes();
-
 
     //Add listener to update page when dimensions change. to swap between 2/4 boxes per row
     window.addEventListener('resize', checkSize);
@@ -39,6 +46,10 @@ const CreateRecipe = () => {
     fetchRecipes()
   }
 
+  const isLoaded = () => {
+    return recipes.length != 0 
+  }
+
   const getCookTime = (recipe) => {
     const time = recipe.cook_time
     const mins = time % 60
@@ -54,7 +65,7 @@ const CreateRecipe = () => {
 
   //Based off 992 px standard for large from bootstrap
   const checkSize = () => {
-    SetIsLarge(window.innerWidth > 992)
+    setIsLarge(window.innerWidth > 992)
   }
 
   const mobileCheck = () => {
@@ -74,9 +85,17 @@ const CreateRecipe = () => {
     <div className="container">
       <h1 className="text-center m-4">Select A Recipe</h1>
 
-      <div id="recipe-select-container" className="d-flex flex-wrap bg-papaya border border-dark border-5">
-        {recipes.map((recipe) => (
-          <button className={mobileCheck()} key={recipe.id} onClick={() => goToPage(recipe.id)}>
+      <div
+        id="recipe-select-container"
+        className="d-flex flex-wrap bg-papaya border border-dark border-5"
+      >
+        { isLoaded() ? (
+        recipes.map((recipe) => (
+          <button
+            className={mobileCheck()}
+            key={recipe.id}
+            onClick={() => goToPage(recipe.id)}
+          >
             <div className="recipe-button-info">
               <h4> {recipe.name} </h4>
               <p> {recipe.desc} </p>
@@ -84,18 +103,33 @@ const CreateRecipe = () => {
               <div>
                 <div className="container">
                   <div className="row">
-                    <div className="col-6 col-md-6 text-decoration-underline"> <h6>Time</h6> </div>
-                    <div className="col-6 col-md-6 text-decoration-underline"> <h6>Cuisine</h6> </div>
+                    <div className="col-6 col-md-6 text-decoration-underline">
+                      {" "}
+                      <h6>Time</h6>{" "}
+                    </div>
+                    <div className="col-6 col-md-6 text-decoration-underline">
+                      {" "}
+                      <h6>Cuisine</h6>{" "}
+                    </div>
                   </div>
-                  <div className="row"> 
-                    <div className="col-6 col-md-6"> {getCookTime(recipe)} </div>
-                    <div className="col-6 col-md-6"> {recipe.cuisine.name} </div>
+                  <div className="row">
+                    <div className="col-6 col-md-6">
+                      {" "}
+                      {getCookTime(recipe)}{" "}
+                    </div>
+                    <div className="col-6 col-md-6">
+                      {" "}
+                      {recipe.cuisine.name}{" "}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </button>
-        ))}
+        ))
+        ) : (
+        <div className="container p-2 text-center"> 
+        No recipes available yet. <br></br> Feel free to create one! </div>)}
       </div>
 
       <h4 className="text-center mt-5"> Deleting table </h4>
@@ -117,7 +151,10 @@ const CreateRecipe = () => {
               <td>{recipe.cuisine.name}</td>
               <td>
                 <div className="w-100 d-flex justify-content-center">
-                  <button onClick={() => handleDelete(recipe.id)} className="btn btn-dark">
+                  <button
+                    onClick={() => handleDelete(recipe.id)}
+                    className="btn btn-dark"
+                  >
                     {" "}
                     Delete{" "}
                   </button>

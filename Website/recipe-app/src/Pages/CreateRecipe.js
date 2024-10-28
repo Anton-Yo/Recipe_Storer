@@ -328,6 +328,11 @@ const CreateRecipe = () => {
 
           <div className="container h-50 flex-column justify-content-center d-flex mt-4">
             <div className="flex-row justify-content-around d-flex pb-3 mt-4">
+              
+              <button type="submit" onClick={handleGoBack} className="btn btn-dark w-30">
+                    Back
+              </button>
+
               <button
                 type="submit"
                 onClick={submitNewRecipe}
@@ -335,17 +340,13 @@ const CreateRecipe = () => {
               >
                 Send to Server
               </button>
-
-              <button type="submit" onClick={handleGoBack} className="btn btn-dark w-30">
-                    Back
-              </button>
             </div>
         
           </div>
         </div>
       );
     }
-    //If recipe submitted, show ingredient from
+    //Show Ingredient form
     else if (recipeSubmitted && !ingredientsAllSubmitted) {
       return (
         <div>
@@ -421,8 +422,8 @@ const CreateRecipe = () => {
               </div>
 
               <div className="container justify-content-around d-flex mt-4">
-                <button type="submit" className="btn btn-dark w-25">
-                  Add
+                <button type="submit" onClick={handleGoBack} className="btn btn-dark w-25">
+                    Back
                 </button>
 
                 <button
@@ -432,17 +433,16 @@ const CreateRecipe = () => {
                   Next Section
                 </button>
 
-                <button type="submit" onClick={handleGoBack} className="btn btn-dark w-25">
-                  Back
+                <button type="submit" className="btn btn-dark w-25">
+                  Add
                 </button>
-
               </div>
             </div>
           </form>
         </div>
       );
     }
-    //if ingredient submitted show step form
+    //Show Step form
     else if (recipeSubmitted && ingredientsAllSubmitted) {
       return (
         <div>
@@ -474,24 +474,26 @@ const CreateRecipe = () => {
               </div>
 
               <div className="container justify-content-around d-flex mt-4">
-                <button type="submit" className="btn btn-dark w-25">
-                  Add
+                <button type="submit" onClick={handleGoBack} className="btn btn-dark w-25">
+                  Back
                 </button>
-
+            
                 <button onClick={stepsComplete} className="btn btn-dark w-25">
                   Next Section
                 </button>
 
-                <button type="submit" onClick={handleGoBack} className="btn btn-dark w-25">
-                  Back
+                <button type="submit" className="btn btn-dark w-25">
+                  Add
                 </button>
+
+                
               </div>
             </div>
           </form>
         </div>
       );
     }
-    //Show recipe form
+    //Show Recipe form
     else {
       return (
         <form className="create-form" onSubmit={handleRecipeSubmit}>
