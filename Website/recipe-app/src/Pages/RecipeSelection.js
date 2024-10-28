@@ -8,7 +8,7 @@ import { isMobile } from 'react-device-detect';
 const CreateRecipe = () => {
   const [recipes, setRecipes] = useState([]);
   const [isLarge, setIsLarge] = useState(window.innerWidth > 992)
-  //const [isLoaded, setIsLoaded] = useState([false])
+  const [loaded, setLoaded] = useState([false])
 
   let navigate = useNavigate()
 
@@ -16,13 +16,7 @@ const CreateRecipe = () => {
     const response = await api.get("/recipes");
     setRecipes(response.data)
     console.log(response.data.length)
-
-    // if(response.data.length != 0)
-    // {
-    //   setIsLoaded(true);
-    //   console.log(isLoaded)
-    // }
-    
+    setLoaded(true)
   };
 
   useEffect(() => {
@@ -47,7 +41,11 @@ const CreateRecipe = () => {
   }
 
   const isLoaded = () => {
-    return recipes.length != 0 
+    return loaded
+  }
+  
+  const isThereData = () => {
+    return recipes.length != 0
   }
 
   const getCookTime = (recipe) => {
@@ -89,7 +87,7 @@ const CreateRecipe = () => {
         id="recipe-select-container"
         className="d-flex flex-wrap bg-papaya border border-dark border-5"
       >
-        { isLoaded() ? (
+        { isThereData() ? (
         recipes.map((recipe) => (
           <button
             className={mobileCheck()}
@@ -128,8 +126,13 @@ const CreateRecipe = () => {
           </button>
         ))
         ) : (
-        <div className="container p-2 text-center"> 
-        No recipes available yet. <br></br> Feel free to create one! </div>)}
+          isLoaded() ? (
+            <div className="container p-2 text-center"> No recipes available yet. <br></br> Feel free to create one! </div>
+          ) : (
+            <div><br></br></div>
+          )
+        )
+        }
       </div>
 
       <h4 className="text-center mt-5"> Deleting table </h4>
