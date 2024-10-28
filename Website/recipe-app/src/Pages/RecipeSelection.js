@@ -8,6 +8,7 @@ import { isMobile } from 'react-device-detect';
 const CreateRecipe = () => {
   const [recipes, setRecipes] = useState([]);
   const [isLarge, setIsLarge] = useState(window.innerWidth > 992)
+  const [loaded, setLoaded] = useState([false])
 
   let navigate = useNavigate()
 
@@ -39,6 +40,10 @@ const CreateRecipe = () => {
     fetchRecipes()
   }
 
+  const isLoaded = () => {
+    return loaded
+  }
+  
   const isThereData = () => {
     return recipes.length != 0
   }
@@ -121,7 +126,11 @@ const CreateRecipe = () => {
           </button>
         ))
         ) : (
-          <div className="container p-2 text-center"> Loading recipes... <br></br> Feel free to create one in the meantime! </div>
+          isLoaded() ? (
+            <div className="container p-2 text-center"> No recipes available yet. <br></br> Feel free to create one! </div>
+          ) : (
+            <div><br></br></div>
+          )
         )
         }
       </div>
