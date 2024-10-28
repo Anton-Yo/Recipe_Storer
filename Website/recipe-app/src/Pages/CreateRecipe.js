@@ -368,6 +368,7 @@ const CreateRecipe = () => {
                   className="form-control"
                   id="name"
                   name="name"
+                  maxLength="30"
                   onChange={(event) => handleInputChange(event, 1)}
                   value={ingForm.name}
                 ></input>
@@ -383,6 +384,7 @@ const CreateRecipe = () => {
                   className="form-control"
                   id="quantity"
                   name="quantity"
+                  maxLength="30"
                   onChange={(event) => handleInputChange(event, 1)}
                   placeholder="e.g 500g, 1kg"
                   value={ingForm.quantity}
@@ -400,6 +402,7 @@ const CreateRecipe = () => {
                   id="additional_notes"
                   name="additional_notes"
                   placeholder="(optional)"
+                  maxLength="40"
                   onChange={(event) => handleInputChange(event, 1)}
                   value={ingForm.additional_notes}
                 ></input>
@@ -416,6 +419,7 @@ const CreateRecipe = () => {
                   className="form-control"
                   id="category"
                   name="category"
+                  maxLength="30"
                   onChange={(event) => handleInputChange(event, 1)}
                   value={ingForm.category}
                 ></input>
@@ -468,6 +472,7 @@ const CreateRecipe = () => {
                   id="desc"
                   name="desc"
                   placeholder="Write the instructions here"
+                  maxLength="1000"
                   onChange={(event) => handleInputChange(event, 2)}
                   value={stepForm.desc}
                 />
