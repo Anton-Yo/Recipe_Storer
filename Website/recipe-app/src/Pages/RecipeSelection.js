@@ -8,7 +8,6 @@ import { isMobile } from 'react-device-detect';
 const CreateRecipe = () => {
   const [recipes, setRecipes] = useState([]);
   const [isLarge, setIsLarge] = useState(window.innerWidth > 992)
-  const [loaded, setLoaded] = useState([false])
 
   let navigate = useNavigate()
 
@@ -16,7 +15,6 @@ const CreateRecipe = () => {
     const response = await api.get("/recipes");
     setRecipes(response.data)
     console.log(response.data.length)
-    setLoaded(true)
   };
 
   useEffect(() => {
@@ -40,10 +38,6 @@ const CreateRecipe = () => {
     fetchRecipes()
   }
 
-  const isLoaded = () => {
-    return loaded
-  }
-  
   const isThereData = () => {
     return recipes.length != 0
   }
@@ -126,11 +120,7 @@ const CreateRecipe = () => {
           </button>
         ))
         ) : (
-          isLoaded() ? (
-            <div className="container p-2 text-center"> No recipes available yet. <br></br> Feel free to create one! </div>
-          ) : (
-            <div><br></br></div>
-          )
+          <div className="container p-2 text-center"> Loading recipes... </div>
         )
         }
       </div>
